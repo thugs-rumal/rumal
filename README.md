@@ -14,7 +14,7 @@ Rumāl needs to make sure you are using a supported Thug version, to avoid any i
 
 To clone both Rumāl and Thug at once, you can run the following command:
 
-    $ git clone --recursive git.sysenter-honeynet.org:rumal
+    $ git clone --recursive git@github.com:pdelsante/rumal.git
 
 Before any further setup on Rumāl's part, you will need to set up Thug first. Please refer to [Thug's own documentation](http://buffer.github.io/thug/). **Please make sure you fully configure MongoDB and let Thug's MongoDB logger enabled.**
 
