@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Thug's Rumāl: Task #36</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="task_report_files/bootstrap.css" rel="stylesheet">
+<link href="task_report_files/bootstrap-datetimepicker.css" rel="stylesheet">
+<link href="task_report_files/bootstrap-select.css" rel="stylesheet">
+<link href="task_report_files/dataTables.css" rel="stylesheet">
+<link href="task_report_files/flags32.css" rel="stylesheet">
+<link href="task_report_files/prettify.css" rel="stylesheet">
+<style>
+body {
+    margin-top: 20px;
+}
+.footer {
+    margin-top: 45px;
+    padding: 35px 0 36px;
+    border-top: 1px solid #e5e5e5;
+}
+.footer p {
+    margin-bottom: 0;
+    color: #555;
+}
+.mono {
+    font-family: monospace;
+}
+.signature {
+    padding: 6px;
+    margin-bottom: 3px;
+}
+img.fade {
+    opacity:0.4;
+    filter:alpha(opacity=40);
+}
+img.fade:hover {
+    opacity:1.0;
+    filter:alpha(opacity=100);
+}
+.section-title {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    margin-top: 20px;
+    padding-bottom: 3px;
+}
+
+.panel-heading a:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    float: right;
+    color: grey;
+}
+.panel-heading a.collapsed:after {
+    content:"\e080";
+}
+
+.fixed {
+    position: fixed;
+}
+
+/* sidebar */
+.bs-docs-sidebar {
+    padding-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+    color: #999;
+    border-left: 2px solid transparent;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+}
+
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>li>a:hover, 
+.bs-docs-sidebar .nav>li>a:focus {
+    color: #563d7c;                 
+    text-decoration: none;          
+    background-color: transparent;  
+    border-left-color: #563d7c; 
+}
+/* all active links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+    font-weight: 700;
+}
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a, 
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+    display: none;           
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+    display: block;           
+}
+
+</style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="pull-right">
+            Welcome, yourname-here [ <a href="#">Admin</a> ] [ <a href="#">Logout</a> ]
+        </div>
+        
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentaion">
+                <a href="#">
+                    <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> New task
+                </a>
+            </li>
+            <li role="presentaion" class="active">
+                <a href="#">
+                    <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Reports
+                </a>
+            </li>
+        </ul>
+
+        <br>
+            
+        <ol class="breadcrumb">
+            <li><a href="#">Reports</a></li>
+            <li class="active">Task #36</li>
+        </ol>
+
+            
+        <div class="row">
+            <div class="col-md-10">
+
+                <!-- Task summary -->
+                <div class="panel panel-default" id="panel_task_summary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Task summary</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover" id="table_task_summary">
+                            <colgroup>
+                                <col style="width: 30%;">
+                                <col style="width: 70%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>Task ID</th>
+                                    <td>36</td>
+                                </tr>
+                                <tr>
+                                    <th>Target URL</th>
+                                    <td>http://www.bodyweb.com/forums/threads/353333-Consiglio-su-pasti-post-wo-allenamento-tarda-sera</td>
+                                </tr>
+                                <tr>
+                                    <th>Referer</th>
+                                    <td>about:blank</td>
+                                </tr>
+                                <tr>
+                                    <th>User-Agent</th>
+                                    <td>win7ie80</td>
+                                </tr>
+                                <tr>
+                                    <th>Proxy</th>
+                                    <td>None</td>
+                                </tr>
+                                <tr>
+                                    <th>Submitted on</th>
+                                    <td id="submitted_on">2015-02-07 19:51:22</td>
+                                </tr>
+                                <tr id="started_on">
+                                    <th>Started on</th>
+                                    <td>2015-02-07 19:51:22</td>
+                                </tr>
+                                <tr id="completed_on">
+                                    <th>Completed on</th>
+                                    <td>2015-02-07 19:51:22</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <span id="span_status" class="label label-success">Completed</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+                <!-- Graph -->
+                <div class="panel panel-default" id="panel_task_graph">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Graph</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="div_graph">
+                            <!-- Title: G Pages: 1 -->
+                            <svg viewBox="0.00 0.00 1020.00 908.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none">
+                                <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 904)">
+                                    <title>G</title>
+                                    <polygon fill="white" stroke="none" points="-4,4 -4,-904 1016,-904 1016,4 -4,4" />
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera -->
+                                    <a xlink:href="#">
+                                        <g id="node1" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera</title>
+                                            <polygon fill="white" stroke="black" points="463.5,-468 136.5,-468 136.5,-432 463.5,-432 463.5,-468" />
+                                            <text text-anchor="middle" x="300" y="-448.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/favicon.ico -->
+                                    <a xlink:href="#">
+                                        <g id="node2" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/favicon.ico</title>
+                                            <polygon fill="white" stroke="black" points="862,-900 680,-900 680,-864 862,-864 862,-900" />
+                                            <text text-anchor="middle" x="771" y="-880.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/favicon.ico</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/favicon.ico -->
+                                    <g id="edge2" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/favicon.ico</title>
+                                        <path fill="none" stroke="black" d="M304.214,-468.298C317.267,-536.173 373.298,-773.799 530,-855 572.484,-877.015 624.784,-884.768 669.705,-886.599" />
+                                        <polygon fill="black" stroke="black" points="669.658,-890.099 679.764,-886.917 669.879,-883.103 669.658,-890.099" />
+                                        <text text-anchor="middle" x="497" y="-844.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/yui/yuiloader&#45;dom&#45;event/yuiloader&#45;dom&#45;event.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node3" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/yui/yuiloader&#45;dom&#45;event/yuiloader&#45;dom&#45;event.js?v=419</title>
+                                            <polygon fill="white" stroke="black" points="949.5,-846 592.5,-846 592.5,-810 949.5,-810 949.5,-846" />
+                                            <text text-anchor="middle" x="771" y="-826.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/yui/yuiloader&#45;dom&#45;event/yuiloader&#45;dom&#45;event.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/yui/yuiloader&#45;dom&#45;event/yuiloader&#45;dom&#45;event.js?v=419 -->
+                                    <g id="edge3" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/yui/yuiloader&#45;dom&#45;event/yuiloader&#45;dom&#45;event.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M306.152,-468.4C324.402,-529.591 392.399,-726.587 530,-801 546.257,-809.792 564.03,-816.356 582.317,-821.2" />
+                                        <polygon fill="black" stroke="black" points="581.672,-824.646 592.22,-823.648 583.352,-817.85 581.672,-824.646" />
+                                        <text text-anchor="middle" x="497" y="-791.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node4" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419</title>
+                                            <polygon fill="yellow" stroke="red" stroke-width="5" points="925.5,-792 616.5,-792 616.5,-756 925.5,-756 925.5,-792" />
+                                            <text text-anchor="middle" x="771" y="-772.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419 -->
+                                    <g id="edge4" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M308.486,-468.344C331.751,-522.63 408.596,-682.696 530,-747 553.327,-759.356 579.696,-767.267 606.2,-772.173" />
+                                        <polygon fill="black" stroke="black" points="605.911,-775.675 616.358,-773.909 607.091,-768.775 605.911,-775.675" />
+                                        <text text-anchor="middle" x="497" y="-733.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/clientscript/vbulletin&#45;core.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node5" class="node">
+                                            <title>http://www.bodyweb.com/forums/clientscript/vbulletin&#45;core.js?v=419</title>
+                                            <polygon fill="white" stroke="black" points="919.472,-720 845.236,-738 696.764,-738 622.528,-720 696.764,-702 845.236,-702 919.472,-720" />
+                                            <text text-anchor="middle" x="771" y="-718.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/clientscript/vbulletin&#45;core.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/clientscript/vbulletin&#45;core.js?v=419 -->
+                                    <g id="edge5" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/clientscript/vbulletin&#45;core.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M311.571,-468.078C339.993,-514.796 423.185,-639.607 530,-693 555.414,-705.703 584.188,-713.573 612.764,-718.279" />
+                                        <polygon fill="black" stroke="black" points="612.445,-721.771 622.858,-719.814 613.498,-714.85 612.445,-721.771" />
+                                        <text text-anchor="middle" x="497" y="-681.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/external.php?type=RSS2 -->
+                                    <a xlink:href="#">
+                                        <g id="node6" class="node">
+                                            <title>http://www.bodyweb.com/forums/external.php?type=RSS2</title>
+                                            <polygon fill="white" stroke="black" points="871,-684 671,-684 671,-648 871,-648 871,-684" />
+                                            <text text-anchor="middle" x="771" y="-664.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/external.php?type=RSS2</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/external.php?type=RSS2 -->
+                                    <g id="edge6" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/external.php?type=RSS2</title>
+                                        <path fill="none" stroke="black" d="M316.211,-468.276C349.999,-507.425 435.793,-599.058 530,-639 570.652,-656.236 618.471,-663.86 660.681,-666.864" />
+                                        <polygon fill="black" stroke="black" points="660.517,-670.361 670.718,-667.5 660.959,-663.375 660.517,-670.361" />
+                                        <text text-anchor="middle" x="497" y="-630.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/external.php?type=RSS2&amp;forumids=19 -->
+                                    <a xlink:href="#">
+                                        <g id="node7" class="node">
+                                            <title>http://www.bodyweb.com/forums/external.php?type=RSS2&amp;forumids=19</title>
+                                            <polygon fill="white" stroke="black" points="892.5,-630 649.5,-630 649.5,-594 892.5,-594 892.5,-630" />
+                                            <text text-anchor="middle" x="771" y="-610.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/external.php?type=RSS2&amp;forumids=19</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/external.php?type=RSS2&amp;forumids=19 -->
+                                    <g id="edge7" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/external.php?type=RSS2&amp;forumids=19</title>
+                                        <path fill="none" stroke="black" d="M324.1,-468.177C363.683,-498.228 448.143,-557.659 530,-585 564.535,-596.535 603.255,-603.351 639.347,-607.322" />
+                                        <polygon fill="black" stroke="black" points="639.145,-610.82 649.452,-608.368 639.866,-603.857 639.145,-610.82" />
+                                        <text text-anchor="middle" x="497" y="-579.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/main&#45;rollup.css?d=1415538179 -->
+                                    <a xlink:href="#">
+                                        <g id="node8" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/main&#45;rollup.css?d=1415538179</title>
+                                            <polygon fill="white" stroke="black" points="951.5,-576 590.5,-576 590.5,-540 951.5,-540 951.5,-576" />
+                                            <text text-anchor="middle" x="771" y="-556.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/main&#45;rollup.css?d=1415538179</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/main&#45;rollup.css?d=1415538179 -->
+                                    <g id="edge8" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/main&#45;rollup.css?d=1415538179</title>
+                                        <path fill="none" stroke="black" d="M342.769,-468.032C388.031,-486.795 462.804,-515.55 530,-531 546.226,-534.731 563.192,-537.954 580.278,-540.737" />
+                                        <polygon fill="black" stroke="black" points="579.924,-544.224 590.348,-542.325 581.015,-537.31 579.924,-544.224" />
+                                        <text text-anchor="middle" x="497" y="-528.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/post_thanks.js -->
+                                    <a xlink:href="#">
+                                        <g id="node9" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/post_thanks.js</title>
+                                            <polygon fill="white" stroke="black" points="885.5,-522 656.5,-522 656.5,-486 885.5,-486 885.5,-522" />
+                                            <text text-anchor="middle" x="771" y="-502.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/post_thanks.js</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/post_thanks.js -->
+                                    <g id="edge9" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/post_thanks.js</title>
+                                        <path fill="none" stroke="black" d="M452.806,-468.014C478.565,-471.037 505.045,-474.125 530,-477 567.855,-481.361 609.078,-486.028 646.508,-490.235" />
+                                        <polygon fill="black" stroke="black" points="646.118,-493.713 656.446,-491.351 646.9,-486.757 646.118,-493.713" />
+                                        <text text-anchor="middle" x="497" y="-476.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera?s=be4409ca6b944a62c89c730faf7a9928 -->
+                                    <a xlink:href="#">
+                                        <g id="node10" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera?s=be4409ca6b944a62c89c730faf7a9928</title>
+                                            <polygon fill="white" stroke="black" points="1012,-468 530,-468 530,-432 1012,-432 1012,-468" />
+                                            <text text-anchor="middle" x="771" y="-448.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera?s=be4409ca6b944a62c89c730faf7a9928</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera?s=be4409ca6b944a62c89c730faf7a9928 -->
+                                    <g id="edge10" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera?s=be4409ca6b944a62c89c730faf7a9928</title>
+                                        <path fill="none" stroke="black" d="M463.717,-450C481.882,-450 500.684,-450 519.624,-450" />
+                                        <polygon fill="black" stroke="black" points="519.846,-453.5 529.846,-450 519.846,-446.5 519.846,-453.5" />
+                                        <text text-anchor="middle" x="497" y="-452.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/vbulletin_ajax_threadrate.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node11" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/vbulletin_ajax_threadrate.js?v=419</title>
+                                            <polygon fill="white" stroke="black" points="917,-414 625,-414 625,-378 917,-378 917,-414" />
+                                            <text text-anchor="middle" x="771" y="-394.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/vbulletin_ajax_threadrate.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_ajax_threadrate.js?v=419 -->
+                                    <g id="edge11" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_ajax_threadrate.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M452.806,-431.986C478.565,-428.963 505.045,-425.875 530,-423 557.48,-419.834 586.735,-416.507 615.025,-413.312" />
+                                        <polygon fill="black" stroke="black" points="615.443,-416.787 624.987,-412.188 614.658,-409.831 615.443,-416.787" />
+                                        <text text-anchor="middle" x="497" y="-431.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/showthread&#45;rollup.css?d=1415538179 -->
+                                    <a xlink:href="#">
+                                        <g id="node12" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/showthread&#45;rollup.css?d=1415538179</title>
+                                            <polygon fill="white" stroke="black" points="961.5,-360 580.5,-360 580.5,-324 961.5,-324 961.5,-360" />
+                                            <text text-anchor="middle" x="771" y="-340.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/showthread&#45;rollup.css?d=1415538179</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/showthread&#45;rollup.css?d=1415538179 -->
+                                    <g id="edge12" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/showthread&#45;rollup.css?d=1415538179</title>
+                                        <path fill="none" stroke="black" d="M342.769,-431.968C388.031,-413.205 462.804,-384.45 530,-369 543.071,-365.995 556.622,-363.319 570.329,-360.937" />
+                                        <polygon fill="black" stroke="black" points="571.053,-364.365 580.334,-359.254 569.892,-357.462 571.053,-364.365" />
+                                        <text text-anchor="middle" x="497" y="-383.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/additional.css?d=1415538179 -->
+                                    <a xlink:href="#">
+                                        <g id="node13" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/additional.css?d=1415538179</title>
+                                            <polygon fill="white" stroke="black" points="949,-306 593,-306 593,-270 949,-270 949,-306" />
+                                            <text text-anchor="middle" x="771" y="-286.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/additional.css?d=1415538179</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/additional.css?d=1415538179 -->
+                                    <g id="edge13" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_css/style00046l/additional.css?d=1415538179</title>
+                                        <path fill="none" stroke="black" d="M324.1,-431.823C363.683,-401.772 448.143,-342.341 530,-315 546.862,-309.368 564.721,-304.861 582.786,-301.261" />
+                                        <polygon fill="black" stroke="black" points="583.666,-304.656 592.838,-299.353 582.36,-297.779 583.666,-304.656" />
+                                        <text text-anchor="middle" x="497" y="-336.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/css.php?styleid=46&amp;sheet=custom_erd.css -->
+                                    <a xlink:href="#">
+                                        <g id="node14" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/css.php?styleid=46&amp;sheet=custom_erd.css</title>
+                                            <polygon fill="white" stroke="black" points="913,-252 629,-252 629,-216 913,-216 913,-252" />
+                                            <text text-anchor="middle" x="771" y="-232.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/css.php?styleid=46&amp;sheet=custom_erd.css</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/css.php?styleid=46&amp;sheet=custom_erd.css -->
+                                    <g id="edge14" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/css.php?styleid=46&amp;sheet=custom_erd.css</title>
+                                        <path fill="none" stroke="black" d="M316.211,-431.724C349.999,-392.575 435.793,-300.942 530,-261 557.573,-249.31 588.442,-242.041 618.622,-237.636" />
+                                        <polygon fill="black" stroke="black" points="619.387,-241.065 628.825,-236.25 618.445,-234.128 619.387,-241.065" />
+                                        <text text-anchor="middle" x="497" y="-285.4" font-family="arial" font-size="7.00">link</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/threads/clientscript/vbulletin_md5.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node15" class="node">
+                                            <title>http://www.bodyweb.com/forums/threads/clientscript/vbulletin_md5.js?v=419</title>
+                                            <polygon fill="white" stroke="black" points="899.5,-198 642.5,-198 642.5,-162 899.5,-162 899.5,-198" />
+                                            <text text-anchor="middle" x="771" y="-178.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/threads/clientscript/vbulletin_md5.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_md5.js?v=419 -->
+                                    <g id="edge15" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/threads/clientscript/vbulletin_md5.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M311.571,-431.922C339.993,-385.204 423.185,-260.393 530,-207 561.148,-191.43 597.346,-183.121 632.039,-179" />
+                                        <polygon fill="black" stroke="black" points="632.695,-182.45 642.262,-177.899 631.945,-175.49 632.695,-182.45" />
+                                        <text text-anchor="middle" x="497" y="-238.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://connect.facebook.net/en_US/all.js#xfbml=1 -->
+                                    <a xlink:href="#">
+                                        <g id="node16" class="node">
+                                            <title>http://connect.facebook.net/en_US/all.js#xfbml=1</title>
+                                            <polygon fill="yellow" stroke="black" points="882.498,-126 826.749,-144 715.251,-144 659.502,-126 715.251,-108 826.749,-108 882.498,-126" />
+                                            <text text-anchor="middle" x="771" y="-124.4" font-family="arial" font-size="7.00">http://connect.facebook.net/en_US/all.js#xfbml=1</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://connect.facebook.net/en_US/all.js#xfbml=1 -->
+                                    <g id="edge16" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://connect.facebook.net/en_US/all.js#xfbml=1</title>
+                                        <path fill="none" stroke="black" d="M308.486,-431.656C331.751,-377.37 408.596,-217.304 530,-153 570.907,-131.333 621.166,-123.333 665.103,-121.241" />
+                                        <polygon fill="black" stroke="black" points="665.388,-124.733 675.248,-120.856 665.123,-117.738 665.388,-124.733" />
+                                        <text text-anchor="middle" x="497" y="-183.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419 -->
+                                    <a xlink:href="#">
+                                        <g id="node17" class="node">
+                                            <title>http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419</title>
+                                            <polygon fill="yellow" stroke="black" points="930.674,-72 850.837,-90 691.163,-90 611.326,-72 691.163,-54 850.837,-54 930.674,-72" />
+                                            <text text-anchor="middle" x="771" y="-70.4" font-family="arial" font-size="7.00">http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419 -->
+                                    <g id="edge17" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419</title>
+                                        <path fill="none" stroke="black" d="M306.152,-431.6C324.402,-370.409 392.399,-173.413 530,-99 552.141,-87.0266 577.095,-79.1839 602.325,-74.1931" />
+                                        <polygon fill="black" stroke="black" points="603.175,-77.5959 612.382,-72.3534 601.915,-70.7102 603.175,-77.5959" />
+                                        <text text-anchor="middle" x="497" y="-133.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- https://connect.facebook.net/en_US/all.js -->
+                                    <a xlink:href="#">
+                                        <g id="node19" class="node">
+                                            <title>https://connect.facebook.net/en_US/all.js</title>
+                                            <ellipse fill="white" stroke="black" cx="771" cy="-18" rx="82.098" ry="18" />
+                                            <text text-anchor="middle" x="771" y="-16.4" font-family="arial" font-size="7.00">https://connect.facebook.net/en_US/all.js</text>
+                                        </g>
+                                    </a>
+                                    <!-- http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;https://connect.facebook.net/en_US/all.js -->
+                                    <g id="edge18" class="edge">
+                                        <title>http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera&#45;&gt;https://connect.facebook.net/en_US/all.js</title>
+                                        <path fill="none" stroke="black" d="M304.214,-431.702C317.267,-363.827 373.298,-126.201 530,-45 576.389,-20.9619 634.48,-13.9278 681.89,-13.0396" />
+                                        <polygon fill="black" stroke="black" points="682.18,-16.537 692.145,-12.9391 682.111,-9.53735 682.18,-16.537" />
+                                        <text text-anchor="middle" x="497" y="-74.4" font-family="arial" font-size="7.00">script src</text>
+                                    </g>
+                                    <!-- about:blank -->
+                                    <a xlink:href="#">
+                                        <g id="node18" class="node">
+                                            <title>about:blank</title>
+                                            <ellipse fill="white" stroke="black" cx="30" cy="-450" rx="29.6648" ry="18" />
+                                            <text text-anchor="middle" x="30" y="-448.4" font-family="arial" font-size="7.00">about:blank</text>
+                                        </g>
+                                    </a>
+                                    <!-- about:blank&#45;&gt;http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera -->
+                                    <g id="edge1" class="edge">
+                                        <title>about:blank&#45;&gt;http://www.bodyweb.com/forums/threads/353333&#45;Consiglio&#45;su&#45;pasti&#45;post&#45;wo&#45;allenamento&#45;tarda&#45;sera</title>
+                                        <path fill="none" stroke="black" d="M59.6807,-450C76.9063,-450 100.405,-450 125.981,-450" />
+                                        <polygon fill="black" stroke="black" points="126.266,-453.5 136.266,-450 126.266,-446.5 126.266,-453.5" />
+                                        <text text-anchor="middle" x="98" y="-452.4" font-family="arial" font-size="7.00">window open</text>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Details of selected node -->
+                <div class="panel panel-default" id="panel_node_info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Node info</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover" id="table_task_summary">
+                            <colgroup>
+                                <col style="width: 30%;">
+                                <col style="width: 70%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>URL</th>
+                                    <td>
+                                        http://www.bodyweb.com/forums/threads/clientscript/yui/connection/connection&#45;min.js?v=419
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Domain</th>
+                                    <td>
+                                        www.bodyweb.com
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                <li role="presentation"><a href="#">Whois on DomainTools</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <td>
+                                        37.187.150.167
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                <li role="presentation"><a href="#">Whois on DomainTools</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Mime Type</th>
+                                    <td>
+                                        HTML document, ISO-8859 text, with CRLF, LF line terminators
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Content type</th>
+                                    <td>
+                                        text/html; charset=ISO-8859-1
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Content Size</th>
+                                    <td>23688 bytes (2.3Kb)</td>
+                                </tr>
+                                <tr>
+                                    <th>Content MD5</th>
+                                    <td>
+                                        ec84888e8ae1dbcfd75dbf33b487b5ae
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Content SHA256</th>
+                                    <td>
+                                        89863b4d0c7668c30bd87d2f397a59558ffafc4a853a45d80916240a65d3db7f
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Exploit module</th>
+                                    <td>
+                                        Microsoft XMLHTTP ActiveX
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Exploit CVE</th>
+                                    <td>
+                                        <span id="span_cve" class="label label-primary">CVE-2015-0330</span>
+                                        <div class="dropdown pull-right">
+                                            <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                <li role="presentation"><a href="#">Search on MITRE</a></li>
+                                                <li role="presentation"><a href="#">Search on NVD</a></li>
+                                                <li role="presentation"><a href="#">...</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="panel panel-default" id="panel_content_details">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Content details</h3>
+                    </div>
+                    <div class="panel-body" role="tabpanel">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#content_raw" aria-controls="content_raw" role="tab" data-toggle="tab">Raw</a></li>
+                            <li role="presentation"><a href="#content_beautified" aria-controls="content_beautified" role="tab" data-toggle="tab">Beautified</a></li>
+                        </ul>
+                        <br>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <!-- raw version of content -->
+                            <div role="tabpanel" class="tab-pane active" id="content_raw">
+<pre class="prettyprint linenums">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:fb=&quot;http://www.facebook.com/2008/fbml&quot; dir=&quot;ltr&quot; lang=&quot;it&quot; id=&quot;vbulletin_html&quot;&gt;
+&lt;head&gt;
+    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=ISO-8859-1&quot; /&gt;
+&lt;meta id=&quot;e_vb_meta_bburl&quot; name=&quot;vb_meta_bburl&quot; content=&quot;http://www.bodyweb.com/forums&quot; /&gt;
+&lt;base href=&quot;http://www.bodyweb.com/forums/&quot; /&gt;&lt;!--[if IE]&gt;&lt;/base&gt;&lt;![endif]--&gt;
+&lt;meta name=&quot;generator&quot; content=&quot;vBulletin 4.1.9&quot; /&gt;
+
+    &lt;link rel=&quot;Shortcut Icon&quot; href=&quot;favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
+
+
+        &lt;meta name=&quot;keywords&quot; content=&quot;forum,palestra,creatina,proteine,testosterone,bodybuilding, body, building, muscoli,dieta, integratori, integratori alimentari,dieta, alimentazione, muscolo, allenamento, grasso, calcolo, calorie, alimenti,alimento, cibo, massa, muscolare, italia,vbulletin,forum&quot; /&gt;
+        &lt;meta name=&quot;description&quot; content=&quot;Il Grande Forum del Body Building &amp; Fitness :  http://www.bodyweb.it, discussioni su palestra, body building, integratori alimentari, le ultime novità in ambito di fitness, allenamento, dieta.&quot; /&gt;
+
+
+
+    &lt;meta property=&quot;fb:app_id&quot; content=&quot;122752191115598&quot; /&gt;
+&lt;meta property=&quot;og:site_name&quot; content=&quot;Il Forum del Body Building &amp; Fitness&quot; /&gt;
+&lt;meta property=&quot;og:description&quot; content=&quot;Il Grande Forum del Body Building &amp; Fitness :  http://www.bodyweb.it, discussioni su palestra, body building, integratori alimentari, le ultime novità in ambito di fitness, allenamento, dieta.&quot; /&gt;
+&lt;meta property=&quot;og:url&quot; content=&quot;http://www.bodyweb.com/forums/threads&quot; /&gt;
+&lt;meta property=&quot;og:type&quot; content=&quot;article&quot; /&gt;
+
+
+
+
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/yui/yuiloader-dom-event/yuiloader-dom-event.js?v=419&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/yui/connection/connection-min.js?v=419&quot;&gt;&lt;/script&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+&lt;!--
+    var SESSIONURL = &quot;&quot;;
+    var SECURITYTOKEN = &quot;guest&quot;;
+    var IMGDIR_MISC = &quot;images/misc&quot;;
+    var IMGDIR_BUTTON = &quot;images/buttons&quot;;
+    var vb_disable_ajax = parseInt(&quot;0&quot;, 10);
+    var SIMPLEVERSION = &quot;419&quot;;
+    var BBURL = &quot;http://www.bodyweb.com/forums&quot;;
+    var LOGGEDIN = 0 &gt; 0 ? true : false;
+    var THIS_SCRIPT = &quot;showthread&quot;;
+    var RELPATH = &quot;threads/clientscript/yui/connection/connection-min.js?v=419&quot;;
+    var PATHS = {
+        forum : &quot;&quot;,
+        cms   : &quot;&quot;,
+        blog  : &quot;&quot;
+    };
+    var AJAXBASEURL = &quot;http://www.bodyweb.com/forums/&quot;;
+// --&gt;
+&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;http://www.bodyweb.com/forums/clientscript/vbulletin-core.js?v=419&quot;&gt;&lt;/script&gt;
+
+
+
+    &lt;link rel=&quot;alternate&quot; type=&quot;application/rss+xml&quot; title=&quot;Il Forum del Body Building &amp; Fitness Feed RSS&quot; href=&quot;http://www.bodyweb.com/forums/external.php?type=RSS2&quot; /&gt;
+    
+
+
+
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/main-rollup.css?d=1415538179&quot; /&gt;
+        
+
+    &lt;!--[if lt IE 8]&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/popupmenu-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-chrome-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-formcontrols-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/editor-ie.css?d=1415538179&quot; /&gt;
+    &lt;![endif]--&gt;
+
+
+    &lt;meta name=&quot;robots&quot; content=&quot;noindex,follow&quot; /&gt;
+
+    &lt;title&gt;Il Forum del Body Building &amp; Fitness&lt;/title&gt;
+    
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/vbulletin_md5.js?v=419&quot;&gt;&lt;/script&gt;
+
+    
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/additional.css?d=1415538179&quot; /&gt;
+
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css.php?styleid=46&amp;amp;sheet=custom_erd.css&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;above_body&quot;&gt; &lt;!-- closing tag is in template navbar --&gt;
+&lt;div id=&quot;header&quot; class=&quot;floatcontainer doc_header&quot;&gt;
+    &lt;div&gt;&lt;a name=&quot;top&quot; href=&quot;forum.php&quot; class=&quot;logo-image&quot;&gt;&lt;img src=&quot;images/bodywebnew/bodyweb_headerLogo.gif&quot; alt=&quot;Il Forum del Body Building &amp; Fitness - Powered by vBulletin&quot; /&gt;&lt;/a&gt;&lt;/div&gt;
+    &lt;div id=&quot;toplinks&quot; class=&quot;toplinks&quot;&gt;
+        
+            &lt;ul class=&quot;nouser&quot;&gt;
+            
+                &lt;li&gt;&lt;a href=&quot;register.php&quot; rel=&quot;nofollow&quot;&gt;Registrazione&lt;/a&gt;&lt;/li&gt;
+            
+                &lt;li&gt;&lt;a rel=&quot;help&quot; href=&quot;faq.php&quot;&gt;Aiuto&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;
+            &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/vbulletin_md5.js?v=419&quot;&gt;&lt;/script&gt;
+            &lt;form id=&quot;navbar_loginform&quot; action=&quot;login.php?do=login&quot; method=&quot;post&quot; onsubmit=&quot;md5hash(vb_login_password, vb_login_md5password, vb_login_md5password_utf, 0)&quot;&gt;
+                &lt;fieldset id=&quot;logindetails&quot; class=&quot;logindetails&quot;&gt;
+                    &lt;div&gt;
+                        &lt;div&gt;
+                    &lt;input type=&quot;text&quot; class=&quot;textbox default-value&quot; name=&quot;vb_login_username&quot; id=&quot;navbar_username&quot; size=&quot;10&quot; accesskey=&quot;u&quot; tabindex=&quot;101&quot; value=&quot;Nome Utente&quot; /&gt;
+                    &lt;input type=&quot;password&quot; class=&quot;textbox&quot; tabindex=&quot;102&quot; name=&quot;vb_login_password&quot; id=&quot;navbar_password&quot; size=&quot;10&quot; /&gt;
+                    &lt;input type=&quot;text&quot; class=&quot;textbox default-value&quot; tabindex=&quot;102&quot; name=&quot;vb_login_password_hint&quot; id=&quot;navbar_password_hint&quot; size=&quot;10&quot; value=&quot;Password&quot; style=&quot;display:none;&quot; /&gt;
+                    &lt;input type=&quot;submit&quot; class=&quot;loginbutton&quot; tabindex=&quot;104&quot; value=&quot;Accedi&quot; title=&quot;Inserisci il tuo nome utente e la tua password nelle caselle fornite per accedere, o clicca il pulsante 'registrazione' per crearti un profilo.&quot; accesskey=&quot;s&quot; /&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/fieldset&gt;
+                &lt;div id=&quot;remember&quot; class=&quot;remember&quot;&gt;
+                    &lt;label for=&quot;cb_cookieuser_navbar&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;cookieuser&quot; value=&quot;1&quot; id=&quot;cb_cookieuser_navbar&quot; class=&quot;cb_cookieuser_navbar&quot; accesskey=&quot;c&quot; tabindex=&quot;103&quot; /&gt; Ricordami?&lt;/label&gt;
+                &lt;/div&gt;
+
+                &lt;input type=&quot;hidden&quot; name=&quot;s&quot; value=&quot;&quot; /&gt;
+                &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+                &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;login&quot; /&gt;
+                &lt;input type=&quot;hidden&quot; name=&quot;vb_login_md5password&quot; /&gt;
+                &lt;input type=&quot;hidden&quot; name=&quot;vb_login_md5password_utf&quot; /&gt;
+            &lt;/form&gt;
+            &lt;script type=&quot;text/javascript&quot;&gt;
+            YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;inline&quot;);
+            YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;none&quot;);
+            vB_XHTML_Ready.subscribe(function()
+            {
+            //
+                YAHOO.util.Event.on('navbar_username', &quot;focus&quot;, navbar_username_focus);
+                YAHOO.util.Event.on('navbar_username', &quot;blur&quot;, navbar_username_blur);
+                YAHOO.util.Event.on('navbar_password_hint', &quot;focus&quot;, navbar_password_hint);
+                YAHOO.util.Event.on('navbar_password', &quot;blur&quot;, navbar_password);
+            });
+            
+            function navbar_username_focus(e)
+            {
+            //
+                var textbox = YAHOO.util.Event.getTarget(e);
+                if (textbox.value == 'Nome Utente')
+                {
+                //
+                    textbox.value='';
+                    textbox.style.color='#303030';
+                }
+            }
+
+            function navbar_username_blur(e)
+            {
+            //
+                var textbox = YAHOO.util.Event.getTarget(e);
+                if (textbox.value == '')
+                {
+                //
+                    textbox.value='Nome Utente';
+                    textbox.style.color='#828282';
+                }
+            }
+            
+            function navbar_password_hint(e)
+            {
+            //
+                var textbox = YAHOO.util.Event.getTarget(e);
+                
+                YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;none&quot;);
+                YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;inline&quot;);
+                YAHOO.util.Dom.get('navbar_password').focus();
+            }
+
+            function navbar_password(e)
+            {
+            //
+                var textbox = YAHOO.util.Event.getTarget(e);
+                
+                if (textbox.value == '')
+                {
+                    YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;inline&quot;);
+                    YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;none&quot;);
+                }
+            }
+            &lt;/script&gt;
+                &lt;/li&gt;
+                
+                    &lt;li id=&quot;fb_headerbox&quot; class=&quot;hidden&quot;&gt;
+
+    &lt;a id=&quot;fb_loginbtn&quot; href=&quot;#&quot;&gt;&lt;img src=&quot;images/misc/facebook_login.gif&quot; alt=&quot;La Piattaforma Facebook&quot; /&gt;&lt;/a&gt;
+
+&lt;/li&gt;
+
+                
+            &lt;/ul&gt;
+        
+    &lt;/div&gt;
+    &lt;div class=&quot;ad_global_header&quot;&gt;
+         
+         
+    &lt;/div&gt;
+    &lt;hr /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;navbar&quot; class=&quot;navbar&quot;&gt;
+    &lt;ul id=&quot;navtabs&quot; class=&quot;navtabs floatcontainer&quot;&gt;
+        
+    &lt;li&gt;
+    
+        &lt;a class=&quot;navtab&quot; href=&quot;content.php&quot;&gt;Home&lt;/a&gt;
+    
+    &lt;/li&gt;
+
+        
+            &lt;li class=&quot;selected&quot;&gt;&lt;a class=&quot;navtab&quot; href=&quot;forum.php&quot;&gt;Forum&lt;/a&gt;
+                &lt;ul class=&quot;floatcontainer&quot;&gt;
+                    
+                    
+                        
+                        &lt;li&gt;&lt;a href=&quot;search.php?do=getdaily&amp;amp;contenttype=vBForum_Post&quot;&gt;Messaggi di Oggi&lt;/a&gt;&lt;/li&gt;
+                        
+                    
+                    
+                    
+                    
+                    &lt;li&gt;&lt;a rel=&quot;help&quot; href=&quot;faq.php&quot; accesskey=&quot;5&quot;&gt;FAQ&lt;/a&gt;&lt;/li&gt;
+                    
+                    
+                        &lt;li&gt;&lt;a href=&quot;calendar.php&quot;&gt;Calendario&lt;/a&gt;&lt;/li&gt;
+                    
+                    
+                    
+                    &lt;li class=&quot;popupmenu&quot;&gt;
+                        &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot; accesskey=&quot;6&quot;&gt;Comunità&lt;/a&gt;
+                        &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                            
+                            
+                            
+                                &lt;li&gt;&lt;a href=&quot;album.php&quot;&gt;I Miei Album&lt;/a&gt;&lt;/li&gt;
+                            
+                            
+                            
+                                &lt;li&gt;&lt;a href=&quot;memberlist.php&quot;&gt;Lista Utenti&lt;/a&gt;&lt;/li&gt;
+                            
+                            
+                        &lt;/ul&gt;
+                    &lt;/li&gt;
+                    
+                    
+                    
+                    &lt;li class=&quot;popupmenu&quot;&gt;
+                        &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot;&gt;Azioni Forum&lt;/a&gt;
+                        &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                            &lt;li&gt;
+                                &lt;a href=&quot;forumdisplay.php?do=markread&amp;amp;markreadhash=guest&quot;&gt;Segna Forum Come Letti&lt;/a&gt;
+                            &lt;/li&gt;
+                                                        
+                        &lt;/ul&gt;
+                    &lt;/li&gt;
+                    
+                    &lt;li class=&quot;popupmenu&quot;&gt;
+                        &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot; accesskey=&quot;3&quot;&gt;Link Veloci&lt;/a&gt;
+                        &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                            
+                            
+                            &lt;li&gt;&lt;a href=&quot;showgroups.php&quot; rel=&quot;nofollow&quot;&gt;
+                                
+                                    Visualizza Leader Sito
+                                
+                            &lt;/a&gt;&lt;/li&gt;
+                            
+                            
+                            
+                            
+                            
+                            
+                        &lt;/ul&gt;
+                    &lt;/li&gt;
+                    
+                &lt;/ul&gt;
+
+            &lt;/li&gt;
+        
+        
+        
+            &lt;li&gt;&lt;a class=&quot;navtab&quot; href=&quot;search.php?do=getdaily&amp;amp;contenttype=vBForum_Post&quot; accesskey=&quot;2&quot;&gt;Cos'è Nuovo?&lt;/a&gt;&lt;/li&gt;
+        
+        
+    &lt;/ul&gt;
+
+    
+    &lt;div id=&quot;globalsearch&quot; class=&quot;globalsearch&quot;&gt;
+        &lt;form action=&quot;search.php?do=process&quot; method=&quot;post&quot; id=&quot;navbar_search&quot; class=&quot;navbar_search&quot;&gt;
+            
+            &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;process&quot; /&gt;
+            &lt;span class=&quot;textboxcontainer&quot;&gt;&lt;span&gt;&lt;input type=&quot;text&quot; value=&quot;&quot; name=&quot;query&quot; class=&quot;textbox&quot; tabindex=&quot;99&quot;/&gt;&lt;/span&gt;&lt;/span&gt;
+            &lt;span class=&quot;buttoncontainer&quot;&gt;&lt;span&gt;&lt;input type=&quot;image&quot; class=&quot;searchbutton&quot; src=&quot;images/buttons/search.png&quot; name=&quot;submit&quot; onclick=&quot;document.getElementById('navbar_search').submit;&quot; tabindex=&quot;100&quot;/&gt;&lt;/span&gt;&lt;/span&gt;
+        &lt;/form&gt;
+        &lt;ul class=&quot;navbar_advanced_search&quot;&gt;
+            &lt;li&gt;&lt;a href=&quot;search.php&quot; accesskey=&quot;4&quot;&gt;Ricerca Avanzata&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+    
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- closing div for above_body --&gt;
+
+&lt;div class=&quot;body_wrapper&quot;&gt;
+&lt;div id=&quot;breadcrumb&quot; class=&quot;breadcrumb&quot;&gt;
+    &lt;ul class=&quot;floatcontainer&quot;&gt;
+        &lt;li class=&quot;navbithome&quot;&gt;&lt;a href=&quot;index.php&quot; accesskey=&quot;1&quot;&gt;&lt;img src=&quot;images/misc/navbit-home.png&quot; alt=&quot;Home&quot; /&gt;&lt;/a&gt;&lt;/li&gt;
+        
+        
+    &lt;li class=&quot;navbit lastnavbit&quot;&gt;&lt;span&gt;Messaggio vBulletin&lt;/span&gt;&lt;/li&gt;
+
+    &lt;/ul&gt;
+    &lt;hr /&gt;
+&lt;/div&gt;
+
+ 
+&lt;div id=&quot;ad_global_below_navbar&quot;&gt;&lt;div align=&quot;center&quot;&gt;&lt;div id=&quot;bannerleaderboard&quot;&gt;
+&lt;script type='text/javascript'&gt;
+&lt;!--//&lt;![CDATA[
+   document.MAX_ct0 ='';
+   var m3_u = (location.protocol=='https:'?'https://cas.criteo.com/delivery/ajs.php?':'http://cas.criteo.com/delivery/ajs.php?');
+   var m3_r = Math.floor(Math.random()*99999999999);
+   document.write (&quot;&lt;scr&quot;+&quot;ipt type='text/javascript' src='&quot;+m3_u);
+   document.write (&quot;zoneid=67140&quot;);document.write(&quot;&amp;amp;nodis=1&quot;);
+   document.write ('&amp;amp;cb=' + m3_r);
+   if (document.MAX_used != ',') document.write (&quot;&amp;amp;exclude=&quot; + document.MAX_used);
+   document.write (document.charset ? '&amp;amp;charset='+document.charset : (document.characterSet ? '&amp;amp;charset='+document.characterSet : ''));
+   document.write (&quot;&amp;amp;loc=&quot; + escape(window.location));
+   if (document.referrer) document.write (&quot;&amp;amp;referer=&quot; + escape(document.referrer));
+   if (document.context) document.write (&quot;&amp;context=&quot; + escape(document.context));
+   if ((typeof(document.MAX_ct0) != 'undefined') &amp;&amp; (document.MAX_ct0.substring(0,4) == 'http')) {
+       document.write (&quot;&amp;amp;ct0=&quot; + escape(document.MAX_ct0));
+   }
+   if (document.mmm_fo) document.write (&quot;&amp;amp;mmm_fo=1&quot;);
+   document.write (&quot;'&gt;&lt;/scr&quot;+&quot;ipt&gt;&quot;);
+//]]&gt;--&gt;&lt;/script&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+
+
+    &lt;form action=&quot;profile.php?do=dismissnotice&quot; method=&quot;post&quot; id=&quot;notices&quot; class=&quot;notices&quot;&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;dismissnotice&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;s&quot; value=&quot;&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; id=&quot;dismiss_notice_hidden&quot; name=&quot;dismiss_noticeid&quot; value=&quot;&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;url&quot; value=&quot;&quot; /&gt;
+        &lt;ol&gt;
+            &lt;li class=&quot;restore&quot; id=&quot;navbar_notice_1&quot;&gt;
+    
+    If this is your first visit, be sure to
+        check out the &lt;a href=&quot;faq.php&quot; target=&quot;_blank&quot;&gt;&lt;b&gt;FAQ&lt;/b&gt;&lt;/a&gt; by clicking the
+        link above. You may have to &lt;a href=&quot;register.php&quot; target=&quot;_blank&quot;&gt;&lt;b&gt;register&lt;/b&gt;&lt;/a&gt;
+        before you can post: click the register link above to proceed. To start viewing messages,
+        select the forum that you want to visit from the selection below.
+&lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/form&gt;
+
+
+&lt;div class=&quot;standard_error&quot;&gt;
+    &lt;h2 class=&quot;blockhead&quot;&gt;Messaggio vBulletin&lt;/h2&gt;
+    
+        &lt;div class=&quot;blockbody formcontrols&quot;&gt;
+            &lt;div class=&quot;blockrow restore&quot;&gt;Nessuna Discussione specificata. Se hai seguito un link valido, per favore notifica l'&lt;a href=&quot;mailto:webmaster@bodyweb.it&quot;&gt;amministratore&lt;/a&gt;.&lt;/div&gt;
+        &lt;/div&gt;
+    
+&lt;/div&gt;
+
+&lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;navpopupmenu popupmenu nohovermenu&quot; id=&quot;navpopup&quot;&gt;
+    
+        &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot;&gt;&lt;span class=&quot;ctrlcontainer&quot;&gt;Navigazione Rapida&lt;/span&gt;&lt;/a&gt;
+    
+    &lt;ul class=&quot;navpopupbody popupbody popuphover&quot;&gt;
+        
+        &lt;li class=&quot;optionlabel&quot;&gt;Aree Sito&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;usercp.php&quot;&gt;Impostazioni&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;private.php&quot;&gt;Messaggi Privati&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;subscription.php&quot;&gt;Sottoscrizioni&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;online.php&quot;&gt;Chi è Online&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;search.php&quot;&gt;Ricerca nei Forum&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;forum.php&quot;&gt;Home Page Forum&lt;/a&gt;&lt;/li&gt;
+        
+            &lt;li class=&quot;optionlabel&quot;&gt;Forum&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/4-Body-Zone&quot;&gt;Body Zone&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/68-Fitness-Wellness&quot;&gt;Fitness &amp;amp; Wellness&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/13-Elettrostimolazione&quot;&gt;Elettrostimolazione&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/23-Home-Gym&quot;&gt;Home Gym&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/12-Allenamento&quot;&gt;Allenamento&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/96-Threads-in-nota-consigliati&quot;&gt;Threads in nota, consigliati.&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/22-L-angolo-del-Neofita&quot;&gt;L'angolo del Neofita&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/47-Experimental-Training&quot;&gt;Experimental Training&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/65-Blogs-e-Diari&quot;&gt;Blogs e Diari&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/19-Dieta-ed-Alimentazione&quot;&gt;Dieta ed Alimentazione&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/95-Threads-consigliati-in-nota&quot;&gt;Threads, consigliati in nota.&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/9-Integratori-uso-e-caratteristiche&quot;&gt;Integratori uso e caratteristiche.&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/71-Guide-Manuali&quot;&gt;Guide Manuali&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/92-Supplements-Feedback&quot;&gt;Supplements Feedback&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/11-Experimental-Supplementation&quot;&gt;Experimental Supplementation&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/6-Gruppi-di-discussione&quot;&gt;Gruppi di discussione&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/18-CAFFETTERIA&quot;&gt;CAFFETTERIA&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/76-VIP-Zone&quot;&gt;VIP Zone&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/34-Trash&quot;&gt;Trash&lt;/a&gt;
+                    &lt;ol class=&quot;d3&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/67-Purgatory&quot;&gt;Purgatory&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/40-Body-Building-Pro-e-Gare&quot;&gt;Body Building Pro e Gare&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/66-IFBB&quot;&gt;IFBB&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/53-WABBA-CSEN&quot;&gt;WABBA/CSEN&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/99-AINBB&quot;&gt;AINBB&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/54-Opes&quot;&gt;Opes&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/91-N-B-B-U-I&quot;&gt;N.B.B.U.I.&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/93-Musclemania&quot;&gt;Musclemania&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/77-AIC-IBFA&quot;&gt;AIC-IBFA&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/98-Sezione-Ufficiale-Trofeo-2-torri&quot;&gt;Sezione Ufficiale Trofeo 2 torri&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/55-Powerlifting-Forza&quot;&gt;Powerlifting &amp;amp; Forza&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/72-Arti-Marziali&quot;&gt;Arti Marziali&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/35-Medicina-BB&quot;&gt;Medicina &amp;amp; BB&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/26-Woman-s-World&quot;&gt;Woman's World&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/36-Photo-Gallery&quot;&gt;Photo Gallery&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/5-General-Community&quot;&gt;General Community&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/15-Super-Digital-Forum&quot;&gt;Super-Digital-Forum&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/29-Suggerimenti&quot;&gt;Suggerimenti&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/28-Test-forum&quot;&gt;Test forum&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/64-home-unix&quot;&gt;/home/unix&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/74-Audio-Video-Zone&quot;&gt;Audio Video Zone&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/75-Motor-Hard-Core&quot;&gt;Motor Hard Core&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/21-Esilarandia-)&quot;&gt;Esilarandia :-)&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/20-Sondaggi&quot;&gt;Sondaggi&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/45-Sondaggi-HP&quot;&gt;Sondaggi HP&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/17-Il-Mercatino-del-Fitness&quot;&gt;Il Mercatino del Fitness&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/69-Il-Mercatone-del-Fitness&quot;&gt;Il Mercatone del Fitness&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/56-Informazioni-Articoli&quot;&gt;Informazioni &amp;amp; Articoli&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/42-Notizie-in-Home-Page&quot;&gt;Notizie in Home Page&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/97-ecommerce&quot;&gt;ecommerce&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/57-ARCHIVIO-ARTICOLI&quot;&gt;ARCHIVIO ARTICOLI&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/58-Allenamento&quot;&gt;Allenamento&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/59-Alimentazione&quot;&gt;Alimentazione&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/60-Integrazione&quot;&gt;Integrazione&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/61-Raccolta-Articoli&quot;&gt;Raccolta Articoli&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/32-Scientific-Corner&quot;&gt;Scientific Corner&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/46-Archivio&quot;&gt;Archivio&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/8-E-Commerce-Area&quot;&gt;E-Commerce Area&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/101-Dicono-di-noi&quot;&gt;Dicono di noi&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/10-e-Commerce-informazioni-generiche&quot;&gt;e-Commerce  informazioni generiche.&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/70-e-commerce-Assistenza-su-Ordini&quot;&gt;e-commerce  Assistenza su Ordini.&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/7-Prive&quot;&gt;Prive&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/16-Staff-Only&quot;&gt;Staff Only&lt;/a&gt;
+                    &lt;ol class=&quot;d2&quot;&gt;
+                        
+        
+            
+                &lt;li&gt;&lt;a href=&quot;forums/48-Fakes-infrazioni-segnalazioni&quot;&gt;Fakes, infrazioni, segnalazioni&lt;/a&gt;&lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+            
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            
+        
+        
+    &lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;
+
+
+&lt;div style=&quot;clear: left&quot;&gt;
+   
+   
+&lt;/div&gt;
+ 
+
+&lt;div id=&quot;footer&quot; class=&quot;floatcontainer footer&quot;&gt;
+
+    &lt;form action=&quot;forum.php&quot; method=&quot;get&quot; id=&quot;footer_select&quot; class=&quot;footer_select&quot;&gt;
+
+            
+        
+        
+        
+            &lt;select name=&quot;langid&quot; onchange=&quot;switch_id(this, 'lang')&quot;&gt;
+                &lt;optgroup label=&quot;Scelta Rapida Lingua&quot;&gt;
+                    &lt;option value=&quot;1&quot; class=&quot;&quot; &gt;-- English (US)&lt;/option&gt;&lt;option value=&quot;2&quot; class=&quot;&quot; selected=&quot;selected&quot;&gt;-- Italiano (IT)&lt;/option&gt;
+                &lt;/optgroup&gt;
+            &lt;/select&gt;
+        
+    &lt;/form&gt;
+
+    &lt;ul id=&quot;footer_links&quot; class=&quot;footer_links&quot;&gt;
+        &lt;li&gt;&lt;a href=&quot;mailto:webmaster@bodyweb.it&quot; rel=&quot;nofollow&quot; accesskey=&quot;9&quot;&gt;Contattaci&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;http://www.bodyweb.com/&quot;&gt;www.bodyweb.com&lt;/a&gt;&lt;/li&gt;
+        
+        
+        
+        
+        
+        
+        &lt;li&gt;&lt;a href=&quot;threads/clientscript/yui/connection/connection-min.js?v=419#top&quot; onclick=&quot;document.location.hash='top'; return false;&quot;&gt;Cima&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    
+    
+    
+    &lt;script type=&quot;text/javascript&quot;&gt;
+    &lt;!--
+        // Main vBulletin Javascript Initialization
+        vBulletin_init();
+    //--&gt;
+    &lt;/script&gt;
+        
+&lt;/div&gt;
+&lt;/div&gt; &lt;!-- closing div for body_wrapper --&gt;
+
+&lt;div class=&quot;below_body&quot;&gt;
+&lt;div id=&quot;footer_time&quot; class=&quot;shade footer_time&quot;&gt;Tutti gli orari sono GMT +1. Adesso sono le &lt;span class=&quot;time&quot;&gt;20:01:03&lt;/span&gt;.&lt;/div&gt;
+
+&lt;div id=&quot;footer_copyright&quot; class=&quot;shade footer_copyright&quot;&gt;
+    &lt;!-- Do not remove this copyright notice --&gt;
+    Powered by &lt;a href=&quot;http://www.vbulletin.com&quot; id=&quot;vbulletinlink&quot;&gt;vBulletin&amp;reg;&lt;/a&gt; Version 4.1.9 &lt;br /&gt;Copyright &amp;copy; 2015 vBulletin Solutions, Inc. All rights reserved. 
+    &lt;!-- Do not remove this copyright notice --&gt;  
+&lt;/div&gt;
+&lt;div id=&quot;footer_morecopyright&quot; class=&quot;shade footer_morecopyright&quot;&gt;
+    &lt;!-- Do not remove cronimage or your scheduled tasks will cease to function --&gt;
+    
+    &lt;!-- Do not remove cronimage or your scheduled tasks will cease to function --&gt;
+    Copyright © 1999-2014 Bodyweb.com - MNI doo SI559552585
+&lt;/div&gt;
+ 
+
+    &lt;div id=&quot;fb-root&quot;&gt;&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://connect.facebook.net/en_US/all.js&quot;&gt;&lt;/script&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+&lt;!--
+YAHOO.util.Event.onDOMReady(
+    function()
+    {
+        vBfb = new vB_Facebook({
+            appid : &quot;122752191115598&quot;,
+            connected : 0,
+            active : 0,
+            autoreg : 1,
+            feed_newthread : 1,
+            feed_postreply : 1,
+            feed_blogentry : 0,
+            feed_blogcomment : 0,
+            feed_newarticle : 0,
+            feed_articlecomment : 0
+        });
+    }
+);
+--&gt;
+&lt;/script&gt;
+
+
+&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-771220-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+                            </div>
+                            
+                            <!-- beautified version of content -->
+                            <div role="tabpanel" class="tab-pane" id="content_beautified">
+<pre class="prettyprint linenums">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:fb=&quot;http://www.facebook.com/2008/fbml&quot; dir=&quot;ltr&quot; lang=&quot;it&quot; id=&quot;vbulletin_html&quot;&gt;
+
+&lt;head&gt;
+    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=ISO-8859-1&quot; /&gt;
+    &lt;meta id=&quot;e_vb_meta_bburl&quot; name=&quot;vb_meta_bburl&quot; content=&quot;http://www.bodyweb.com/forums&quot; /&gt;
+    &lt;base href=&quot;http://www.bodyweb.com/forums/&quot; /&gt;
+    &lt;!--[if IE]&gt;&lt;/base&gt;&lt;![endif]--&gt;
+    &lt;meta name=&quot;generator&quot; content=&quot;vBulletin 4.1.9&quot; /&gt;
+    &lt;link rel=&quot;Shortcut Icon&quot; href=&quot;favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
+    &lt;meta name=&quot;keywords&quot; content=&quot;forum,palestra,creatina,proteine,testosterone,bodybuilding, body, building, muscoli,dieta, integratori, integratori alimentari,dieta, alimentazione, muscolo, allenamento, grasso, calcolo, calorie, alimenti,alimento, cibo, massa, muscolare, italia,vbulletin,forum&quot; /&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;Il Grande Forum del Body Building &amp; Fitness :  http://www.bodyweb.it, discussioni su palestra, body building, integratori alimentari, le ultime novità in ambito di fitness, allenamento, dieta.&quot; /&gt;
+    &lt;meta property=&quot;fb:app_id&quot; content=&quot;122752191115598&quot; /&gt;
+    &lt;meta property=&quot;og:site_name&quot; content=&quot;Il Forum del Body Building &amp; Fitness&quot; /&gt;
+    &lt;meta property=&quot;og:description&quot; content=&quot;Il Grande Forum del Body Building &amp; Fitness :  http://www.bodyweb.it, discussioni su palestra, body building, integratori alimentari, le ultime novità in ambito di fitness, allenamento, dieta.&quot; /&gt;
+    &lt;meta property=&quot;og:url&quot; content=&quot;http://www.bodyweb.com/forums/threads&quot; /&gt;
+    &lt;meta property=&quot;og:type&quot; content=&quot;article&quot; /&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/yui/yuiloader-dom-event/yuiloader-dom-event.js?v=419&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/yui/connection/connection-min.js?v=419&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+        &lt;!--
+        var SESSIONURL = &quot;&quot;;
+        var SECURITYTOKEN = &quot;guest&quot;;
+        var IMGDIR_MISC = &quot;images/misc&quot;;
+        var IMGDIR_BUTTON = &quot;images/buttons&quot;;
+        var vb_disable_ajax = parseInt(&quot;0&quot;, 10);
+        var SIMPLEVERSION = &quot;419&quot;;
+        var BBURL = &quot;http://www.bodyweb.com/forums&quot;;
+        var LOGGEDIN = 0 &gt; 0 ? true : false;
+        var THIS_SCRIPT = &quot;showthread&quot;;
+        var RELPATH = &quot;threads/clientscript/yui/connection/connection-min.js?v=419&quot;;
+        var PATHS = {
+            forum: &quot;&quot;,
+            cms: &quot;&quot;,
+            blog: &quot;&quot;
+        };
+        var AJAXBASEURL = &quot;http://www.bodyweb.com/forums/&quot;;
+        // --&gt;
+    &lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;http://www.bodyweb.com/forums/clientscript/vbulletin-core.js?v=419&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;alternate&quot; type=&quot;application/rss+xml&quot; title=&quot;Il Forum del Body Building &amp; Fitness Feed RSS&quot; href=&quot;http://www.bodyweb.com/forums/external.php?type=RSS2&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/main-rollup.css?d=1415538179&quot; /&gt;
+    &lt;!--[if lt IE 8]&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/popupmenu-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-chrome-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/vbulletin-formcontrols-ie.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/editor-ie.css?d=1415538179&quot; /&gt;
+    &lt;![endif]--&gt;
+    &lt;meta name=&quot;robots&quot; content=&quot;noindex,follow&quot; /&gt;
+    &lt;title&gt;Il Forum del Body Building &amp; Fitness&lt;/title&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/vbulletin_md5.js?v=419&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;clientscript/vbulletin_css/style00046l/additional.css?d=1415538179&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css.php?styleid=46&amp;amp;sheet=custom_erd.css&quot; /&gt; &lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div class=&quot;above_body&quot;&gt;
+        &lt;!-- closing tag is in template navbar --&gt;
+        &lt;div id=&quot;header&quot; class=&quot;floatcontainer doc_header&quot;&gt;
+            &lt;div&gt;
+                &lt;a name=&quot;top&quot; href=&quot;forum.php&quot; class=&quot;logo-image&quot;&gt;&lt;img src=&quot;images/bodywebnew/bodyweb_headerLogo.gif&quot; alt=&quot;Il Forum del Body Building &amp; Fitness - Powered by vBulletin&quot; /&gt;
+                &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id=&quot;toplinks&quot; class=&quot;toplinks&quot;&gt;
+                &lt;ul class=&quot;nouser&quot;&gt;
+                    &lt;li&gt;&lt;a href=&quot;register.php&quot; rel=&quot;nofollow&quot;&gt;Registrazione&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li&gt;&lt;a rel=&quot;help&quot; href=&quot;faq.php&quot;&gt;Aiuto&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        &lt;script type=&quot;text/javascript&quot; src=&quot;clientscript/vbulletin_md5.js?v=419&quot;&gt;&lt;/script&gt;
+                        &lt;form id=&quot;navbar_loginform&quot; action=&quot;login.php?do=login&quot; method=&quot;post&quot; onsubmit=&quot;md5hash(vb_login_password, vb_login_md5password, vb_login_md5password_utf, 0)&quot;&gt;
+                            &lt;fieldset id=&quot;logindetails&quot; class=&quot;logindetails&quot;&gt;
+                                &lt;div&gt;
+                                    &lt;div&gt;
+                                        &lt;input type=&quot;text&quot; class=&quot;textbox default-value&quot; name=&quot;vb_login_username&quot; id=&quot;navbar_username&quot; size=&quot;10&quot; accesskey=&quot;u&quot; tabindex=&quot;101&quot; value=&quot;Nome Utente&quot; /&gt;
+                                        &lt;input type=&quot;password&quot; class=&quot;textbox&quot; tabindex=&quot;102&quot; name=&quot;vb_login_password&quot; id=&quot;navbar_password&quot; size=&quot;10&quot; /&gt;
+                                        &lt;input type=&quot;text&quot; class=&quot;textbox default-value&quot; tabindex=&quot;102&quot; name=&quot;vb_login_password_hint&quot; id=&quot;navbar_password_hint&quot; size=&quot;10&quot; value=&quot;Password&quot; style=&quot;display:none;&quot; /&gt;
+                                        &lt;input type=&quot;submit&quot; class=&quot;loginbutton&quot; tabindex=&quot;104&quot; value=&quot;Accedi&quot; title=&quot;Inserisci il tuo nome utente e la tua password nelle caselle fornite per accedere, o clicca il pulsante 'registrazione' per crearti un profilo.&quot; accesskey=&quot;s&quot; /&gt; &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/fieldset&gt;
+                            &lt;div id=&quot;remember&quot; class=&quot;remember&quot;&gt;
+                                &lt;label for=&quot;cb_cookieuser_navbar&quot;&gt;
+                                    &lt;input type=&quot;checkbox&quot; name=&quot;cookieuser&quot; value=&quot;1&quot; id=&quot;cb_cookieuser_navbar&quot; class=&quot;cb_cookieuser_navbar&quot; accesskey=&quot;c&quot; tabindex=&quot;103&quot; /&gt; Ricordami?&lt;/label&gt;
+                            &lt;/div&gt;
+                            &lt;input type=&quot;hidden&quot; name=&quot;s&quot; value=&quot;&quot; /&gt;
+                            &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+                            &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;login&quot; /&gt;
+                            &lt;input type=&quot;hidden&quot; name=&quot;vb_login_md5password&quot; /&gt;
+                            &lt;input type=&quot;hidden&quot; name=&quot;vb_login_md5password_utf&quot; /&gt; &lt;/form&gt;
+                        &lt;script type=&quot;text/javascript&quot;&gt;
+                            YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;inline&quot;);
+                            YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;none&quot;);
+                            vB_XHTML_Ready.subscribe(function() {
+                                //
+                                YAHOO.util.Event.on('navbar_username', &quot;focus&quot;, navbar_username_focus);
+                                YAHOO.util.Event.on('navbar_username', &quot;blur&quot;, navbar_username_blur);
+                                YAHOO.util.Event.on('navbar_password_hint', &quot;focus&quot;, navbar_password_hint);
+                                YAHOO.util.Event.on('navbar_password', &quot;blur&quot;, navbar_password);
+                            });
+
+                            function navbar_username_focus(e) {
+                                //
+                                var textbox = YAHOO.util.Event.getTarget(e);
+                                if (textbox.value == 'Nome Utente') {
+                                    //
+                                    textbox.value = '';
+                                    textbox.style.color = '#303030';
+                                }
+                            }
+
+                            function navbar_username_blur(e) {
+                                //
+                                var textbox = YAHOO.util.Event.getTarget(e);
+                                if (textbox.value == '') {
+                                    //
+                                    textbox.value = 'Nome Utente';
+                                    textbox.style.color = '#828282';
+                                }
+                            }
+
+                            function navbar_password_hint(e) {
+                                //
+                                var textbox = YAHOO.util.Event.getTarget(e);
+                                YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;none&quot;);
+                                YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;inline&quot;);
+                                YAHOO.util.Dom.get('navbar_password').focus();
+                            }
+
+                            function navbar_password(e) {
+                                //
+                                var textbox = YAHOO.util.Event.getTarget(e);
+                                if (textbox.value == '') {
+                                    YAHOO.util.Dom.setStyle('navbar_password_hint', &quot;display&quot;, &quot;inline&quot;);
+                                    YAHOO.util.Dom.setStyle('navbar_password', &quot;display&quot;, &quot;none&quot;);
+                                }
+                            }
+                        &lt;/script&gt;
+                    &lt;/li&gt;
+                    &lt;li id=&quot;fb_headerbox&quot; class=&quot;hidden&quot;&gt;
+                        &lt;a id=&quot;fb_loginbtn&quot; href=&quot;#&quot;&gt;&lt;img src=&quot;images/misc/facebook_login.gif&quot; alt=&quot;La Piattaforma Facebook&quot; /&gt;
+                        &lt;/a&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;ad_global_header&quot;&gt; &lt;/div&gt;
+            &lt;hr /&gt; &lt;/div&gt;
+        &lt;div id=&quot;navbar&quot; class=&quot;navbar&quot;&gt;
+            &lt;ul id=&quot;navtabs&quot; class=&quot;navtabs floatcontainer&quot;&gt;
+                &lt;li&gt; &lt;a class=&quot;navtab&quot; href=&quot;content.php&quot;&gt;Home&lt;/a&gt; &lt;/li&gt;
+                &lt;li class=&quot;selected&quot;&gt;&lt;a class=&quot;navtab&quot; href=&quot;forum.php&quot;&gt;Forum&lt;/a&gt;
+                    &lt;ul class=&quot;floatcontainer&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;search.php?do=getdaily&amp;amp;contenttype=vBForum_Post&quot;&gt;Messaggi di Oggi&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a rel=&quot;help&quot; href=&quot;faq.php&quot; accesskey=&quot;5&quot;&gt;FAQ&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;calendar.php&quot;&gt;Calendario&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;popupmenu&quot;&gt; &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot; accesskey=&quot;6&quot;&gt;Comunità&lt;/a&gt;
+                            &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;album.php&quot;&gt;I Miei Album&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;memberlist.php&quot;&gt;Lista Utenti&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;popupmenu&quot;&gt; &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot;&gt;Azioni Forum&lt;/a&gt;
+                            &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                                &lt;li&gt; &lt;a href=&quot;forumdisplay.php?do=markread&amp;amp;markreadhash=guest&quot;&gt;Segna Forum Come Letti&lt;/a&gt; &lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;popupmenu&quot;&gt; &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot; accesskey=&quot;3&quot;&gt;Link Veloci&lt;/a&gt;
+                            &lt;ul class=&quot;popupbody popuphover&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;showgroups.php&quot; rel=&quot;nofollow&quot;&gt;
+                                
+                                    Visualizza Leader Sito
+                                
+                            &lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a class=&quot;navtab&quot; href=&quot;search.php?do=getdaily&amp;amp;contenttype=vBForum_Post&quot; accesskey=&quot;2&quot;&gt;Cos'è Nuovo?&lt;/a&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;div id=&quot;globalsearch&quot; class=&quot;globalsearch&quot;&gt;
+                &lt;form action=&quot;search.php?do=process&quot; method=&quot;post&quot; id=&quot;navbar_search&quot; class=&quot;navbar_search&quot;&gt;
+                    &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+                    &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;process&quot; /&gt; &lt;span class=&quot;textboxcontainer&quot;&gt;&lt;span&gt;&lt;input type=&quot;text&quot; value=&quot;&quot; name=&quot;query&quot; class=&quot;textbox&quot; tabindex=&quot;99&quot;/&gt;&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;buttoncontainer&quot;&gt;&lt;span&gt;&lt;input type=&quot;image&quot; class=&quot;searchbutton&quot; src=&quot;images/buttons/search.png&quot; name=&quot;submit&quot; onclick=&quot;document.getElementById('navbar_search').submit;&quot; tabindex=&quot;100&quot;/&gt;&lt;/span&gt;&lt;/span&gt;
+                &lt;/form&gt;
+                &lt;ul class=&quot;navbar_advanced_search&quot;&gt;
+                    &lt;li&gt;&lt;a href=&quot;search.php&quot; accesskey=&quot;4&quot;&gt;Ricerca Avanzata&lt;/a&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- closing div for above_body --&gt;
+    &lt;div class=&quot;body_wrapper&quot;&gt;
+        &lt;div id=&quot;breadcrumb&quot; class=&quot;breadcrumb&quot;&gt;
+            &lt;ul class=&quot;floatcontainer&quot;&gt;
+                &lt;li class=&quot;navbithome&quot;&gt;
+                    &lt;a href=&quot;index.php&quot; accesskey=&quot;1&quot;&gt;&lt;img src=&quot;images/misc/navbit-home.png&quot; alt=&quot;Home&quot; /&gt;
+                    &lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;navbit lastnavbit&quot;&gt;&lt;span&gt;Messaggio vBulletin&lt;/span&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;hr /&gt; &lt;/div&gt;
+        &lt;div id=&quot;ad_global_below_navbar&quot;&gt;
+            &lt;div align=&quot;center&quot;&gt;
+                &lt;div id=&quot;bannerleaderboard&quot;&gt;
+                    &lt;script type='text/javascript'&gt;
+                        &lt;!--//&lt;![CDATA[
+                        document.MAX_ct0 = '';
+                        var m3_u = (location.protocol == 'https:' ? 'https://cas.criteo.com/delivery/ajs.php?' : 'http://cas.criteo.com/delivery/ajs.php?');
+                        var m3_r = Math.floor(Math.random() * 99999999999);
+                        document.write(&quot;&lt;scr&quot; + &quot;ipt type='text/javascript' src='&quot; + m3_u);
+                        document.write(&quot;zoneid=67140&quot;);
+                        document.write(&quot;&amp;amp;nodis=1&quot;);
+                        document.write('&amp;amp;cb=' + m3_r);
+                        if (document.MAX_used != ',') document.write(&quot;&amp;amp;exclude=&quot; + document.MAX_used);
+                        document.write(document.charset ? '&amp;amp;charset=' + document.charset : (document.characterSet ? '&amp;amp;charset=' + document.characterSet : ''));
+                        document.write(&quot;&amp;amp;loc=&quot; + escape(window.location));
+                        if (document.referrer) document.write(&quot;&amp;amp;referer=&quot; + escape(document.referrer));
+                        if (document.context) document.write(&quot;&amp;context=&quot; + escape(document.context));
+                        if ((typeof(document.MAX_ct0) != 'undefined') &amp;&amp; (document.MAX_ct0.substring(0, 4) == 'http')) {
+                            document.write(&quot;&amp;amp;ct0=&quot; + escape(document.MAX_ct0));
+                        }
+                        if (document.mmm_fo) document.write(&quot;&amp;amp;mmm_fo=1&quot;);
+                        document.write(&quot;'&gt;&lt;/scr&quot; + &quot;ipt&gt;&quot;);
+                        //]]&gt;--&gt;
+                    &lt;/script&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;form action=&quot;profile.php?do=dismissnotice&quot; method=&quot;post&quot; id=&quot;notices&quot; class=&quot;notices&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;do&quot; value=&quot;dismissnotice&quot; /&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;s&quot; value=&quot;&quot; /&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;securitytoken&quot; value=&quot;guest&quot; /&gt;
+            &lt;input type=&quot;hidden&quot; id=&quot;dismiss_notice_hidden&quot; name=&quot;dismiss_noticeid&quot; value=&quot;&quot; /&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;url&quot; value=&quot;&quot; /&gt;
+            &lt;ol&gt;
+                &lt;li class=&quot;restore&quot; id=&quot;navbar_notice_1&quot;&gt; If this is your first visit, be sure to check out the &lt;a href=&quot;faq.php&quot; target=&quot;_blank&quot;&gt;&lt;b&gt;FAQ&lt;/b&gt;&lt;/a&gt; by clicking the link above. You may have to &lt;a href=&quot;register.php&quot; target=&quot;_blank&quot;&gt;&lt;b&gt;register&lt;/b&gt;&lt;/a&gt; before you can post: click the register link above to proceed. To start viewing messages, select the forum that you want to visit from the selection below. &lt;/li&gt;
+            &lt;/ol&gt;
+        &lt;/form&gt;
+        &lt;div class=&quot;standard_error&quot;&gt;
+            &lt;h2 class=&quot;blockhead&quot;&gt;Messaggio vBulletin&lt;/h2&gt;
+            &lt;div class=&quot;blockbody formcontrols&quot;&gt;
+                &lt;div class=&quot;blockrow restore&quot;&gt;Nessuna Discussione specificata. Se hai seguito un link valido, per favore notifica l'&lt;a href=&quot;mailto:webmaster@bodyweb.it&quot;&gt;amministratore&lt;/a&gt;.&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;navpopupmenu popupmenu nohovermenu&quot; id=&quot;navpopup&quot;&gt; &lt;a href=&quot;javascript://&quot; class=&quot;popupctrl&quot;&gt;&lt;span class=&quot;ctrlcontainer&quot;&gt;Navigazione Rapida&lt;/span&gt;&lt;/a&gt;
+            &lt;ul class=&quot;navpopupbody popupbody popuphover&quot;&gt;
+                &lt;li class=&quot;optionlabel&quot;&gt;Aree Sito&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;usercp.php&quot;&gt;Impostazioni&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;private.php&quot;&gt;Messaggi Privati&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;subscription.php&quot;&gt;Sottoscrizioni&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;online.php&quot;&gt;Chi è Online&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;search.php&quot;&gt;Ricerca nei Forum&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forum.php&quot;&gt;Home Page Forum&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;optionlabel&quot;&gt;Forum&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/4-Body-Zone&quot;&gt;Body Zone&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/68-Fitness-Wellness&quot;&gt;Fitness &amp;amp; Wellness&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/13-Elettrostimolazione&quot;&gt;Elettrostimolazione&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/23-Home-Gym&quot;&gt;Home Gym&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/12-Allenamento&quot;&gt;Allenamento&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/96-Threads-in-nota-consigliati&quot;&gt;Threads in nota, consigliati.&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/22-L-angolo-del-Neofita&quot;&gt;L'angolo del Neofita&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/47-Experimental-Training&quot;&gt;Experimental Training&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/65-Blogs-e-Diari&quot;&gt;Blogs e Diari&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/19-Dieta-ed-Alimentazione&quot;&gt;Dieta ed Alimentazione&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/95-Threads-consigliati-in-nota&quot;&gt;Threads, consigliati in nota.&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/9-Integratori-uso-e-caratteristiche&quot;&gt;Integratori uso e caratteristiche.&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/71-Guide-Manuali&quot;&gt;Guide Manuali&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/92-Supplements-Feedback&quot;&gt;Supplements Feedback&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/11-Experimental-Supplementation&quot;&gt;Experimental Supplementation&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/6-Gruppi-di-discussione&quot;&gt;Gruppi di discussione&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/18-CAFFETTERIA&quot;&gt;CAFFETTERIA&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/76-VIP-Zone&quot;&gt;VIP Zone&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/34-Trash&quot;&gt;Trash&lt;/a&gt;
+                                    &lt;ol class=&quot;d3&quot;&gt;
+                                        &lt;li&gt;&lt;a href=&quot;forums/67-Purgatory&quot;&gt;Purgatory&lt;/a&gt;
+                                        &lt;/li&gt;
+                                    &lt;/ol&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/40-Body-Building-Pro-e-Gare&quot;&gt;Body Building Pro e Gare&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/66-IFBB&quot;&gt;IFBB&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/53-WABBA-CSEN&quot;&gt;WABBA/CSEN&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/99-AINBB&quot;&gt;AINBB&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/54-Opes&quot;&gt;Opes&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/91-N-B-B-U-I&quot;&gt;N.B.B.U.I.&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/93-Musclemania&quot;&gt;Musclemania&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/77-AIC-IBFA&quot;&gt;AIC-IBFA&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/98-Sezione-Ufficiale-Trofeo-2-torri&quot;&gt;Sezione Ufficiale Trofeo 2 torri&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/55-Powerlifting-Forza&quot;&gt;Powerlifting &amp;amp; Forza&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/72-Arti-Marziali&quot;&gt;Arti Marziali&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/35-Medicina-BB&quot;&gt;Medicina &amp;amp; BB&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/26-Woman-s-World&quot;&gt;Woman's World&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/36-Photo-Gallery&quot;&gt;Photo Gallery&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/5-General-Community&quot;&gt;General Community&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/15-Super-Digital-Forum&quot;&gt;Super-Digital-Forum&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/29-Suggerimenti&quot;&gt;Suggerimenti&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/28-Test-forum&quot;&gt;Test forum&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/64-home-unix&quot;&gt;/home/unix&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/74-Audio-Video-Zone&quot;&gt;Audio Video Zone&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/75-Motor-Hard-Core&quot;&gt;Motor Hard Core&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/21-Esilarandia-)&quot;&gt;Esilarandia :-)&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/20-Sondaggi&quot;&gt;Sondaggi&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/45-Sondaggi-HP&quot;&gt;Sondaggi HP&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/17-Il-Mercatino-del-Fitness&quot;&gt;Il Mercatino del Fitness&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/69-Il-Mercatone-del-Fitness&quot;&gt;Il Mercatone del Fitness&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/56-Informazioni-Articoli&quot;&gt;Informazioni &amp;amp; Articoli&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/42-Notizie-in-Home-Page&quot;&gt;Notizie in Home Page&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/97-ecommerce&quot;&gt;ecommerce&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/57-ARCHIVIO-ARTICOLI&quot;&gt;ARCHIVIO ARTICOLI&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/58-Allenamento&quot;&gt;Allenamento&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/59-Alimentazione&quot;&gt;Alimentazione&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/60-Integrazione&quot;&gt;Integrazione&lt;/a&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/61-Raccolta-Articoli&quot;&gt;Raccolta Articoli&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/32-Scientific-Corner&quot;&gt;Scientific Corner&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/46-Archivio&quot;&gt;Archivio&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/8-E-Commerce-Area&quot;&gt;E-Commerce Area&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/101-Dicono-di-noi&quot;&gt;Dicono di noi&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/10-e-Commerce-informazioni-generiche&quot;&gt;e-Commerce  informazioni generiche.&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/70-e-commerce-Assistenza-su-Ordini&quot;&gt;e-commerce  Assistenza su Ordini.&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;forums/7-Prive&quot;&gt;Prive&lt;/a&gt;
+                    &lt;ol class=&quot;d1&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;forums/16-Staff-Only&quot;&gt;Staff Only&lt;/a&gt;
+                            &lt;ol class=&quot;d2&quot;&gt;
+                                &lt;li&gt;&lt;a href=&quot;forums/48-Fakes-infrazioni-segnalazioni&quot;&gt;Fakes, infrazioni, segnalazioni&lt;/a&gt;
+                                &lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;
+        &lt;div style=&quot;clear: left&quot;&gt; &lt;/div&gt;
+        &lt;div id=&quot;footer&quot; class=&quot;floatcontainer footer&quot;&gt;
+            &lt;form action=&quot;forum.php&quot; method=&quot;get&quot; id=&quot;footer_select&quot; class=&quot;footer_select&quot;&gt;
+                &lt;select name=&quot;langid&quot; onchange=&quot;switch_id(this, 'lang')&quot;&gt;
+                    &lt;optgroup label=&quot;Scelta Rapida Lingua&quot;&gt;
+                        &lt;option value=&quot;1&quot; class=&quot;&quot;&gt;-- English (US)&lt;/option&gt;
+                        &lt;option value=&quot;2&quot; class=&quot;&quot; selected=&quot;selected&quot;&gt;-- Italiano (IT)&lt;/option&gt;
+                    &lt;/optgroup&gt;
+                &lt;/select&gt;
+            &lt;/form&gt;
+            &lt;ul id=&quot;footer_links&quot; class=&quot;footer_links&quot;&gt;
+                &lt;li&gt;&lt;a href=&quot;mailto:webmaster@bodyweb.it&quot; rel=&quot;nofollow&quot; accesskey=&quot;9&quot;&gt;Contattaci&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;http://www.bodyweb.com/&quot;&gt;www.bodyweb.com&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;threads/clientscript/yui/connection/connection-min.js?v=419#top&quot; onclick=&quot;document.location.hash='top'; return false;&quot;&gt;Cima&lt;/a&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;script type=&quot;text/javascript&quot;&gt;
+                &lt;!--
+                // Main vBulletin Javascript Initialization
+                vBulletin_init();
+                //--&gt;
+            &lt;/script&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- closing div for body_wrapper --&gt;
+    &lt;div class=&quot;below_body&quot;&gt;
+        &lt;div id=&quot;footer_time&quot; class=&quot;shade footer_time&quot;&gt;Tutti gli orari sono GMT +1. Adesso sono le &lt;span class=&quot;time&quot;&gt;20:01:03&lt;/span&gt;.&lt;/div&gt;
+        &lt;div id=&quot;footer_copyright&quot; class=&quot;shade footer_copyright&quot;&gt;
+            &lt;!-- Do not remove this copyright notice --&gt;Powered by &lt;a href=&quot;http://www.vbulletin.com&quot; id=&quot;vbulletinlink&quot;&gt;vBulletin&amp;reg;&lt;/a&gt; Version 4.1.9
+            &lt;br /&gt;Copyright &amp;copy; 2015 vBulletin Solutions, Inc. All rights reserved.
+            &lt;!-- Do not remove this copyright notice --&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;footer_morecopyright&quot; class=&quot;shade footer_morecopyright&quot;&gt;
+            &lt;!-- Do not remove cronimage or your scheduled tasks will cease to function --&gt;
+            &lt;!-- Do not remove cronimage or your scheduled tasks will cease to function --&gt;Copyright © 1999-2014 Bodyweb.com - MNI doo SI559552585 &lt;/div&gt;
+        &lt;div id=&quot;fb-root&quot;&gt;&lt;/div&gt;
+        &lt;script type=&quot;text/javascript&quot; src=&quot;http://www.bodyweb.com/forums/clientscript/vbulletin_facebook.js?v=419&quot;&gt;&lt;/script&gt;
+        &lt;script type=&quot;text/javascript&quot; src=&quot;https://connect.facebook.net/en_US/all.js&quot;&gt;&lt;/script&gt;
+        &lt;script type=&quot;text/javascript&quot;&gt;
+            &lt;!--
+            YAHOO.util.Event.onDOMReady(function() {
+                vBfb = new vB_Facebook({
+                    appid: &quot;122752191115598&quot;,
+                    connected: 0,
+                    active: 0,
+                    autoreg: 1,
+                    feed_newthread: 1,
+                    feed_postreply: 1,
+                    feed_blogentry: 0,
+                    feed_blogcomment: 0,
+                    feed_newarticle: 0,
+                    feed_articlecomment: 0
+                });
+            });
+            --&gt;
+        &lt;/script&gt;
+    &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-771220-2']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    &lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <!-- sidebar -->
+            <div class="col-md-2">
+                <nav class="bs-docs-sidebar">
+                    <ul id="sidebar" class="nav nav-stacked fixed">
+                        <li class="active"><a href="#panel_task_summary">Summary</a></li>
+                        <li><a href="#panel_task_graph">Graph</a></li>
+                        <li><a href="#panel_node_info">Node info</a></li>
+                        <li><a href="#panel_content_details">Content details</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-1 col-md-offset-11"><a href="#">Back to top</a></div>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="task_report_files/jquery.js"></script>
+    <script src="task_report_files/jquery-ui.js"></script>
+    <script src="task_report_files/moment.js"></script>
+    <script src="task_report_files/bootstrap.js"></script>
+    <script src="task_report_files/bootstrap-datetimepicker.js"></script>
+    <script src="task_report_files/bootstrap-select.js"></script>
+    <script src="task_report_files/dataTables.js"></script>
+    <script src="task_report_files/dataTables_002.js"></script>
+    <script src="task_report_files/Chart.js"></script>
+    <script src="task_report_files/prettify.js"></script>
+
+    <script>
+    // Instantiate Scrollspy element
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 40
+    });
+
+    // Prettify
+    !function ($) {
+        $(function(){
+            window.prettyPrint && prettyPrint()
+        })
+    }(window.jQuery)
+    </script>
+
+
+</body></html>

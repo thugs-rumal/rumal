@@ -1,0 +1,7 @@
+python-dateutil
+django-tastypie
+django-widget-tweaks
+hexdump
+pymongo
+python-magic
+pytz

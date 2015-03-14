@@ -1,0 +1,21 @@
+    <div class="pull-right">
+        Welcome, {{ user.username }} {% if user.is_staff %}[ <a href="{% url 'admin:index' %}">Admin</a> ] {% endif %}[ <a href="{% url 'logout' %}">Logout</a> ]
+    </div>
+    
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentaion" {% if active_tab == 'new_task' %} class="active"{% endif %}>
+            <a href="{% if active_tab == 'new_task' %}#{% else %}{% url 'interface:new_task' %}{% endif %}">
+                <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> New task
+            </a>
+        </li>
+        <li role="presentaion" {% if active_tab == 'reports' %} class="active"{% endif %}>
+            <a href="{% if active_tab == 'reports' %}#{% else %}{% url 'interface:reports' %}{% endif %}">
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Reports
+            </a>
+        </li>
+        <li role="presentaion" {% if active_tab == 'search' %} class="active"{% endif %}>
+            <a href="{% if active_tab == 'search' %}#{% else %}#{% endif %}">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search
+            </a>
+        </li>
+    </ul>

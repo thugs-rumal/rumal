@@ -1,0 +1,19 @@
+# Ignore database
+db.sqlite3
+
+# Ignore Python byte code
+*.pyc
+
+# Ignore certificates
+*.pem
+*.cert
+
+# Ignore OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+.*.swp
+
+# Ignore Django secret_key
+rumal/secret_key.py

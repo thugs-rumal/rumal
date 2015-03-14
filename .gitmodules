@@ -1,0 +1,3 @@
+[submodule "thug"]
+	path = thug
+	url = git@github.com:buffer/thug.git

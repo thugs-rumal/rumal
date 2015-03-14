@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Choose Thug options and parameters{% endblock %}
+{% block navbar %}{% include 'navbar.html' %}{% endblock %} 
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-10">
+            <!-- Display any form errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">Please review the errors below and try again</div>
+            {% endif %}
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+            {% endfor %}
+            
+            <!-- Basic options -->
+            <div class="panel panel-default" id="thug_base_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Options</h3>
+                </div>
+                <div class="panel-body">
+                    
+                    
+                    {% for error in form.url.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                    {% endfor %}
+                    <div class="form-group{% if form.url.errors %} has-error{% endif %}">
+                        {{ form.url.label_tag }}
+                        {% render_field form.url class+="form-control" %}
+                    </div>
+                    
+                    {% for error in form.referer.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                    {% endfor %}
+                    <div class="form-group">
+                        {{ form.referer.label_tag }}
+                        {% render_field form.referer class+="form-control" %}
+                    </div>
+                    
+                    {% for error in form.useragent.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                    {% endfor %}
+                    <div class="form-group">
+                        {{ form.useragent.label_tag }}
+                        {% render_field form.useragent class+="form-control" %}
+                    </div>
+                    
+                    {% for error in form.proxy.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                    {% endfor %}
+                    <div class="form-group">
+                        {{ form.proxy.label_tag }}
+                        {% render_field form.proxy class+="form-control" %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced options -->
+            <div class="panel panel-default" id="thug_advanced_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#advanced_options" aria-expanded="false" aria-controls="advanced_options" class="collapsed">
+                            Advanced Options
+                        </a>
+                    </h3>
+                </div>
+                <div id="advanced_options" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        {% for error in form.events.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.events.label_tag }}
+                            {% render_field form.events class+="form-control" %}
+                        </div>
+                        
+                        {% for error in form.delay.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.delay.label_tag }}
+                            {% render_field form.delay class+="form-control" type="number" min="0" max="65535" %}
+                        </div>
+                        
+                        {% for error in form.timeout.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.timeout.label_tag }}
+                            {% render_field form.timeout class+="form-control" type="number" min="0" max="65535" %}
+                        </div>
+                        
+                        {% for error in form.threshold.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.threshold.label_tag }}
+                            {% render_field form.threshold class+="form-control" type="number" min="0" max="65535" %}
+                        </div>
+                        
+                        {% for error in form.no_cache.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.no_cache }} {{ form.no_cache.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.verbose.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.verbose }} {{ form.verbose.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.quiet.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.quiet }} {{ form.quiet.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.debug.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.debug }} {{ form.debug.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.ast_debug.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.ast_debug }} {{ form.ast_debug.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.http_debug.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.http_debug }} {{ form.http_debug.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.extensive.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.extensive }} {{ form.extensive.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.broken_url.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.broken_url }} {{ form.broken_url.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plugins options -->
+            <div class="panel panel-default" id="thug_plugins_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#plugins_options" aria-expanded="false" aria-controls="plugins_options" class="collapsed">
+                            Plugins Options
+                        </a>
+                    </h3>
+                </div>
+                <div id="plugins_options" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        {% for error in form.adobepdf.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.adobepdf.label_tag }}
+                            {% render_field form.adobepdf class+="form-control" %}
+                        </div>
+                        
+                        {% for error in form.no_adobepdf.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.no_adobepdf }} {{ form.no_adobepdf.label }}
+                            </label>
+                        </div>
+
+                        {% for error in form.shockwave.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.shockwave.label_tag }}
+                            {% render_field form.shockwave class+="form-control" %}
+                        </div>
+                        
+                        {% for error in form.no_shockwave.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.no_shockwave }} {{ form.no_shockwave.label }}
+                            </label>
+                        </div>
+
+                        {% for error in form.javaplugin.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.javaplugin.label_tag }}
+                            {% render_field form.javaplugin class+="form-control" %}
+                        </div>
+                        
+                        {% for error in form.no_javaplugin.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.no_javaplugin }} {{ form.no_javaplugin.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- External services options -->
+            <div class="panel panel-default" id="thug_external_services_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#external_services_options" aria-expanded="false" aria-controls="external_services_options" class="collapsed">
+                            External Services
+                        </a>
+                    </h3>
+                </div>
+                <div id="external_services_options" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        {% for error in form.vtquery.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.vtquery }} {{ form.vtquery.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.vtsubmit.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.vtsubmit }} {{ form.vtsubmit.label }}
+                            </label>
+                        </div>
+                        
+                        {% for error in form.no_honeyagent.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="checkbox">
+                            <label>
+                            {{ form.no_honeyagent }} {{ form.no_honeyagent.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sharing options -->
+            <div class="panel panel-default" id="result_sharing_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#sharing_options" aria-expanded="false" aria-controls="sharing_options" class="collapsed">
+                            Sharing options
+                        </a>
+                    </h3>
+                </div>
+                <div id="sharing_options" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        {% for error in form.sharing_model.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.sharing_model.label_tag }}
+                            {% render_field form.sharing_model class+="form-control" %}
+                        </div>
+                        
+                        {% for error in form.sharing_groups.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                        {% endfor %}
+                        <div class="form-group">
+                            {{ form.sharing_groups.label_tag }}
+                            {% render_field form.sharing_groups class+="form-control" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <nav class="bs-docs-sidebar">
+                <ul id="sidebar" class="nav nav-stacked fixed">
+                    <li><input type="submit" id="rule_save" class="btn btn-danger" value="Run" style="margin-bottom:20px;margin-left:20px;"></li>
+                    <li><a href="#thug_base_options">Basic Options</a></li>
+                    <li><a href="#thug_advanced_options">Advanced Options</a></li>
+                    <li><a href="#thug_plugins_options">Plugins Options</a></li>
+                    <li><a href="#thug_external_services_options">External Services</a></li>
+                    <li><a href="#result_sharing_options">Sharing Options</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block bottomscripts %}
+// Add 'control-label' class to all labels
+$('label').addClass('control-label');
+
+// Initiate Select Pickers
+$('#{{ form.useragent.id_for_label }}').selectpicker();
+$('#{{ form.proxy.id_for_label }}').selectpicker();
+
+// Control interdependent options
+$('#{{ form.no_adobepdf.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.adobepdf.id_for_label }}').attr('disabled', 'disabled');
+    }
+    else{
+        $('#{{ form.adobepdf.id_for_label }}').removeAttr('disabled');
+    }
+});
+$('#{{ form.no_shockwave.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.shockwave.id_for_label }}').attr('disabled', 'disabled');
+    }
+    else{
+        $('#{{ form.shockwave.id_for_label }}').removeAttr('disabled');
+    }
+});
+$('#{{ form.no_javaplugin.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.javaplugin.id_for_label }}').attr('disabled', 'disabled');
+    }
+    else{
+        $('#{{ form.javaplugin.id_for_label }}').removeAttr('disabled');
+    }
+});
+$('#{{ form.verbose.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.quiet.id_for_label }}').attr('disabled', 'disabled');
+    }
+    else{
+        $('#{{ form.quiet.id_for_label }}').removeAttr('disabled');
+    }
+});
+$('#{{ form.quiet.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.verbose.id_for_label }}').attr('disabled', true);
+    }
+    else{
+        $('#{{ form.verbose.id_for_label }}').removeAttr('disabled');
+    }
+});
+$('#{{ form.ast_debug.id_for_label }}').change(function() {
+    if(this.checked){
+        $('#{{ form.debug.id_for_label }}').prop('checked', true);
+    }
+});
+$('#{{ form.sharing_model.id_for_label }}').change(function() {
+    if($('#{{ form.sharing_model.id_for_label }}').val() != 2){
+        $('#{{ form.sharing_groups.id_for_label }}').attr('disabled', 'disabled');
+    }
+    else{
+        $('#{{ form.sharing_groups.id_for_label }}').removeAttr('disabled');
+    }
+});
+
+// Instantiate Scrollspy element
+$('body').scrollspy({
+    target: '.bs-docs-sidebar',
+    offset: 40
+});
+{% endblock %}
+{% block customcss %}
+.panel-heading a:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    float: right;
+    color: grey;
+}
+.panel-heading a.collapsed:after {
+    content:"\e080";
+}
+
+.fixed {
+    position: fixed;
+}
+
+/* sidebar */
+.bs-docs-sidebar {
+    padding-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+    color: #999;
+    border-left: 2px solid transparent;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+}
+
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>li>a:hover, 
+.bs-docs-sidebar .nav>li>a:focus {
+    color: #563d7c;                 
+    text-decoration: none;          
+    background-color: transparent;  
+    border-left-color: #563d7c; 
+}
+/* all active links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+    font-weight: 700;
+}
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a, 
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+    display: none;           
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+    display: block;           
+}
+{% endblock %}

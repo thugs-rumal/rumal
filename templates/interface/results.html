@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block navbar %}{% include 'navbar.html' %}{% endblock %} 
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" id="tasks_list">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Reports</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-hover" id="table_tasks">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Submitted on</th>
+                                <th>URL</th>
+                                <th>Referer</th>
+                                <th>User-Agent</th>
+                                <th>Proxy</th>
+                                <th>Owner</th>
+                                <th>Shared with</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block bottomscripts %}
+var table = $('#table_tasks').DataTable({
+    "processing": true,
+    "serverSide": true,
+    "stateSave": true,
+    "jQueryUI": true,
+    "autoWidth": false,
+    "ordering": true,
+    "order": [[0, 'desc']],
+    "searching": false,
+    "pagingType": "full_numbers",
+    "pageLength": 25,
+    "lengthMenu": [ [25, 50, 100, 200, -1], [25, 50, 100, 200, "All"] ],
+    "language":{
+        "zeroRecords": "No records found.",
+        "lengthMenu": "Display: _MENU_",
+        "infoFiltered": "",
+        "emptyTable": "Still no tasks here"
+    },
+    "ajax": function(data, callback, settings) {
+        data.limit = data.length;
+        data.offset = data.start;
+        if (data.order.length > 0){
+            var direction = (data.order[0]['dir'] == 'desc' ? '-' : '');
+            var column_name = data.columns[data.order[0]['column']]['data'];
+            if (column_name == 'shared_with'){
+                column_name = 'sharing_groups';
+            }
+            data.order_by = direction + column_name;
+        }
+
+        $.ajax({
+            url: "/api/v1/task/",
+            data: data,
+            success: function(innerdata) {
+                innerdata.draw = data.draw;
+                innerdata.recordsTotal = innerdata.meta.total_count;
+                innerdata.recordsFiltered = innerdata.meta.total_count;
+                innerdata.data = innerdata.objects;
+                $.each(innerdata.data, function(){
+                    // Add links to IDs
+                    this.id = '<a href="{% url 'interface:report' %}' + this.id + '/">' + this.id + '</a>';
+                
+                    // Parse dates
+                    this.submitted_on = new Date(this.submitted_on);
+                    
+                    // Truncate long URLs and referers
+                    if (this.url.length > 50){
+                        this.url = this.url.substring(0, 47) + '...';
+                    }
+                    if (this.referer.length == 0){
+                        this.referer = "about:blank";
+                    }
+                    else if (this.referer.length > 50){
+                        this.referer = this.referer.substring(0, 47) + '...';
+                    }
+                    
+                    // Set "Default" for empty user-agents
+                    this.useragent = (this.useragent != null ? this.useragent : 'Default');
+                    
+                    // Proxy is a yes/no value:
+                    this.proxy = (this.proxy != null ? 'Yes' : 'No');
+                    
+                    // Fix "Shared with"
+                    if (this.sharing_model == 0){
+                        this.shared_with = "Public";
+                    }
+                    else if (this.sharing_model == 1){
+                        this.shared_with = "Private";
+                    }
+                    else if (this.sharing_model == 2){
+                        if (this.sharing_groups.length > 0){
+                            var groups = [];
+                            $.each(this.sharing_groups, function(i){
+                                groups.push(this.name);
+                            });
+                            this.shared_with = groups.join(", ");
+                        }
+                        else{
+                            this.shared_with = "Nobody"
+                        }
+                    }
+                    else{
+                        this.shared_with = "Nobody";
+                    }
+                    
+                    // Status to badge
+                    switch (this.status){
+                        case 0:
+                            this.status = '<span id="span_status" class="label label-info">Queued</span>';
+                            break;
+                        case 1:
+                            this.status = '<span id="span_status" class="label label-primary">Running</span>';
+                            break;
+                        case 2:
+                            this.status = '<span id="span_status" class="label label-danger">Failed</span>';
+                            break;
+                        case 3:
+                            this.status = '<span id="span_status" class="label label-success">Completed</span>';
+                            break;
+                        default:
+                            this.status = '<span id="span_status" class="label label-default">Unknown</span>';
+                    }
+                });
+            },
+            dataType: 'json'
+        }).done(function (d) {
+            callback(d);
+        });
+    },
+    "columns": [
+        { "data": "id" },
+        { "data": "submitted_on" },
+        { "data": "url" },
+        { "data": "referer" },
+        { "data": "useragent" },
+        { "data": "proxy" },
+        { "data": "user.username" },
+        { "data": "shared_with" },
+        { "data": "status" },
+    ]
+});
+
+// Reload table every 10 seconds
+// setInterval( function () {
+//     table.ajax.reload( null, false ); // user paging is not reset on reload
+// }, 10000 );
+
+{% endblock %}

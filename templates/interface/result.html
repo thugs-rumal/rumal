@@ -1,0 +1,633 @@
+{% extends "base.html" %}
+{% block title %}Task #{{ task.id }}{% endblock %}
+{% block navbar %}{% include 'navbar.html' %}{% endblock %} 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'interface:reports' %}">Reports</a></li>
+        <li class="active">Task #{{ task.id }}</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-10">
+
+            <!-- Task summary -->
+            <div class="panel panel-default" id="panel_task_summary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Task summary</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-hover" id="table_task_summary">
+                        <colgroup>
+                            <col style="width: 30%;"/>
+                            <col style="width: 70%"/>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>Task ID</th>
+                                <td>{{task.id}}</td>
+                            </tr>
+                            <tr>
+                                <th>Target URL</th>
+                                <td>{{task.url}}</td>
+                            </tr>
+                            <tr>
+                                <th>Referer</th>
+                                <td>{{task.referer|default:"-"}}</td>
+                            </tr>
+                            <tr>
+                                <th>User-Agent</th>
+                                <td>{{task.useragent|default:"Default"}}</td>
+                            </tr>
+                            <tr>
+                                <th>Proxy</th>
+                                <td>{{task.proxy}}</td>
+                            </tr>
+                            <tr>
+                                <th>Submitted on</th>
+                                <td id="submitted_on">{{task.submitted_on|date:"Y-m-d H:i:s"}}</td>
+                            </tr>
+                            <tr id="started_on" class="collapse{% if task.started_on %} in{%endif%}">
+                                <th>Started on</th>
+                                <td>{{task.started_on|date:"Y-m-d H:i:s"}}</td>
+                            </tr>
+                            <tr id="completed_on" class="collapse{% if task.completed_on %} in{%endif%}">
+                                <th>Completed on</th>
+                                <td>{{task.completed_on|date:"Y-m-d H:i:s"}}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    {% if task.status == 0 %}
+                                    <span id="span_status" class="label label-info">Queued</span>
+                                    {% elif task.status == 1 %}
+                                    <span id="span_status" class="label label-primary">Running</span>
+                                    {% elif task.status == 2 %}
+                                    <span id="span_status" class="label label-danger">Failed</span>
+                                    {% elif task.status == 3 %}
+                                    <span id="span_status" class="label label-success">Completed</span>
+                                    {% else %}
+                                    <span id="span_status" class="label label-default">Unknown</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- start collapsible div to be shown when result is "completed" -->
+            <div class="collapse" id="div_display_graph">
+                <!-- Graph -->
+                <div class="panel panel-default" id="panel_task_graph">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Graph</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="div_graph">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- start collapsible div to be shown when a node in the graph is clicked -->
+                <div class="collapse" id="div_display_details">
+                    <!-- Details of selected node -->
+                    <div class="panel panel-default" id="panel_node_info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Node info</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-hover" id="table_task_summary">
+                                <colgroup>
+                                    <col style="width: 30%;">
+                                    <col style="width: 70%">
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th>URL</th>
+                                        <td id="td_url">
+                                            <span id="span_url"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Domain</th>
+                                        <td id="td_domain">
+                                            <span id="span_domain"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                    <li role="presentation"><a href="#">Whois on DomainTools</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>IP Address</th>
+                                        <td id="td_ip">
+                                            <span id="span_ip"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                    <li role="presentation"><a href="#">Whois on DomainTools</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Mime Type</th>
+                                        <td id="td_mime_type">
+                                            <span id="span_mime_type"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Content type</th>
+                                        <td id="td_content_type">
+                                            <span id="span_content_type"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Content Size</th>
+                                        <td id="td_content_size">
+                                            <span id="span_size"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Content MD5</th>
+                                        <td id="td_md5">
+                                            <span id="span_md5"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Content SHA256</th>
+                                        <td id="td_sha256">
+                                            <span id="span_sha256"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on VirusTotal</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Exploit module</th>
+                                        <td id="td_exploit_module">
+                                            <span id="span_exploit_module"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Exploit CVE</th>
+                                        <td id="td_cve_list">
+                                            <span id="span_cve_list"></span>
+                                            <div class="dropdown pull-right">
+                                                <a id="domain_dropdown" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span></a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="domain_dropdown">
+                                                    <li role="presentation"><a href="#">Search on Rumāl</a></li>
+                                                    <li role="presentation"><a href="#">Search on MITRE</a></li>
+                                                    <li role="presentation"><a href="#">Search on NVD</a></li>
+                                                    <li role="presentation"><a href="#">...</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="panel panel-default" id="panel_content_details">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <a id="panel_content_details_a" aria-expanded="false" aria-controls="panel_content_details_collapse" class="collapsed" onClick="display_content_panel();">
+                                    Content details
+                                </a>
+                            </h3>
+                        </div>
+                        <div class="panel-body collapse" id="panel_content_details_collapse">
+                            <pre id="pre_content_raw" class="prettyprint linenums"></pre>
+                        </div>
+                    </div>
+                    <!-- end panels -->
+                </div>
+                <!-- end collapsible "div_display_details" div -->
+            </div>
+            <!-- end collapsible "div_display_graph" div -->
+        </div>
+        <div class="col-md-2">
+            <nav class="bs-docs-sidebar">
+                <ul id="sidebar" class="nav nav-stacked fixed">
+                    <li><a href="#panel_task_summary">Summary</a></li>
+                    <li class="collapse" id="menu_graph"><a href="#panel_task_graph">Graph</a></li>
+                    <li class="collapse" id="menu_node_info"><a href="#panel_node_info">Node info</a></li>
+                    <li class="collapse" id="menu_content_details"><a href="#panel_content_details">Content details</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+{% block bottomscripts %}
+// Declare vars
+var status = {{ task.status }};
+var selected_node = null;
+var poller = false;
+
+// Instantiate Scrollspy element
+$('body').scrollspy({
+    target: '.bs-docs-sidebar',
+    offset: 40
+});
+
+function hide_date(id){
+    $('#' + id).collapse("hide");
+}
+
+function show_date(id, value){
+    $('#' + id).collapse("show");
+}
+
+function display_graph(){
+    var margin = {top: 20, right: 120, bottom: 20, left: 120},
+        width = 960 - margin.right - margin.left,
+        height = 800 - margin.top - margin.bottom;
+        
+    var i = 0,
+        duration = 750,
+        root;
+
+    var tree = d3.layout.tree()
+        .size([height, width]);
+
+    var diagonal = d3.svg.diagonal()
+        .projection(function(d) { return [d.y, d.x]; });
+
+    var svg = d3.select("#div_graph").append("svg")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    d3.json("{% url 'interface:json_tree_graph' task.object_id %}", function(error, flare) {
+        root = flare.graph.nodes;
+        root.x0 = height / 2;
+        root.y0 = 0;
+
+        function collapse(d) {
+            if (d.children) {
+            d._children = d.children;
+            d._children.forEach(collapse);
+            d.children = null;
+            }
+        }
+
+        root.children.forEach(collapse);
+        update(root);
+    });
+
+    d3.select(self.frameElement).style("height", "800px");
+
+    function update(source) {
+
+    // Compute the new tree layout.
+    var nodes = tree.nodes(root).reverse(),
+        links = tree.links(nodes);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+    // Update the nodes…
+    var node = svg.selectAll("g.node")
+        .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+    // Enter any new nodes at the parent's previous position.
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        .on("click", click);
+
+    nodeEnter.append("circle")
+        .attr("r", 1e-6)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+    nodeEnter.append("text")
+        .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+        .text(function(d) { return d.domain; })
+        .style("fill-opacity", 1e-6);
+
+    nodeEnter.append("title")
+        .text(function(d) { return d.url; });
+
+    // Transition nodes to their new position.
+    var nodeUpdate = node.transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+    nodeUpdate.select("circle")
+        .attr("r", 4.5)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+    nodeUpdate.select("text")
+        .style("fill-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    var nodeExit = node.exit().transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+        .remove();
+
+    nodeExit.select("circle")
+        .attr("r", 1e-6);
+
+    nodeExit.select("text")
+        .style("fill-opacity", 1e-6);
+
+    // Update the links…
+    var link = svg.selectAll("path.link")
+        .data(links, function(d) { return d.target.id; });
+
+    // Enter any new links at the parent's previous position.
+    link.enter().insert("path", "g")
+        .attr("class", "link")
+        .attr("d", function(d) {
+            var o = {x: source.x0, y: source.y0};
+            return diagonal({source: o, target: o});
+        });
+
+    // Transition links to their new position.
+    link.transition()
+        .duration(duration)
+        .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    link.exit().transition()
+        .duration(duration)
+        .attr("d", function(d) {
+            var o = {x: source.x, y: source.y};
+            return diagonal({source: o, target: o});
+        })
+        .remove();
+
+    // Stash the old positions for transition.
+    nodes.forEach(function(d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+    });
+    }
+
+    // Toggle children on click.
+    function click(d) {
+        // set selected_node "globally"
+        selected_node = d;
+        
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        update(d);
+        
+        // Update info in the "Node info" table
+        $("#span_url").text(d.url);
+        $("#span_domain").text(d.domain);
+        $("#span_mime_type").text(d.location['mime-type'] ? d.location['mime-type'] : 'Unknown');
+        $("#span_content_type").text(d.location['content-type'] ? d.location['content-type'] : 'Unknown');
+        $("#span_size").text(d.location['size'] ? d.location['size'] : 'Unknown');
+        $("#span_md5").text(d.location['md5'] ? d.location['md5'] : 'Unknown');
+        $("#span_sha256").text(d.location['sha256'] ? d.location['sha256'] : 'Unknown');
+        $("#span_exploit_module").text(d.exploits.length ? d.exploits[0].module : '-');
+        $("#span_cve_list").text(d.exploits.length ? d.exploits[0].cve : '-');
+        $("#panel_content_details_collapse").collapse("hide");
+        $("#div_display_details").collapse("show");
+        $("#menu_node_info").collapse("show");
+        $("#menu_content_details").collapse("show");
+    }
+}
+
+function display_details_div(){
+    $("#div_display_graph").collapse("show");
+    display_graph();
+    $("#menu_graph").collapse("show");
+}
+
+function display_content_panel(){
+    if ($("#panel_content_details_collapse").hasClass('in')){
+        $("#panel_content_details_a").addClass("collapsed");
+        $("#panel_content_details_collapse").collapse("hide");
+    }
+    else{
+        if (selected_node){
+            $.getJSON("{% url 'interface:content' %}"+selected_node.location.content_id+"/", function(data){
+                $("#pre_content_raw").text(data.content);
+            });
+            $("#panel_content_details_collapse").collapse("show");
+            $("#panel_content_details_a").removeClass("collapsed");
+        }
+    }
+}
+
+// Check status and populate graph
+function check_status(){
+    if(status < 2){
+        $.getJSON( "{% url 'api_dispatch_detail' api_name="v1" resource_name="task" pk=task.id %}", function( task ) {
+            if (status != task['status']){
+                status = task['status']
+                if (status == 0){
+                    $('#span_status').attr('class', 'label label-info').text('Queued');
+                    hide_date('started_on');
+                    hide_date('completed_on');
+                }
+                else if (status == 1){
+                    $('#span_status').attr('class', 'label label-primary').text('Running');
+                    show_date('started_on', task['started_on']);
+                    hide_date('completed_on');
+                }
+                else if (status == 2){
+                    if (poller){
+                        clearInterval(poller);
+                    }
+                    $('#span_status').attr('class', 'label label-danger').text('Failed');
+                    show_date('started_on', task['started_on']);
+                    show_date('completed_on', task['completed_on']);
+                }
+                else if (status == 3){
+                    if (poller){
+                        clearInterval(poller);
+                    }
+                    $('#span_status').attr('class', 'label label-success').text('Completed');
+                    show_date('started_on', task['started_on']);
+                    show_date('completed_on', task['completed_on']);
+                    display_details_div();
+                }
+                else{
+                    $('#span_status').attr('class', 'label label-default').text('Unknown');
+                    hide_date('started_on');
+                    hide_date('completed_on');
+                }
+            }
+        });
+    }
+    else{
+        if (poller){
+            clearInterval(poller);
+        }
+        if (status == 3){
+            display_details_div();
+        }
+    }
+}
+
+// Start poller to get status changes
+$(document).ready(function(){
+    $('.collapse').collapse({'toggle': false});
+
+    if (status > 2){
+        check_status()
+    }
+    else{
+        poller = setInterval(check_status(), 2000);
+    }
+});
+
+{% endblock %}
+{% block customcss %}
+.panel-heading a:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    float: right;
+    color: grey;
+}
+.panel-heading a.collapsed:after {
+    content:"\e080";
+}
+
+.fixed {
+    position: fixed;
+}
+
+/* sidebar */
+.bs-docs-sidebar {
+    padding-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+    color: #999;
+    border-left: 2px solid transparent;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+}
+
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>li>a:hover, 
+.bs-docs-sidebar .nav>li>a:focus {
+    color: #563d7c;                 
+    text-decoration: none;          
+    background-color: transparent;  
+    border-left-color: #563d7c; 
+}
+/* all active links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+    font-weight: 700;
+}
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a, 
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+    display: none;           
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+    display: block;           
+}
+
+/* d3.js */
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+{% endblock %}
