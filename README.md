@@ -1,7 +1,7 @@
-# Rumāl
+# Thug's Rumāl
 
 From Wikipedia, the free encyclopedia:
-> A rumāl is a piece of clothing similar to a handkerchief or bandana. The rumāl was used by the Thugs in India as a method of strangulation. A coin was knotted in one end of the scarf, and would be swung around the neck of the victim; who would then be strangled in the most brutal and abhorrent manner.
+> A rumāl is a piece of clothing similar to a handkerchief or bandana. [...] The rumāl was used by the Thugs in India as a method of strangulation. A coin was knotted in one end of the scarf, and would be swung around the neck of the victim; who would then be strangled in the most brutal and abhorrent manner.
 
 This project aims to be [Thug](http://buffer.github.io/thug/)'s dress - providing a convenient web GUI - but also its weapon, as it should provide a set of tools that should enrich Thug's output with new metadata and allow for correlation of results.
 
