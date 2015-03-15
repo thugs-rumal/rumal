@@ -10,17 +10,31 @@ While it is perfectly possible to use it as a simple web GUI for Thug on your ow
 ## Basic usage
 
 ### Install
+
 Rumāl needs to make sure you are using a supported Thug version, to avoid any incompatibilities in arguments and behaviours. To do so, Thug was included as a submodule.
 
 To clone both Rumāl and Thug at once, you can run the following command:
 
     $ git clone --recursive git@github.com:pdelsante/rumal.git
 
+**Please consider using VirtualEnv from now on, especially if you already have other projects running on Django versions other than 1.7**. Installing VirtualEnv is extremely easy:
+
+    $ sudo pip install virtualenv
+
+Actually, you only need sudo if you're installing `virtualenv` globally (which I suggest you to do). Now, `cd` to Rumāl's root directory to create and activate your virtual environment:
+
+    $ cd rumal
+    $ virtualenv venv
+    $ source venv/bin/activate
+
+That's all. The first command will create a folder named `venv`, with a copy of the Python executable, pip and some other tools; the second command will activate the virtual environment for you. From now on, every time you run `pip install`, the requested modules will be installed locally, without touching your global Python environment.
+When you're done with Rumāl, just run `deactivate` to exit from `venv`. Please also consider using [Autoenv](https://github.com/kennethreitz/autoenv) to automatically activate your virtual environment every time you enter the folder (and to automatically deactivate it when you leave).
+
 Before any further setup on Rumāl's part, you will need to set up Thug first. Please refer to [Thug's own documentation](http://buffer.github.io/thug/). **Please make sure you fully configure MongoDB and let Thug's MongoDB logger enabled.**
 
-Now, you can install Rumāl's own dependencies by running (from Rumāl's root directory):
+Now, you can install Rumāl's own dependencies by running the following command from Rumāl's root directory. **WARNING: Rumāl requires specific versions of some libraries such as Django 1.7. If you've got other projects running on the same box, please consider using VirtualEnv (see above) if you didn't already!**
 
-    $ sudo pip install -r requirements.txt
+    $ pip install -r requirements.txt
 
 Now you can setup the database (which, for now, uses SQLite as the backend) and create your superuser by running (from Rumāl's root directory):
 

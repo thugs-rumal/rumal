@@ -1,4 +1,5 @@
 python-dateutil
+django==1.7.6
 django-tastypie
 django-widget-tweaks
 hexdump
