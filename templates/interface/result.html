@@ -275,7 +275,6 @@
 // Declare vars
 var status = {{ task.status }};
 var object_id = '{{ task.object_id }}';
-var json_tree_graph_url = '{% url 'interface:json_tree_graph' %}';
 
 var selected_node = null;
 var poller = false;
@@ -315,7 +314,7 @@ function display_graph(){
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-    d3.json(json_tree_graph_url + object_id, function(error, flare) {
+    d3.json('{% url 'interface:json_tree_graph' %}' + object_id, function(error, flare) {
         root = flare.graph.nodes;
         root.x0 = height / 2;
         root.y0 = 0;
