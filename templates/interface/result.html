@@ -274,6 +274,9 @@
 {% block bottomscripts %}
 // Declare vars
 var status = {{ task.status }};
+var object_id = '{{ task.object_id }}';
+var json_tree_graph_url = '{% url 'interface:json_tree_graph' 'tmp' %}'.slice(0, -4);
+
 var selected_node = null;
 var poller = false;
 
@@ -312,7 +315,7 @@ function display_graph(){
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-    d3.json("{% url 'interface:json_tree_graph' task.object_id %}", function(error, flare) {
+    d3.json(json_tree_graph_url + object_id, function(error, flare) {
         root = flare.graph.nodes;
         root.x0 = height / 2;
         root.y0 = 0;
@@ -478,6 +481,9 @@ function display_content_panel(){
 function check_status(){
     if(status < 2){
         $.getJSON( "{% url 'api_dispatch_detail' api_name="v1" resource_name="task" pk=task.id %}", function( task ) {
+	    if (object_id != task['object_id']) {
+	        object_id = task['object_id'];
+	    }
             if (status != task['status']){
                 status = task['status']
                 if (status == 0){
