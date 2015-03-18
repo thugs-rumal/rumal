@@ -69,6 +69,8 @@ class Proxy(models.Model):
     password        = models.CharField('Password', null=True, blank=True, max_length=50, default=None)
     host            = models.CharField('Host', null=False, blank=False, max_length=50)
     port            = models.IntegerField('Port', null=False, blank=False)
+    def __unicode__(self):
+        return u'%s://%s:%s' % (self.scheme, self.host, self.port)
 
 class Task(models.Model):
     # User and sharing info
