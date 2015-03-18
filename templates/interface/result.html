@@ -275,7 +275,7 @@
 // Declare vars
 var status = {{ task.status }};
 var object_id = '{{ task.object_id }}';
-var json_tree_graph_url = '{% url 'interface:json_tree_graph' 'tmp' %}'.slice(0, -4);
+var json_tree_graph_url = '{% url 'interface:json_tree_graph' %}';
 
 var selected_node = null;
 var poller = false;
