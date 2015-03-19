@@ -81,7 +81,7 @@ class MongoDBResource(Resource):
             # Grab a mutable copy.
             filters = bundle.request.GET.copy()
 
-         # Update with the provided kwargs.
+        # Update with the provided kwargs.
         filters.update(kwargs)
 
         applicable_filters = self.build_filters(filters=filters)
