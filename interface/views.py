@@ -107,7 +107,6 @@ def json_tree_graph(request, analysis_id=None):
     # TODO: use NetworkX to construct the graph?
     if not analysis_id:
         raise Http404("Analyis not found");
-        
     graph = {
         'analysis_id': analysis_id,
         'graph': {
