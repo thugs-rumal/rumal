@@ -50,7 +50,7 @@ def new_task(request):
             saved_form.user = request.user
             saved_form.save()
 
-            return HttpResponseRedirect(reverse('interface:result', kwargs={'task_id': saved_form.id}))
+            return HttpResponseRedirect(reverse('interface:report', kwargs={'task_id': saved_form.id}))
 
     return render(request, 'interface/new_task.html', context)
 
@@ -102,9 +102,11 @@ def report(request, task_id):
     return render(request, 'interface/result.html', context)
 
 @login_required
-def json_tree_graph(request, analysis_id):
+def json_tree_graph(request, analysis_id=None):
     # TODO: migrate this view to the APIs? (Not sure if it's easily feasible)
     # TODO: use NetworkX to construct the graph?
+    if not analysis_id:
+        raise Http404("Analyis not found");
     graph = {
         'analysis_id': analysis_id,
         'graph': {
