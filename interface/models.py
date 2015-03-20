@@ -125,7 +125,7 @@ class Task(models.Model):
     shockwave       = models.CharField("Shockwave Flash version (default: 10.0.64.0)", null=True, blank=True, default=None, max_length=30)
     no_shockwave    = models.BooleanField("Disable Shockwave Flash plugin", null=False, blank=True, default=False)
     javaplugin      = models.CharField("Java plugin version (default: 1.6.0.32)", null=True, blank=True, default=None, max_length=30)
-    no_javaplugin   = models.BooleanField("Disable Java plugin", null=False, blank=True, default=False)
+    no_javaplugin   = models.BooleanField("Enable/ Disable Java plugin", null=False, blank=True, default=False)
     def __unicode__(self):
         return self.object_id
 
