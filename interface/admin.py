@@ -25,28 +25,27 @@ from .models import Proxy, Task
 
 # Register your models here.
 
-def add_broken_url(modelAdmin, request, queryset):
-    queryset.update(broken_url = True)
-add_broken_url.short_description = 'Add Broken Url tag'
-
-def remove_broken_url(modelAdmin, request, queryset):
-    queryset.update(broken_url = False)
-remove_broken_url.short_description = 'Remove Broken Url tag'
-
-def enable_javaplugin(modelAdmin, request, queryset):
-    queryset.update(no_javaplugin = True)
-enable_javaplugin.short_description = 'Enable Java Plugins'
-
-def disable_javaplugin(modelAdmin, request, queryset):
-    queryset.update(no_javaplugin = False)
-disable_javaplugin.short_description = 'Disable Java Plugins'
-
 class TaskAdmin(admin.ModelAdmin):
     #list_display = ['__unicode__', 'proxy', 'broken_url']
     list_display = ['proxy', 'broken_url', 'no_javaplugin']
     date_hierarchy = 'submitted_on'
-    actions = [add_broken_url, remove_broken_url, 
-        enable_javaplugin, disable_javaplugin]
+    actions = ['add_broken_url', 'remove_broken_url',
+        'enable_javaplugin', 'disable_javaplugin']
+    def add_broken_url(self, request, queryset):
+        queryset.update(broken_url = True)
+    add_broken_url.short_description = 'Add Broken Url tag'
+
+    def remove_broken_url(self, request, queryset):
+        queryset.update(broken_url = False)
+    remove_broken_url.short_description = 'Remove Broken Url tag'
+
+    def enable_javaplugin(self, request, queryset):
+        queryset.update(no_javaplugin = True)
+    enable_javaplugin.short_description = 'Enable Java Plugins'
+
+    def disable_javaplugin(self, request, queryset):
+        queryset.update(no_javaplugin = False)
+    disable_javaplugin.short_description = 'Disable Java Plugins'
 
 admin.site.register(Proxy)
 admin.site.register(Task, TaskAdmin)
