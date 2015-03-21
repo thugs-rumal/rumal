@@ -35,7 +35,7 @@ remove_broken_url.short_description = 'Remove Broken Url tag'
 
 def enable_javaplugin(modelAdmin, request, queryset):
     queryset.update(no_javaplugin = True)
-add_broken_url.short_description = 'Enable Java Plugins'
+enable_javaplugin.short_description = 'Enable Java Plugins'
 
 def disable_javaplugin(modelAdmin, request, queryset):
     queryset.update(no_javaplugin = False)
