@@ -6,7 +6,7 @@
 <form method="post">
     {% csrf_token %}
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-10 col-sm-9 col-xs-12">
             <!-- Display any form errors -->
             {% if form.errors %}
             <div class="alert alert-danger" role="alert">Please review the errors below and try again</div>
@@ -311,7 +311,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 col-sm-3 hidden-xs">
             <nav class="bs-docs-sidebar">
                 <ul id="sidebar" class="nav nav-stacked fixed">
                     <li><input type="submit" id="rule_save" class="btn btn-danger" value="Run" style="margin-bottom:20px;margin-left:20px;"></li>
@@ -323,6 +323,9 @@
                 </ul>
             </nav>
         </div>
+	<div class="col-xs-12 visible-xs">
+		<input type="submit" id="rule_save" class="btn btn-danger" value="Run" style="margin-left:20px;">
+	</div>
     </div>
 </form>
 {% endblock %}
