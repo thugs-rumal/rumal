@@ -31,10 +31,12 @@ from django.http import HttpResponseRedirect, JsonResponse, Http404
 from gridfs import GridFS
 from pymongo import Connection
 from bson import ObjectId
+from django.views.decorators.csrf import csrf_protect
 
 from interface.forms import *
 from interface.models import *
 
+@csrf_protect
 @login_required
 def new_task(request):
     context = {
