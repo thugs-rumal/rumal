@@ -28,6 +28,7 @@ urlpatterns = patterns('',
 
     url(r'^json_tree_graph/(?:(?P<analysis_id>[\w]+)/)?$', 'interface.views.json_tree_graph', name='json_tree_graph'),
     url(r'^content/(?:(?P<content_id>[\w]+)/)?$', 'interface.views.content', name='content'),
+    url(r'^raw_content/(?:(?P<content_id>[\w]+)/)?$', 'interface.views.raw_content', name='raw_content'),
 
     url(r'^$', 'interface.views.new_task', name='new_task'),
 )
