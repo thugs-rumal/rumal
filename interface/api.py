@@ -30,6 +30,7 @@ from rumal.authorization import *
 from interface.models import *
 from interface.resources import MongoDBResource
 
+from django.http import HttpRequest
 """
 Resources for SQLite models
 """
