@@ -62,7 +62,7 @@ class ProxyResource(ModelResource):
         authorization   = OwnAndSharedObjectsOnlyRelAuthorization()
         allowed_methods = ['get']
         include_resource_uri = False
-
+        excludes = ["id",]
 class TaskResource(ModelResource):
     proxy           = fields.ForeignKey(ProxyResource, 'proxy', full=True, null=True)
     user            = fields.ForeignKey(UserResource, 'user', full=True)
