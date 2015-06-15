@@ -61,6 +61,7 @@ class ProxyResource(ModelResource):
         authentication  = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
         authorization   = OwnAndSharedObjectsOnlyRelAuthorization()
         allowed_methods = ['get']
+        include_resource_uri = False
 
 class TaskResource(ModelResource):
     proxy           = fields.ForeignKey(ProxyResource, 'proxy', full=True, null=True)
@@ -79,6 +80,7 @@ class TaskResource(ModelResource):
         authentication  = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
         authorization   = OwnAndSharedObjectsOnlyRelAuthorization()
         allowed_methods = ['get']
+        include_resource_uri = False
         ordering        = [
             'id',
             'user__username',
