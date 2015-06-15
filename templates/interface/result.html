@@ -250,6 +250,7 @@
                             </h3>
                         </div>
                         <div class="panel-body collapse" id="panel_content_details_collapse">
+                            <a id="download_raw_content" href="#"><span class="glyphicon glyphicon-floppy-save"></span> Download file</a>
                             <pre id="pre_content_raw" class="prettyprint linenums"></pre>
                         </div>
                     </div>
@@ -470,6 +471,7 @@ function display_content_panel(){
             $.getJSON("{% url 'interface:content' %}"+selected_node.location.content_id+"/", function(data){
                 $("#pre_content_raw").text(data.content);
             });
+            $("#download_raw_content").attr("href", "{% url 'interface:raw_content' %}"+selected_node.location.content_id+"/");
             $("#panel_content_details_collapse").collapse("show");
             $("#panel_content_details_a").removeClass("collapsed");
         }

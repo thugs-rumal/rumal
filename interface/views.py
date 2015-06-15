@@ -27,7 +27,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, JsonResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from gridfs import GridFS
 from pymongo import Connection
 from bson import ObjectId
@@ -155,3 +155,29 @@ def content(request, content_id=None):
     }
 
     return JsonResponse(data)
+
+def raw_content(request, content_id=None):
+    # TODO: migrate this view to the APIs? (would need a GridFSResource)
+    if not content_id:
+        raise Http404("Content not found")
+
+    if not isinstance(content_id, ObjectId):
+        try:
+            content_id = ObjectId(content_id)
+        except:
+            raise Http404("Content not found")
+
+    dbfs    = Connection().thugfs
+    fs      = GridFS(dbfs)
+
+    fo = fs.get(content_id)
+    try:
+        content = base64.b64decode(fo.read())
+    except:
+        raise Http404("Content not found")
+
+    mime = magic.from_buffer(content, mime=True)
+
+    response = HttpResponse(content, content_type=mime)
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(fo.filename or fo.md5)
+    return response
