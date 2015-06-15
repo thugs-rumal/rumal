@@ -67,6 +67,12 @@ class TaskResource(ModelResource):
     user            = fields.ForeignKey(UserResource, 'user', full=True)
     sharing_groups  = fields.ToManyField(GroupResource, 'sharing_groups', full=True, null=True)
 
+    def renderDetail(self,pkval):
+        request = HttpRequest()
+        request.GET = {'format': 'json'}
+        resp =  self.get_detail(request, pk=pkval)
+        return resp.content
+
     class Meta:
         queryset        = Task.objects.all()
         resource_name   = 'task'
