@@ -40,7 +40,7 @@ BACKEND_HOST = ""
 API_KEY = ""
 API_USER = ""
 
-TASK_POST_URL = BACKEND_HOST + "/api/v1/task/?username={}&api_key={}".format(API_USER,API_KEY)
+TASK_POST_URL = BACKEND_HOST + "/api/v1/task/"
 
 
 client = pymongo.MongoClient()
@@ -85,22 +85,24 @@ class Command(BaseCommand):
         temp.pop("sharing_model")
         temp["frontend_id"] = temp.pop("id")
         post_data = dumps(temp)
-        headers = {'Content-type': 'application/json'}
+        headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         r = requests.post(TASK_POST_URL, json.dumps(post_data), headers=headers)
         if r.status_code == 201:
             self.mark_as_running(task)
 
     def retrive_save_document(self,analysis_id):
-        combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?username={}&api_key={}&format=json".format(analysis_id,API_USER,API_KEY)
-        r = requests.get(combo_resource_url)
+        combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
+        retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        r = requests.get(combo_resource_url, headers = retrive_headers)
         response = loads(r.json())
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
     def get_backend_status(self,pending_id_list):
         semicolon_seperated = ";".join(pending_id_list) + ";"
-        status_url = BACKEND_HOST + "/api/v1/status/set/{}/?username={}&api_key={}&format=json".format(semicolon_sepearated,API_USER,API_KEY)
-        r = requests.get(status_url)
+        status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_sepearated)
+        r = requests.get(status_url, headers=status_headers)
         response = loads(r.json())
         finished_on_backend = [x for x in response["objects"] if x["status"] == 1]
         return finished_on_backend
