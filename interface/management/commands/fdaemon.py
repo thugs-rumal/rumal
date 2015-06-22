@@ -61,19 +61,19 @@ class Command(BaseCommand):
         # Task.objects.filter(status__exact=STATUS_PROCESSING).update(status=STATUS_NEW)
 
     def mark_as_running(self, task):
-        logger.debug("[{}] Marking task as running".format(task.id))
+        logger.info("[{}] Marking task as running".format(task.id))
         task.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_PROCESSING
         task.save()
 
     def mark_as_failed(self, task):
-        logger.debug("[{}] Marking task as failed".format(task.id))
+        logger.info("[{}] Marking task as failed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_FAILED
         task.save()
 
     def mark_as_completed(self, task):
-        logger.debug("[{}] Marking task as completed".format(task.id))
+        logger.info("[{}] Marking task as completed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_COMPLETED
         task.save()
@@ -122,13 +122,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info("Starting up frontend daemon")
         while True:
-            logger.debug("Fetching new tasks to post to backend.")
+            logger.info("Fetching new tasks to post to backend.")
             tasks = self.fetch_new_tasks()
-            logger.debug("Got {} new tasks".format(len(tasks)))
+            logger.info("Got {} new tasks".format(len(tasks)))
             for task in tasks:
                 # self._mark_as_running(task)
                 self.post_new_task(task)
-            logger.debug("Fetching pending tasks posted to backend.")
+            logger.info("Fetching pending tasks posted to backend.")
             tasks = self.fetch_pending_tasks()
             pending_id_list = [str(x.id) for x in tasks]
             finished_on_backend = self.get_backend_status(pending_id_list)
