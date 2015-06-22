@@ -86,14 +86,23 @@ class Command(BaseCommand):
         temp["frontend_id"] = temp.pop("id")
         post_data = dumps(temp)
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        r = requests.post(TASK_POST_URL, json.dumps(post_data), headers=headers)
+        try:
+            r = requests.post(TASK_POST_URL, json.dumps(post_data), headers=headers)
+        except requests.exceptions.ConnectionError:
+            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         if r.status_code == 201:
             self.mark_as_running(task)
+        elif r.status_code == 401:
+            log.debug("Got 401 - not authorized to acess resource.")
+
 
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        r = requests.get(combo_resource_url, headers = retrive_headers)
+        try:   
+            r = requests.get(combo_resource_url, headers = retrive_headers)
+        except requests.exceptions.ConnectionError:
+            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = loads(r.json())
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
@@ -102,7 +111,10 @@ class Command(BaseCommand):
         semicolon_seperated = ";".join(pending_id_list) + ";"
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_sepearated)
-        r = requests.get(status_url, headers=status_headers)
+        try:
+            r = requests.get(status_url, headers=status_headers)
+        except requests.exceptions.ConnectionError:
+            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")      
         response = loads(r.json())
         finished_on_backend = [x for x in response["objects"] if x["status"] == 1]
         return finished_on_backend
