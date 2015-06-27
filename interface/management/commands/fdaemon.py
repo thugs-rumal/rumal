@@ -108,7 +108,7 @@ class Command(BaseCommand):
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
             return None
         downloaded_file = r.content
-        return fs.put(downloaded_file)
+        return str(fs.put(downloaded_file))
 
     def search_samples_dict_list(search_id,sample_dict):
         "returns new gridfs sample_id"
