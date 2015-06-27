@@ -110,6 +110,12 @@ class Command(BaseCommand):
         downloaded_file = r.content
         return fs.put(downloaded_file)
 
+    def search_samples_dict_list(search_id,sample_dict):
+        "returns new gridfs sample_id"
+        for x in sample_dict:
+            if x["_id"] == search_id:
+                retun x["sample_id"]
+
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
