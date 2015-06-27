@@ -100,6 +100,17 @@ class Command(BaseCommand):
         elif r.status_code == 401:
             log.debug("Got 401 - not authorized to acess resource.")
 
+    def fetch_save_file(url):
+        url = BACKEND_HOST + url
+        file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        try:   
+            r = requests.get(url, headers = retrive_headers)
+        except requests.exceptions.ConnectionError:
+            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+            return None
+        downloaded_file = r.content
+        return fs.put(downloaded_file)
+
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
