@@ -145,7 +145,9 @@ class Command(BaseCommand):
             x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
         for x in response["peepdf"]:
             x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
-        #remove id from all samples and locations
+        #remove id from all samples
+        for x in response["samples"]:
+            x.pop("_id")
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
