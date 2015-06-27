@@ -91,6 +91,7 @@ class Command(BaseCommand):
         temp["frontend_id"] = temp.pop("id")
         post_data = dumps(temp)
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        logger.info("Posting task {}".format(temp["frontend_id"]))
         try:
             r = requests.post(TASK_POST_URL, json.dumps(post_data), headers=headers)
         except requests.exceptions.ConnectionError:
@@ -102,6 +103,7 @@ class Command(BaseCommand):
 
     def fetch_save_file(url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        logger.info("Fetching file from {}".format(url))
         try:   
             r = requests.get(url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
@@ -119,6 +121,7 @@ class Command(BaseCommand):
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        logger.info("Fetching resource from {}".format(combo_resource_url))
         try:   
             r = requests.get(combo_resource_url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
