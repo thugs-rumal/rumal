@@ -118,7 +118,18 @@ class Command(BaseCommand):
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = loads(r.json())
-        #now files for all samples and locations
+        #now files for locations
+        for x in response['locations']:
+            download_url = BACKEND_HOST + '/api/v1/location/' + x.sample_id +'/file/'
+            new_fs_id = self.fetch_save_file(download_url)
+            #now change id in repsonse
+            x.location_id = new_fs_id
+        # now for samples
+        for x in response['samples']:
+            download_url = BACKEND_HOST + '/api/v1/sample/' + x.sample_id +'/file/'
+            new_fs_id = self.fetch_save_file(download_url)
+            #now change id in repsonse
+            x.sample_id = new_fs_id
         #for vt,andro etc. point sample_id to gridfs id
         #remove id from all samples and locations
         frontend_analysis_id = db.analysiscombo.insert(response)
