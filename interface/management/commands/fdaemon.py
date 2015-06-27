@@ -31,6 +31,7 @@ from interface.models import *
 from interface.api import TaskResource
 
 import pymongo
+import gridfs
 from bson import ObjectId
 from bson.json_util import loads,dumps
 
@@ -43,8 +44,12 @@ API_USER = ""
 TASK_POST_URL = BACKEND_HOST + "/api/v1/task/"
 
 
+# mongodb connection settings
 client = pymongo.MongoClient()
 db = client.thug
+dbfs = client.thugfs
+fs = gridfs.GridFS(db)
+
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +100,6 @@ class Command(BaseCommand):
         elif r.status_code == 401:
             log.debug("Got 401 - not authorized to acess resource.")
 
-
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
@@ -104,6 +108,9 @@ class Command(BaseCommand):
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = loads(r.json())
+        #now files for all samples and locations
+        #for vt,andro etc. point sample_id to gridfs id
+        #remove id from all samples and locations
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
