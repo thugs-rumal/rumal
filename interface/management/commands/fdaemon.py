@@ -101,7 +101,6 @@ class Command(BaseCommand):
             log.debug("Got 401 - not authorized to acess resource.")
 
     def fetch_save_file(url):
-        url = BACKEND_HOST + url
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         try:   
             r = requests.get(url, headers = retrive_headers)
