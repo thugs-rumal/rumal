@@ -88,7 +88,7 @@ class Task(models.Model):
     object_id       = models.CharField("ObjectID", null=True, blank=True, default=None, max_length=24)
 
     # Base options
-    url             = models.CharField("Target URL", null=False, blank=False, max_length=4096)
+    url             = models.URLField("Target URL", null=False, blank=False, max_length=4096)
     referer         = models.CharField("Referer", null=True, blank=True, default=None, max_length=4096)
     useragent       = models.CharField("User Agent", null=True, blank=True, default=None, max_length=50, choices=get_personalities())
 
@@ -126,8 +126,10 @@ class Task(models.Model):
     no_shockwave    = models.BooleanField("Disable Shockwave Flash plugin", null=False, blank=True, default=False)
     javaplugin      = models.CharField("Java plugin version (default: 1.6.0.32)", null=True, blank=True, default=None, max_length=30)
     no_javaplugin   = models.BooleanField("Enable/ Disable Java plugin", null=False, blank=True, default=False)
+    
     def __unicode__(self):
         return self.object_id
+
 
 
 # Models for MongoDB objects
