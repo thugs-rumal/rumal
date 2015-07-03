@@ -54,7 +54,7 @@ class PluginBase(object):
         """Run and make changes to data"""
         #1. Call check for dependencies
         self.check_dependencies()
-        #2. Append all changes to x.data["enrichment"]["url_link/node"]["plugin_name"]
+        #2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
         #3. Call save data
         self.save_data()
 
