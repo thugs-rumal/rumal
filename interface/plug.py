@@ -21,7 +21,7 @@
 
 import abc
 
-class UnmetDependenyError(Exception): 
+class UnmetDependencyError(Exception): 
     value = "Dependency %s was not met."
 
 class PluginBase(object):
