@@ -50,7 +50,7 @@ class PluginBase(object):
                 raise UnmetDependenyError, UnmetDependenyError.value % x
 
     @abc.abstractmethod
-    def run(self, input):
+    def run(self):
         """Run and make changes to data"""
         #1. Call check for dependencies
         self.check_dependencies()
