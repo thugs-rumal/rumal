@@ -16,7 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA  02111-1307  USA
 #
-# Author:   Tarun Kumar <reach.tarun.here@gmail.com
+# Author:   Tarun Kumar <reach.tarun.here@gmail.com>
 #
 
 import abc
@@ -36,6 +36,7 @@ class PluginBase(object):
     def input_run(self,data):
         """Adds data to object and calls self.run"""
         self.data = data
+        self.run()
 
     def save_data(self):
         """Add to plugins list and return modified data."""
