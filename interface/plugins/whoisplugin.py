@@ -21,6 +21,7 @@
 
 from interface.plug import *
 import tldextract
+import pythonwhois
 
 class WhoisPlugin(PluginBase):  
     @property
@@ -33,15 +34,17 @@ class WhoisPlugin(PluginBase):
         """ Find top level domain from given url"""
         ext = tldextract.extract(url)
         return ext.registered_domain
-        
+
     def get_whois(self,domain):
-        pass
+        """ Fetch whois data for the given domain."""
+        return pythonwhois.get_whois(domain) #check for normalizations
+
 
     def run(self):
         """Run and make changes to data"""
         self.check_dependencies()
         #2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
-        domain_whois_map = {}
+        domain_whois_map = {} #keys are domain names and values contain respective whois data.
         for node in self.data["flat_tree"]:
             node_domain = self.find_domain(node["url"])
             if node_domain in domain_whois_map.keys():
