@@ -30,6 +30,17 @@ class WhoisPlugin(PluginBase):
            Return blank list if none."""
         return []
 
+    @property
+    def module_dependencies(self):
+        """List of non-standard lib module dependencies
+           - put module names as keys and versions as
+           values.Return blank list if none."""
+        return
+        {
+            "tldextract": "1.6",
+            "pythonwhois": "2.4.0"
+        }
+
     def find_domain(self,url):
         """ Find top level domain from given url"""
         ext = tldextract.extract(url)
