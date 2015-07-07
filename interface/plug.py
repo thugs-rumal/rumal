@@ -21,12 +21,14 @@
 
 import abc
 
-class UnmetDependencyError(Exception): 
+
+class UnmetDependencyError(Exception):
     value = "Dependency %s was not met."
+
 
 class PluginBase(object):
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractproperty
     def dependencies(self):
         """List of dependencies - put class names of required plugins here.
@@ -35,12 +37,12 @@ class PluginBase(object):
 
     @abc.abstractproperty
     def module_dependencies(self):
-        """List of non-standard lib module dependencies 
-           - put module names as keys and versions as 
+        """List of non-standard lib module dependencies
+           - put module names as keys and versions as
            values.Return blank list if none."""
         return {}
 
-    def input_run(self,data):
+    def input_run(self, data):
         """Adds data to object and calls self.run"""
         self.data = data
         self.run()
@@ -60,10 +62,10 @@ class PluginBase(object):
     @abc.abstractmethod
     def run(self):
         """Run and make changes to data"""
-        #1. Call check for dependencies
+        # 1. Call check for dependencies
         self.check_dependencies()
-        #2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
-        #3. Call save data
+        # 2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
+        # 3. Call save data
         self.save_data()
 
     def search(self):
