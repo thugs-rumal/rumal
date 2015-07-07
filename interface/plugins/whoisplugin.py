@@ -20,6 +20,7 @@
 #
 
 from interface.plug import *
+import tldextract
 
 class WhoisPlugin(PluginBase):  
     @property
@@ -29,8 +30,10 @@ class WhoisPlugin(PluginBase):
         return []
 
     def find_domain(self,url):
-        pass
-
+        """ Find top level domain from given url"""
+        ext = tldextract.extract(url)
+        return ext.registered_domain
+        
     def get_whois(self,domain):
         pass
 
