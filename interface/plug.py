@@ -33,6 +33,13 @@ class PluginBase(object):
            Return blank list if none."""
         return []
 
+    @abc.abstractproperty
+    def module_dependencies(self):
+        """List of non-standard lib module dependencies 
+           - put module names as keys and versions as 
+           values.Return blank list if none."""
+        return {}
+
     def input_run(self,data):
         """Adds data to object and calls self.run"""
         self.data = data
