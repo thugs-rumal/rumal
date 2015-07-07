@@ -23,7 +23,8 @@ from interface.plug import *
 import tldextract
 import pythonwhois
 
-class WhoisPlugin(PluginBase):  
+
+class WhoisPlugin(PluginBase):
     @property
     def dependencies(self):
         """List of dependencies - put class names of required plugins here.
@@ -41,21 +42,20 @@ class WhoisPlugin(PluginBase):
             "pythonwhois": "2.4.0"
         }
 
-    def find_domain(self,url):
+    def find_domain(self, url):
         """ Find top level domain from given url"""
         ext = tldextract.extract(url)
         return ext.registered_domain
 
-    def get_whois(self,domain):
+    def get_whois(self, domain):
         """ Fetch whois data for the given domain."""
-        return pythonwhois.get_whois(domain) #check for normalizations
-
+        return pythonwhois.get_whois(domain)  # check for normalizations
 
     def run(self):
         """Run and make changes to data"""
         self.check_dependencies()
-        #2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
-        domain_whois_map = {} #keys are domain names and values contain respective whois data.
+        # 2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
+        domain_whois_map = {}  # keys are domain names and values contain respective whois data.
         for node in self.data["flat_tree"]:
             node_domain = self.find_domain(node["url"])
             if node_domain in domain_whois_map.keys():
@@ -63,5 +63,5 @@ class WhoisPlugin(PluginBase):
             else:
                 node["WhoisPlugin"] = self.get_whois(node_domain)
                 domain_whois_map[node_domain] = node["WhoisPlugin"]
-        #3. Call save data
+        # 3. Call save data
         self.save_data()
