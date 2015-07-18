@@ -52,11 +52,18 @@ class GeoPlugin(PluginBase):
         }
 
     def config_plugin(self):
-        pass  # will config the respective DB file. Including the file place and type of db.
-        # Possible to config multiple dbs as enable disabled.
-        # Need to work on config file.
-        # need to implement a method to import configurations in the abstract class.
-        # also create reader object as creation is expensive.
+        """ Use data in self.config_dict to configure required settings 
+            also create reader object as creation is expensive.
+        """
+        self.readers = {}
+        # Now check which dbs are enabled.
+        self.enabled_dbs = []
+        db_path_dict = parser.option("db_path")
+        for name, value in parser.options("dbs"):
+            if value == "True":
+                self.enabled_dbs.append(name)
+                db_path = db_path_dict[name]
+                self.readers[name] = geoip2.database.Reader(db_path)
 
     def get_geo(self, ip, db_type):
         """Fetch data from local DB"""
