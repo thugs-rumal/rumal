@@ -69,27 +69,27 @@ class GeoPlugin(PluginBase):
         """Fetch data from local DB"""
         if db_type == "city":
             try:
-                response = self.reader.city(ip)
+                response = self.readers["city"].city(ip)
             except AddressNotFoundError:
                 response = {}
         elif db_type == "anonymous_ip":
             try:
-                response = self.anonymous_ip.city(ip)
+                response = self.readers["anonymous_ip"].anonymous_ip(ip)
             except AddressNotFoundError:
                 response = {}
         elif db_type == "connection_type":
             try:
-                response = self.connection_type.city(ip)
+                response = self.readers["connection_type"].connection_type(ip)
             except AddressNotFoundError:
                 response = {}
         elif db_type == "domain":
             try:
-                response = self.domain.city(ip)
+                response = self.readers["domain"].domain(ip)
             except AddressNotFoundError:
                 response = {}
         elif db_type == "isp":
             try:
-                response = self.isp.city(ip)
+                response = self.readers["isp"].isp(ip)
             except AddressNotFoundError:
                 response = {}
         return response
@@ -98,7 +98,7 @@ class GeoPlugin(PluginBase):
         """Run and make changes to data"""
         self.check_dependencies()
         # 2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
-        for db_type in self.dbs_to_use:  # will be set in config method
+        for db_type in self.enabled_dbs:  # will be set in config method
             ip_geo_map = {}  # keys are IPs and values contain respective geo data.
             # Reset ip_geo_map for each DB run.
             for node in self.data["flat_tree"]:
