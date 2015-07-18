@@ -60,7 +60,7 @@ class PluginBase(object):
             for name, value in parser.options(section_name):
                 section_content[name] = value
             config_dict[section_name] = section_content
-        self.config = config_dict
+        self.config_dict = config_dict
 
     def save_data(self):
         """Add to plugins list and return modified data."""
