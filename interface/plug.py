@@ -71,7 +71,7 @@ class PluginBase(object):
     def check_dependencies(self):
         """Check if all the dependencies are met."""
         for x in self.dependencies:
-            if x not self.data["Plugins"]:
+            if x not in self.data["Plugins"]:
                 raise UnmetDependenyError, UnmetDependenyError.value % x
 
     @abc.abstractmethod
