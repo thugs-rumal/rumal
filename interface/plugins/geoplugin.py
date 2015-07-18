@@ -58,8 +58,8 @@ class GeoPlugin(PluginBase):
         self.readers = {}
         # Now check which dbs are enabled.
         self.enabled_dbs = []
-        db_path_dict = parser.option("db_path")
-        for name, value in parser.options("dbs"):
+        db_path_dict = self.config_dict["db_path"]
+        for name, value in self.config_dict["dbs"]:
             if value == "True":
                 self.enabled_dbs.append(name)
                 db_path = db_path_dict[name]
