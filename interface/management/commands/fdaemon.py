@@ -48,7 +48,7 @@ TASK_POST_URL = BACKEND_HOST + "/api/v1/task/"
 client = pymongo.MongoClient()
 db = client.thug
 dbfs = client.thugfs
-fs = gridfs.GridFS(db)
+fs = gridfs.GridFS(dbfs)
 
 
 logger = logging.getLogger(__name__)
