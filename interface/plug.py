@@ -64,7 +64,7 @@ class PluginBase(object):
 
     def save_data(self):
         """Add to plugins list and return modified data."""
-        if self.__class__.__name__ not self.data["Plugins"]:
+        if self.__class__.__name__ not in self.data["Plugins"]:
             self.data["Plugins"].append(self.__class__.__name__)
         return self.data
 
