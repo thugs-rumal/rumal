@@ -21,6 +21,8 @@
 
 import abc
 
+from ConfigParser import SafeConfigParser
+
 
 class UnmetDependencyError(Exception):
     value = "Dependency %s was not met."
@@ -43,9 +45,22 @@ class PluginBase(object):
         return {}
 
     def input_run(self, data):
-        """Adds data to object and calls self.run"""
+        """Adds data to object and calls self.config and self.run"""
         self.data = data
+        self.config()
         self.run()
+
+    def get_config(self):
+        """Gets config file data and stores it under self.config of object instance"""
+        parser = SafeConfigParser()
+        parser.read('plugin-config')
+        config_dict = {}
+        for section_name in parser.sections():
+            section_content = {}
+            for name, value in parser.options(section_name):
+                section_content[name] = value
+            config_dict[section_name] = section_content
+        self.config = config_dict
 
     def save_data(self):
         """Add to plugins list and return modified data."""
