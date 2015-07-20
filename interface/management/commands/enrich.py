@@ -102,6 +102,14 @@ class Command(BaseCommand):
         ptask.status = STATUS_COMPLETED
         ptask.save()
 
+    def make_ptask_queue(self, ptasks):
+        # starting with making a dependency dict
+        dependency_dict = {}
+        for x in ptasks:
+            dependency_dict[x.plugin_name] = available_plugins[plugin_name].dependencies.keys()
+        resolved_list = resolve_depencies(dependency_dict)
+        return resolved_list
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
