@@ -35,6 +35,11 @@ import gridfs
 from bson import ObjectId
 from bson.json_util import loads,dumps
 
+STATUS_NEW              = 0
+STATUS_PROCESSING       = 1
+STATUS_FAILED           = 2
+STATUS_COMPLETED        = 3
+
 # import json
 #Connection settings to be done manually
 BACKEND_HOST = ""
