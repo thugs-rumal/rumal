@@ -129,6 +129,13 @@ class Task(models.Model):
     def __unicode__(self):
         return self.object_id
 
+class PluginTask(models.Model):
+    status = models.IntegerField("Status", null=False, blank=True, default=STATUS_NEW)
+    task = models.ForeignKey(Task)
+    plugin_name = models.CharField("Class Name of the Plugin", max_length=100)
+
+    def __unicode__(self):
+        return str(self.plugin_name) + " " + str(self.status)
 
 # Models for MongoDB objects
 class Document(dict):
