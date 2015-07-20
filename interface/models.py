@@ -130,7 +130,12 @@ class Task(models.Model):
         return self.object_id
 
 class PluginTask(models.Model):
-    status = models.IntegerField("Status", null=False, blank=True, default=STATUS_NEW)
+    # Metadata
+    submitted_on    = models.DateTimeField("Submitted on", null=False, blank=True, default=add_now)
+    started_on      = models.DateTimeField("Started on", null=True, blank=True, default=None)
+    completed_on    = models.DateTimeField("Completed on", null=True, blank=True, default=None)
+    status          = models.IntegerField("Status", null=False, blank=True, default=STATUS_NEW)
+
     task = models.ForeignKey(Task)
     plugin_name = models.CharField("Class Name of the Plugin", max_length=100)
 
