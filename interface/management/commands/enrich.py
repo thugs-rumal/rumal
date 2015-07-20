@@ -84,6 +84,12 @@ class Command(BaseCommand):
         task.plugin_status = STATUS_COMPLETED
         task.save()
 
+    def mark_ptask_as_running(self, ptask):
+        logger.info("Now running {}".format(ptask.plugin_name))
+        ptask.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        ptask.status = STATUS_PROCESSING
+        ptask.save()
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
