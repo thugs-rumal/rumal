@@ -125,6 +125,10 @@ class Command(BaseCommand):
         processed_data = Plugin.input_run(data)
         return processed_data
 
+    def write_results(self, task):
+        "Converts Python Objects to result and writes to DB"
+        pass
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
