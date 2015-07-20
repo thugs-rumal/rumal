@@ -90,6 +90,12 @@ class Command(BaseCommand):
         ptask.status = STATUS_PROCESSING
         ptask.save()
 
+    def mark_ptask_as_failed(self, ptask):
+        logger.info("{} Failed.".format(ptask.plugin_name))
+        ptask.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        ptask.status = STATUS_FAILED
+        ptask.save()
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
