@@ -110,6 +110,15 @@ class Command(BaseCommand):
         resolved_list = resolve_depencies(dependency_dict)
         return resolved_list
 
+    def run_ptask_queue(self, data, task_queue):
+        for task_name in task_queue:
+            try:
+                data = self.run_ptask(data, task_name)
+            except:
+                log.debug("ERROR: {} failed to run.".format(task_name))
+            # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
+        return data
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
