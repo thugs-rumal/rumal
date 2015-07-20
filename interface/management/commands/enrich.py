@@ -57,6 +57,10 @@ class Command(BaseCommand):
     def fetch_new_tasks(self):
         return Task.objects.filter(plugin_status__exact=STATUS_NEW)
 
+    def get_data(self, task):
+        "Retrieves from DB and returns Python Object"
+        return db.analysiscombo.find_one(ObjectId(task.object_id))
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
