@@ -38,6 +38,11 @@ from bson.json_util import loads, dumps
 
 from interface.plugins import *
 
+STATUS_NEW              = 0
+STATUS_PROCESSING       = 1
+STATUS_FAILED           = 2
+STATUS_COMPLETED        = 3
+
 # mongodb connection settings
 client = pymongo.MongoClient()
 db = client.thug
@@ -66,7 +71,7 @@ class Command(BaseCommand):
         task.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.plugin_status = STATUS_PROCESSING
         task.save()
-        
+
     def mark_task_as_failed(self, task):
         logger.info("[{}] Marking task as failed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
