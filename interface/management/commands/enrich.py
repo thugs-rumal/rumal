@@ -53,5 +53,27 @@ logger = logging.getLogger(__name__)
 class InvalidMongoIdException(Exception):
     pass
 
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        logger.info("Starting up enrichment daemon")
+        while True:
+            logger.info("Fetching new tasks requiring enrichment.")
+            tasks = self.fetch_new_tasks()
+            logger.info("Got {} new tasks for enrichment.".format(len(tasks)))
+            for task in tasks:
+                data = self.get_data(task)
+                self.mark_task_as_running(task)
+                ptasks = task.plugintask_set.filter(status=STATUS_NEW)
+                task_queue = self.make_ptask_queue(ptasks)
+                logger.info("Will run queue of {} plugins for enrichment.".format(len(ptasks)))
+                final_data = self.run_ptask_queue(data, task_queue)
+                logger.info("Writing results to database.")
+                try:
+                    self.write_results(task, data)
+                    self.mark_task_as_completed(task)
+                except:
+                    log.debug("FAILED: Unable to write to DB.")
+                    self.mark_task_as_failed(task)
+            logger.info("Sleeping for {} seconds".format(60))
+            time.sleep(60)
 
-# Add command to use available_plugins after selecting data.
