@@ -61,6 +61,12 @@ class Command(BaseCommand):
         "Retrieves from DB and returns Python Object"
         return db.analysiscombo.find_one(ObjectId(task.object_id))
 
+    def mark_task_as_running(self, task):
+        logger.info("[{}] Marking task as running".format(task.id))
+        task.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        task.plugin_status = STATUS_PROCESSING
+        task.save()
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
