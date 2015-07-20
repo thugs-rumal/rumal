@@ -119,6 +119,12 @@ class Command(BaseCommand):
             # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
         return data
 
+    def run_ptask(self, data, plugin_name):
+        """ Initializes plugin and returns processed data"""
+        Plugin = available_plugins[plugin_name]()
+        processed_data = Plugin.input_run(data)
+        return processed_data
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
