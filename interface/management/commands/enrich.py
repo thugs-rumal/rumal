@@ -54,6 +54,9 @@ class InvalidMongoIdException(Exception):
     pass
 
 class Command(BaseCommand):
+    def fetch_new_tasks(self):
+        return Task.objects.filter(plugin_status__exact=STATUS_NEW)
+
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
         while True:
