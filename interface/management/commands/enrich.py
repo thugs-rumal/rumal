@@ -66,6 +66,12 @@ class Command(BaseCommand):
         task.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.plugin_status = STATUS_PROCESSING
         task.save()
+        
+    def mark_task_as_failed(self, task):
+        logger.info("[{}] Marking task as failed".format(task.id))
+        task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        task.plugin_status = STATUS_FAILED
+        task.save()
 
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
