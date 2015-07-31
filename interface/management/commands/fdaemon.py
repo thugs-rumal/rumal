@@ -121,7 +121,7 @@ class Command(BaseCommand):
         "returns new gridfs sample_id"
         for x in sample_dict:
             if x["_id"] == search_id:
-                retun x["sample_id"]
+                return x["sample_id"]
 
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
