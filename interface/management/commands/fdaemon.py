@@ -160,6 +160,8 @@ class Command(BaseCommand):
         return frontend_analysis_id
 
     def get_backend_status(self,pending_id_list):
+	if not pending_id_list:
+	    return []
         semicolon_seperated = ";".join(pending_id_list) + ";"
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_sepearated)
@@ -181,7 +183,7 @@ class Command(BaseCommand):
                 # self._mark_as_running(task)
                 self.post_new_task(task)
             logger.info("Fetching pending tasks posted to backend.")
-            tasks = self.fetch_pending_tasks()
+            tasks = self.fetch_pending_tasks() if self.fetch_pending_tasks() else []
             pending_id_list = [str(x.id) for x in tasks]
             finished_on_backend = self.get_backend_status(pending_id_list)
             for x in finished_on_backend:
