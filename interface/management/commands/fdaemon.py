@@ -35,12 +35,13 @@ import gridfs
 from bson import ObjectId
 from bson.json_util import loads,dumps
 
+import json
+
 STATUS_NEW              = 0
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
-# import json
 #Connection settings to be done manually
 BACKEND_HOST = ""
 API_KEY = ""
@@ -94,7 +95,6 @@ class Command(BaseCommand):
         temp.pop("user")
         temp.pop("sharing_model")
         temp["frontend_id"] = temp.pop("id")
-        post_data = dumps(temp)
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.info("Posting task {}".format(temp["frontend_id"]))
         try:
@@ -109,7 +109,7 @@ class Command(BaseCommand):
     def fetch_save_file(url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.info("Fetching file from {}".format(url))
-        try:   
+        try:
             r = requests.get(url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
@@ -127,7 +127,7 @@ class Command(BaseCommand):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.info("Fetching resource from {}".format(combo_resource_url))
-        try:   
+        try:
             r = requests.get(combo_resource_url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
@@ -168,7 +168,7 @@ class Command(BaseCommand):
         try:
             r = requests.get(status_url, headers=status_headers)
         except requests.exceptions.ConnectionError:
-            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")      
+            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = loads(r.json())
         finished_on_backend = [x for x in response["objects"] if x["status"] == 1]
         return finished_on_backend
