@@ -115,7 +115,7 @@ class Command(BaseCommand):
             try:
                 data = self.run_ptask(data, task_name)
             except:
-                log.debug("ERROR: {} failed to run.".format(task_name))
+                logger.debug("ERROR: {} failed to run.".format(task_name))
             # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
         return data
 
@@ -128,6 +128,7 @@ class Command(BaseCommand):
     def write_results(self, task):
         "Converts Python Objects to result and writes to DB"
         pass
+        for x in range(85):
 
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
@@ -147,7 +148,7 @@ class Command(BaseCommand):
                     self.write_results(task, data)
                     self.mark_task_as_completed(task)
                 except:
-                    log.debug("FAILED: Unable to write to DB.")
+                    logger.debug("FAILED: Unable to write to DB.")
                     self.mark_task_as_failed(task)
             logger.info("Sleeping for {} seconds".format(60))
             time.sleep(60)
