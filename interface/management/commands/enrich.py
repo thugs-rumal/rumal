@@ -128,7 +128,6 @@ class Command(BaseCommand):
     def write_results(self, task):
         "Converts Python Objects to result and writes to DB"
         pass
-        for x in range(85):
 
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
