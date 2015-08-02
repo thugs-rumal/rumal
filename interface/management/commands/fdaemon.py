@@ -94,11 +94,13 @@ class Command(BaseCommand):
         temp = loads(t.renderDetail(task.id))
         temp.pop("user")
         temp.pop("sharing_model")
+        temp.pop("plugin_status")
+        temp.pop("sharing_groups")
         temp["frontend_id"] = temp.pop("id")
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.info("Posting task {}".format(temp["frontend_id"]))
         try:
-            r = requests.post(TASK_POST_URL, json.dumps(post_data), headers=headers)
+            r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         if r.status_code == 201:
