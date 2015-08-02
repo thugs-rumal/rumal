@@ -43,7 +43,7 @@ STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
 #Connection settings to be done manually
-BACKEND_HOST = ""
+BACKEND_HOST = "" #add http://HOST
 API_KEY = ""
 API_USER = ""
 
@@ -196,3 +196,4 @@ class Command(BaseCommand):
                 self.mark_as_completed(task)
             logger.info("Sleeping for {} seconds".format(60))
             time.sleep(60)
+
