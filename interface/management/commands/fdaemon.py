@@ -172,7 +172,7 @@ class Command(BaseCommand):
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = r.json()
-        finished_on_backend = [x for x in response["objects"] if x["status"] == 1]
+        finished_on_backend = [x for x in response["objects"] if x["status"] == 3]
         return finished_on_backend
 
     def handle(self, *args, **options):
