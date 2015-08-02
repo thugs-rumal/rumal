@@ -68,7 +68,7 @@ class Command(BaseCommand):
         return Task.objects.filter(status__exact=STATUS_NEW).order_by('submitted_on')
 
     def fetch_pending_tasks(self):
-        Task.objects.filter(status__exact=STATUS_PROCESSING)
+        return Task.objects.filter(status__exact=STATUS_PROCESSING)
         # Task.objects.filter(status__exact=STATUS_PROCESSING).update(status=STATUS_NEW)
 
     def mark_as_running(self, task):
