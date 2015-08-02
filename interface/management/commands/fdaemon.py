@@ -164,9 +164,9 @@ class Command(BaseCommand):
     def get_backend_status(self,pending_id_list):
     	if not pending_id_list:
     	    return []
-        semicolon_seperated = ";".join(pending_id_list)
+        semicolon_seperated = ";".join(pending_id_list) + ";"
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_sepearated)
+        status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_seperated)
         try:
             r = requests.get(status_url, headers=status_headers)
         except requests.exceptions.ConnectionError:
