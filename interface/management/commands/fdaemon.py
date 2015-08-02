@@ -43,9 +43,10 @@ STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
 #Connection settings to be done manually
-BACKEND_HOST = "" #add http://HOST
-API_KEY = ""
-API_USER = ""
+BACKEND_HOST = "http://172.17.42.1:8000"
+API_KEY = "testkey"
+API_USER = "testuser"
+
 
 TASK_POST_URL = BACKEND_HOST + "/api/v1/task/"
 
@@ -72,19 +73,19 @@ class Command(BaseCommand):
         # Task.objects.filter(status__exact=STATUS_PROCESSING).update(status=STATUS_NEW)
 
     def mark_as_running(self, task):
-        logger.info("[{}] Marking task as running".format(task.id))
+        logger.debug("[{}] Marking task as running".format(task.id))
         task.started_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_PROCESSING
         task.save()
 
     def mark_as_failed(self, task):
-        logger.info("[{}] Marking task as failed".format(task.id))
+        logger.debug("[{}] Marking task as failed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_FAILED
         task.save()
 
     def mark_as_completed(self, task):
-        logger.info("[{}] Marking task as completed".format(task.id))
+        logger.debug("[{}] Marking task as completed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_COMPLETED
         task.save()
@@ -98,7 +99,7 @@ class Command(BaseCommand):
         temp.pop("sharing_groups")
         temp["frontend_id"] = temp.pop("id")
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.info("Posting task {}".format(temp["frontend_id"]))
+        logger.debug("Posting task {}".format(temp["frontend_id"]))
         try:
             r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
         except requests.exceptions.ConnectionError:
@@ -110,7 +111,7 @@ class Command(BaseCommand):
 
     def fetch_save_file(url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.info("Fetching file from {}".format(url))
+        logger.debug("Fetching file from {}".format(url))
         try:
             r = requests.get(url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
@@ -128,12 +129,12 @@ class Command(BaseCommand):
     def retrive_save_document(self,analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.info("Fetching resource from {}".format(combo_resource_url))
+        logger.debug("Fetching resource from {}".format(combo_resource_url))
         try:
             r = requests.get(combo_resource_url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
             log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
-        response = loads(r.json())
+        response = r.json()
         #now files for locations
         for x in response["locations"]:
             download_url = BACKEND_HOST + "/api/v1/location/" + x.sample_id + "/file/"
@@ -176,24 +177,24 @@ class Command(BaseCommand):
         return finished_on_backend
 
     def handle(self, *args, **options):
-        logger.info("Starting up frontend daemon")
+        logger.debug("Starting up frontend daemon")
         while True:
-            logger.info("Fetching new tasks to post to backend.")
+            logger.debug("Fetching new tasks to post to backend.")
             tasks = self.fetch_new_tasks()
-            logger.info("Got {} new tasks".format(len(tasks)))
+            logger.debug("Got {} new tasks".format(len(tasks)))
             for task in tasks:
                 # self._mark_as_running(task)
                 self.post_new_task(task)
-            logger.info("Fetching pending tasks posted to backend.")
-            tasks = self.fetch_pending_tasks() if self.fetch_pending_tasks() else []
+            logger.debug("Fetching pending tasks posted to backend.")
+            tasks = self.fetch_pending_tasks()
             pending_id_list = [str(x.id) for x in tasks]
             finished_on_backend = self.get_backend_status(pending_id_list)
             for x in finished_on_backend:
-                frontend_analysis_id = retrive_save_document(x["object_id"])
+                frontend_analysis_id = self.retrive_save_document(x["object_id"])
                 task = Task.objects.get(id=x["frontend_id"])
-                task.analysis_id = frontend_analysis_id
+                task.object_id = frontend_analysis_id
                 task.save()
                 self.mark_as_completed(task)
-            logger.info("Sleeping for {} seconds".format(60))
-            time.sleep(60)
+            logger.debug("Sleeping for {} seconds".format(60))
+            time.sleep(6)
 
