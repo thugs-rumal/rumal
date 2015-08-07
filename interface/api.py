@@ -294,3 +294,32 @@ class GraphResource(MongoDBResource):
         filtering       = {
             'analysis_id': ['exact'],
         }
+
+class ComboResource(MongoDBResource):
+    id          = fields.CharField(attribute="_id")
+    # frontend_id = fields.CharField(attribute="frontend_id")
+    thug        = fields.DictField(attribute="thug", null=True)
+    timestamp   = fields.DateTimeField(attribute="timestamp")
+    connections      = fields.ListField(attribute="connections")
+    exploits      = fields.ListField(attribute="exploits")
+    behaviors      = fields.ListField(attribute="behaviors")
+    codes      = fields.ListField(attribute="codes")
+    maec11      = fields.ListField(attribute="maec11")
+    certificates      = fields.ListField(attribute="certificates")
+    url_map      = fields.ListField(attribute="url_map")
+    locations      = fields.ListField(attribute="locations")
+    samples      = fields.ListField(attribute="samples")
+    virustotal      = fields.ListField(attribute="virustotal")
+    honeyagent      = fields.ListField(attribute="honeyagent")
+    androguard      = fields.ListField(attribute="androguard")
+    peepdf      = fields.ListField(attribute="peepdf")
+    url_map      = fields.ListField(attribute="url_map")
+    flat_tree      = fields.ListField(attribute="flat_tree", null=True)
+
+    class Meta:
+        resource_name   = 'analysiscombo'
+        object_class    = Document
+        collection      = "analysiscombo"
+        detail_uri_name = "_id"
+        excludes = ["id",]
+        include_resource_uri = False
