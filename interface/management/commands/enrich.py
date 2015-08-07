@@ -125,9 +125,10 @@ class Command(BaseCommand):
         processed_data = Plugin.input_run(data)
         return processed_data
 
-    def write_results(self, task):
+    def write_results(self, task,data):
         "Converts Python Objects to result and writes to DB"
-        pass
+        db.analysiscombo.update({'_id':ObjectId(task.object_id)}, {"$set": data}, upsert=False)
+
 
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
@@ -144,7 +145,7 @@ class Command(BaseCommand):
                 final_data = self.run_ptask_queue(data, task_queue)
                 logger.info("Writing results to database.")
                 try:
-                    self.write_results(task, data)
+                    self.write_results(task, final_data)
                     self.mark_task_as_completed(task)
                 except:
                     logger.debug("FAILED: Unable to write to DB.")
