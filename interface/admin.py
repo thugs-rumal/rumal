@@ -21,7 +21,7 @@
 #
 
 from django.contrib import admin
-from .models import Proxy, Task
+from .models import Proxy, Task, PluginTask
 
 # Register your models here.
 
@@ -45,8 +45,9 @@ class TaskAdmin(admin.ModelAdmin):
     #list_display = ['__unicode__', 'proxy', 'broken_url']
     list_display = ['proxy', 'broken_url', 'no_javaplugin']
     date_hierarchy = 'submitted_on'
-    actions = [add_broken_url, remove_broken_url, 
+    actions = [add_broken_url, remove_broken_url,
         enable_javaplugin, disable_javaplugin]
 
 admin.site.register(Proxy)
+admin.site.register(PluginTask)
 admin.site.register(Task, TaskAdmin)
