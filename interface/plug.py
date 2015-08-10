@@ -47,7 +47,7 @@ class PluginBase(object):
     def input_run(self, data):
         """Adds data to object and calls self.config and self.run"""
         self.data = data
-        self.config()
+        self.get_config()
         self.run()
 
     def get_config(self):
