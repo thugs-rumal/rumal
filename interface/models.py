@@ -83,7 +83,7 @@ class Task(models.Model):
     started_on      = models.DateTimeField("Started on", null=True, blank=True, default=None)
     completed_on    = models.DateTimeField("Completed on", null=True, blank=True, default=None)
     status          = models.IntegerField("Status", null=False, blank=True, default=STATUS_NEW)
-    plugin_status   = models.IntegerField("Status", null=False, blank=True, default=STATUS_COMPLETED)
+    plugin_status   = models.IntegerField("PluginStatus", null=False, blank=True, default=STATUS_COMPLETED)
 
     # ObjectID of Thug's analysis in MongoDB
     object_id       = models.CharField("ObjectID", null=True, blank=True, default=None, max_length=24)
