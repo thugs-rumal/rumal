@@ -69,7 +69,7 @@ class GeoPlugin(PluginBase):
                 db_path = db_path_dict[name]
                 self.readers[name] = geoip2.database.Reader(db_path)
 
-    def pretty_response(response,db_type):
+    def pretty_response(self,response,db_type):
         pretty_response = {}
         if db_type == "city":
             pretty_response["Country ISO"] = response.country.iso_code
@@ -119,7 +119,10 @@ class GeoPlugin(PluginBase):
                 response = self.readers["isp"].isp(ip)
             except AddressNotFoundError:
                 response = {}
-        return response
+        if response == {}
+            return response
+        else:
+            return self.pretty_response(response, db_type)
 
     def run(self):
         """Run and make changes to data"""
