@@ -94,5 +94,15 @@ def find_plugins():
     for plugin in plugin_files:
       mod = __import__(plugin)
 
+def register_plugins():
+    '''Register all class based plugins.
+
+     Uses the fact that a class knows about all of its subclasses
+     to automatically initialize the relevant plugins
+    '''
+    all_plugins = {}
+    for plugin in Plugin.__subclasses__():
+      all_plugins[plugin.__name__] = plugin
+    return all_plugins
 
 
