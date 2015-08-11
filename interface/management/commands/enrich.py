@@ -30,6 +30,7 @@ from django.core.management.base import BaseCommand, CommandError
 from interface.models import *
 from interface.api import TaskResource
 from interface.plug import PluginBase, init_plugins
+from interface.pdepend import resolve_dependencies
 
 import pymongo
 import gridfs
@@ -47,6 +48,8 @@ db = client.thug
 
 # Now Importing All Plugins.
 available_plugins = init_plugins()
+for key, value in available_plugins.iteritems():
+    available_plugins[key] = value()
 
 logger = logging.getLogger(__name__)
 
@@ -102,8 +105,8 @@ class Command(BaseCommand):
         # starting with making a dependency dict
         dependency_dict = {}
         for x in ptasks:
-            dependency_dict[x.plugin_name] = available_plugins[x.plugin_name].dependencies.keys()
-        resolved_list = resolve_depencies(dependency_dict)
+            dependency_dict[x.plugin_name] = available_plugins[x.plugin_name].dependencies
+        resolved_list = resolve_dependencies(dependency_dict)
         return resolved_list
 
     def run_ptask_queue(self, data, task_queue):
@@ -117,7 +120,7 @@ class Command(BaseCommand):
 
     def run_ptask(self, data, plugin_name):
         """ Initializes plugin and returns processed data"""
-        Plugin = available_plugins[plugin_name]()
+        Plugin = available_plugins[plugin_name]
         processed_data = Plugin.input_run(data)
         return processed_data
 
