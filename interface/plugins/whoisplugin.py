@@ -47,7 +47,11 @@ class WhoisPlugin(PluginBase):
 
     def get_whois(self, domain):
         """ Fetch whois data for the given domain."""
-        return pythonwhois.get_whois(domain)  # check for normalizations
+        try:
+            whois = pythonwhois.get_whois(domain)
+        except:
+            whois = "Timed Out/Not Found Blah!!!!"
+        return whois # check for normalizations
 
     def run(self):
         """Run and make changes to data"""
@@ -56,7 +60,8 @@ class WhoisPlugin(PluginBase):
         domain_whois_map = {}  # keys are domain names and values contain respective whois data.
         for node in self.data["flat_tree"]:
             node_domain = node["domain"][0]
-            if not node_domain:
+            if node_domain == "-":
+                node["WhoisPlugin"] = {}
                 continue # According to modified implementation in backend.
             if node_domain in domain_whois_map.keys():
                 node["WhoisPlugin"] = domain_whois_map[node_domain]
@@ -64,4 +69,6 @@ class WhoisPlugin(PluginBase):
                 node["WhoisPlugin"] = self.get_whois(node_domain)
                 domain_whois_map[node_domain] = node["WhoisPlugin"]
         # 3. Call save data
+        print "now trying to save_data", self.data
         self.save_data()
+
