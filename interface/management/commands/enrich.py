@@ -102,7 +102,7 @@ class Command(BaseCommand):
         # starting with making a dependency dict
         dependency_dict = {}
         for x in ptasks:
-            dependency_dict[x.plugin_name] = available_plugins[plugin_name].dependencies.keys()
+            dependency_dict[x.plugin_name] = available_plugins[x.plugin_name].dependencies.keys()
         resolved_list = resolve_depencies(dependency_dict)
         return resolved_list
 
