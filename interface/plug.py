@@ -85,3 +85,14 @@ class PluginBase(object):
 
     def search(self):
         pass
+
+def find_plugins():
+    '''find all files in the plugin directory and imports them'''
+    plugin_dir = os.path.dirname(os.path.realpath(__file__)+ "interface/plugins")
+    plugin_files = [x[:-3] for x in os.listdir(plugin_dir) if x.endswith(".py") and x != "__init__.py"]
+    sys.path.insert(0, plugin_dir)
+    for plugin in plugin_files:
+      mod = __import__(plugin)
+
+
+
