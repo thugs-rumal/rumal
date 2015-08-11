@@ -22,8 +22,9 @@
 import abc
 import os
 import sys
-from ConfigParser import SafeConfigParser
 
+from ConfigParser import SafeConfigParser
+from django.conf import settings
 
 class UnmetDependencyError(Exception):
     value = "Dependency %s was not met."
@@ -89,7 +90,7 @@ class PluginBase(object):
 
 def find_plugins():
     '''find all files in the plugin directory and imports them'''
-    plugin_dir = os.path.dirname(os.path.realpath(__file__)+ "interface/plugins")
+    plugin_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'interface/plugins'))
     plugin_files = [x[:-3] for x in os.listdir(plugin_dir) if x.endswith(".py") and x != "__init__.py"]
     sys.path.insert(0, plugin_dir)
     for plugin in plugin_files:
@@ -102,7 +103,7 @@ def register_plugins():
      to automatically initialize the relevant plugins
     '''
     all_plugins = {}
-    for plugin in Plugin.__subclasses__():
+    for plugin in PluginBase.__subclasses__():
       all_plugins[plugin.__name__] = plugin
     return all_plugins
 
