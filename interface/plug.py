@@ -105,4 +105,10 @@ def register_plugins():
       all_plugins[plugin.__name__] = plugin
     return all_plugins
 
+def init_plugins():
+    '''simple plugin initializer
+    '''
+    find_plugins()
+    return register_plugins()
+
 
