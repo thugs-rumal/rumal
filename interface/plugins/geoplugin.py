@@ -69,6 +69,29 @@ class GeoPlugin(PluginBase):
                 db_path = db_path_dict[name]
                 self.readers[name] = geoip2.database.Reader(db_path)
 
+    def pretty_response(response,db_type):
+        pretty_response = {}
+        if db_type == "city":
+            pretty_response["Country ISO"] = response.country.iso_code
+            pretty_response["Country"] = response.country.name
+            pretty_response["City"] = response.city.name
+            pretty_response["Postal Code"] = response.postal.code
+            pretty_response["Latitude"] = response.location.latitude
+            pretty_response["Longitude"] = response.location.longitude
+        elif db_type == "anonymous_ip":
+            # define parameters after collecting info
+        elif db_type == "connection_type":
+            pretty_response["Connection Type"] = response.connection_type
+        elif db_type == "domain":
+            pretty_response["Domain"] = response.domain
+        elif db_type == "isp":
+            pretty_response["Autonomus System Number"] = response.autonomous_system_number
+            pretty_response["Autonomus System Org"] = response.autonomous_system_organization
+            pretty_response["ISP"] = response.isp
+            pretty_response["Org"] = response.organization
+        pretty_response["raw"] = response.__dict__
+        return pretty_response
+
     def get_geo(self, ip, db_type):
         """Fetch data from local DB"""
         if db_type == "city":
