@@ -31,7 +31,7 @@ import sys
 import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-from plug import *
+from interface.plug import *
 import geoip2.database
 
 
@@ -56,7 +56,7 @@ class GeoPlugin(PluginBase):
         }
 
     def config_plugin(self):
-        """ Use data in self.config_dict to configure required settings 
+        """ Use data in self.config_dict to configure required settings
             also create reader object as creation is expensive.
         """
         self.readers = {}
