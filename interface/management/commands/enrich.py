@@ -29,14 +29,12 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from interface.models import *
 from interface.api import TaskResource
-from interface.plug import PluginBase
+from interface.plug import PluginBase, init_plugins
 
 import pymongo
 import gridfs
 from bson import ObjectId
 from bson.json_util import loads, dumps
-
-from interface.plugins import *
 
 STATUS_NEW              = 0
 STATUS_PROCESSING       = 1
@@ -48,9 +46,7 @@ client = pymongo.MongoClient()
 db = client.thug
 
 # Now Importing All Plugins.
-available_plugins = {}
-for x in PluginBase.__subclasses__():
-    available_plugins[x.__name__] = x
+available_plugins = init_plugins()
 
 logger = logging.getLogger(__name__)
 
@@ -152,4 +148,3 @@ class Command(BaseCommand):
                     self.mark_task_as_failed(task)
             logger.info("Sleeping for {} seconds".format(60))
             time.sleep(60)
-
