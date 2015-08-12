@@ -144,4 +144,4 @@ class GeoPlugin(PluginBase):
                     node["GeoPlugin"][db_type] = self.get_geo(node_ip, db_type)
                     ip_geo_map[node_ip] = node["GeoPlugin"][db_type]
             # 3. Call save data
-        self.save_data()
+        return self.save_data()
