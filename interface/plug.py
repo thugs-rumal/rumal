@@ -59,7 +59,7 @@ class PluginBase(object):
         config_dict = {}
         for section_name in parser.sections():
             section_content = {}
-            for name, value in parser.options(section_name):
+            for name, value in parser.items(section_name):
                 section_content[name] = value
             config_dict[section_name] = section_content
         self.config_dict = config_dict
