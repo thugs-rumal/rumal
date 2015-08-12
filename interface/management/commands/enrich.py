@@ -109,10 +109,12 @@ class Command(BaseCommand):
         resolved_list = resolve_dependencies(dependency_dict)
         return resolved_list
 
-    def run_ptask_queue(self, data, task_queue):
+    def run_ptask_queue(self, data, task_queue, ptasks):
         for task_name in task_queue:
             try:
                 data = self.run_ptask(data, task_name)
+                this_ptask = filter(lambda x: x.plugin_name == task_name, ptasks)[0]
+                self.mark_ptask_as_completed(this_ptask)
             except:
                 logger.debug("ERROR: {} failed to run.".format(task_name))
             # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
@@ -120,6 +122,7 @@ class Command(BaseCommand):
 
     def run_ptask(self, data, plugin_name):
         """ Initializes plugin and returns processed data"""
+        print "now running {}".format(plugin_name)
         Plugin = available_plugins[plugin_name]
         processed_data = Plugin.input_run(data)
         return processed_data
@@ -141,7 +144,7 @@ class Command(BaseCommand):
                 ptasks = task.plugintask_set.filter(status=STATUS_NEW)
                 task_queue = self.make_ptask_queue(ptasks)
                 logger.info("Will run queue of {} plugins for enrichment.".format(len(ptasks)))
-                final_data = self.run_ptask_queue(data, task_queue)
+                final_data = self.run_ptask_queue(data, task_queue, ptasks)
                 logger.info("Writing results to database.")
                 try:
                     self.write_results(task, final_data)
