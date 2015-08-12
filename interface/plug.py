@@ -50,12 +50,12 @@ class PluginBase(object):
         """Adds data to object and calls self.config and self.run"""
         self.data = data
         self.get_config()
-        self.run()
+        return self.run()
 
     def get_config(self):
         """Gets config file data and stores it under self.config of object instance"""
         parser = SafeConfigParser()
-        parser.read('plugin-config')
+        parser.read('/home/zhirzh/tarun work/socwork/ownfront/rumal/interface/plugins/plugin-config')
         config_dict = {}
         for section_name in parser.sections():
             section_content = {}
