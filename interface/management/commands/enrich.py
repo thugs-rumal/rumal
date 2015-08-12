@@ -78,7 +78,7 @@ class Command(BaseCommand):
         task.save()
 
     def mark_task_as_completed(self, task):
-        logger.info("[{}] Marking task as completed".format(ptask.id))
+        logger.info("[{}] Marking task as completed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.plugin_status = STATUS_COMPLETED
         task.save()

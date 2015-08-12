@@ -55,7 +55,8 @@ class PluginBase(object):
     def get_config(self):
         """Gets config file data and stores it under self.config of object instance"""
         parser = SafeConfigParser()
-        parser.read('/home/zhirzh/tarun work/socwork/ownfront/rumal/interface/plugins/plugin-config')
+        plugin_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'interface/plugins'))
+        parser.read(plugin_dir+ '/{}-config'.format(self.__class__.__name__))
         config_dict = {}
         for section_name in parser.sections():
             section_content = {}
