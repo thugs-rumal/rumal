@@ -136,6 +136,9 @@ class GeoPlugin(PluginBase):
             # Reset ip_geo_map for each DB run.
             for node in self.data["flat_tree"]:
                 node_ip = node["ip"]
+                if node_ip == None:
+                    node["GeoPlugin"][db_type] = {}
+                    continue
                 if "GeoPlugin" not in node.keys():
                     node["GeoPlugin"] = {}  # To avoid key error as further data is according to db.
                 if node_ip in ip_geo_map.keys():
