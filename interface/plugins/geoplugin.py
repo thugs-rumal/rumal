@@ -35,6 +35,7 @@ from interface.plug import *
 import geoip2.database
 
 
+
 class GeoPlugin(PluginBase):
     @property
     def dependencies(self):
@@ -63,7 +64,7 @@ class GeoPlugin(PluginBase):
         # Now check which dbs are enabled.
         self.enabled_dbs = []
         db_path_dict = self.config_dict["db_path"]
-        for name, value in self.config_dict["dbs"]:
+        for name, value in self.config_dict["dbs"].iteritems():
             if value == "True":
                 self.enabled_dbs.append(name)
                 db_path = db_path_dict[name]
@@ -80,6 +81,7 @@ class GeoPlugin(PluginBase):
             pretty_response["Longitude"] = response.location.longitude
         elif db_type == "anonymous_ip":
             # define parameters after collecting info
+            pass
         elif db_type == "connection_type":
             pretty_response["Connection Type"] = response.connection_type
         elif db_type == "domain":
@@ -89,7 +91,7 @@ class GeoPlugin(PluginBase):
             pretty_response["Autonomus System Org"] = response.autonomous_system_organization
             pretty_response["ISP"] = response.isp
             pretty_response["Org"] = response.organization
-        pretty_response["raw"] = response.__dict__
+        # pretty_response["raw"] = response.__dict__ # find fix for this
         return pretty_response
 
     def get_geo(self, ip, db_type):
@@ -119,7 +121,7 @@ class GeoPlugin(PluginBase):
                 response = self.readers["isp"].isp(ip)
             except AddressNotFoundError:
                 response = {}
-        if response == {}
+        if response == {}:
             return response
         else:
             return self.pretty_response(response, db_type)
@@ -127,6 +129,7 @@ class GeoPlugin(PluginBase):
     def run(self):
         """Run and make changes to data"""
         self.check_dependencies()
+        self.config_plugin()
         # 2. Append all changes to x.data["flat_tree"]["url_link/node"]["plugin_name"]
         for db_type in self.enabled_dbs:  # will be set in config method
             ip_geo_map = {}  # keys are IPs and values contain respective geo data.
