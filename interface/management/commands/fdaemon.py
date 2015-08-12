@@ -103,11 +103,11 @@ class Command(BaseCommand):
         try:
             r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
         except requests.exceptions.ConnectionError:
-            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         if r.status_code == 201:
             self.mark_as_running(task)
         elif r.status_code == 401:
-            log.debug("Got 401 - not authorized to acess resource.")
+            logger.debug("Got 401 - not authorized to acess resource.")
 
     def fetch_save_file(url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
@@ -115,7 +115,7 @@ class Command(BaseCommand):
         try:
             r = requests.get(url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
-            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
             return None
         downloaded_file = r.content
         return str(fs.put(downloaded_file))
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         try:
             r = requests.get(combo_resource_url, headers = retrive_headers)
         except requests.exceptions.ConnectionError:
-            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = r.json()
         #now files for locations
         for x in response["locations"]:
@@ -171,7 +171,7 @@ class Command(BaseCommand):
         try:
             r = requests.get(status_url, headers=status_headers)
         except requests.exceptions.ConnectionError:
-            log.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
         response = r.json()
         finished_on_backend = [x for x in response["objects"] if x["status"] == 3]
         return finished_on_backend
