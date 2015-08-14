@@ -322,7 +322,7 @@ class ComboResource(MongoDBResource):
             appending warning data to that.'''
         threat_data = generate_threats(bundle.data['flat_tree'])
         warning_and_theat_data = generate_warnings(threat_data)
-        bundle['flat_tree'] = warning_and_theat_data
+        bundle.data['flat_tree'] = warning_and_theat_data
         return bundle
 
     class Meta:
