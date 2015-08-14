@@ -318,8 +318,11 @@ class ComboResource(MongoDBResource):
     flat_tree      = fields.ListField(attribute="flat_tree", null=True)
 
     def dehydrate(self, bundle):
-        bundle.data['threats'] = generate_threats(bundle.data)
-        bundle.data['warnings'] = generate_warnings(bundle.data)
+        ''' Modify flat tree first add threat data and then to
+            appending warning data to that.'''
+        threat_data = generate_threats(bundle.data['flat_tree'])
+        warning_and_theat_data = generate_warnings(threat_data)
+        bundle['flat_tree'] = warning_and_theat_data
         return bundle
 
     class Meta:
