@@ -1,0 +1,10 @@
+[db_path]
+city = /absolute/path/to/your/db/file
+anonymous_ip = None
+connection_type = None
+isp = None
+[dbs]
+city = True
+anonymous_ip = False
+connection_type = False
+isp = False
