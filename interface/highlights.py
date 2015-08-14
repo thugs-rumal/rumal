@@ -33,7 +33,15 @@ def generate_threats(data):
     return data
 
 def generate_warnings(data):
-    return "wrapper function for warnings"
+    ''' wrapper function to call functions that mark warnings'''
+    for node in data:
+        node['warnings'] = []
+        new_domain_warning_output = new_domain_warning(node)
+        if new_domain_warning_output:
+            node['warnings'].append(new_domain_warning_output)
+        # similarly other function calls according to methods for
+        # finding warnings and use extend and append as required.
+    return data
 
 # Threat Functions
 
