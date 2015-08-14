@@ -24,3 +24,21 @@ def generate_threats(data):
 
 def generate_warnings(data):
     return "wrapper function for warnings"
+
+# Threat Functions
+
+def exploit_threats(node):
+    output = []
+    for exploits in node['exploits']:
+        threat = {}
+        threat['type'] = 'exploit'
+        threat['details'] = {
+        'Module' : exploit['module']
+        'Description' : exploit['description']
+        'CVE' : exploit['cve']
+        'Additional Info' : exploit['data']
+        }
+        output.append(threat)
+    return output
+
+
