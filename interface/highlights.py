@@ -19,8 +19,18 @@
 # Author:   Tarun Kumar <reach.tarun.here@gmail.com>
 #
 
+import datetime
+
 def generate_threats(data):
-    return "wrapper function for threats"
+    ''' wrapper function to call functions that mark threats'''
+    for node in data:
+        node['threats'] = []
+        exploit_threats_output = exploit_threats(node)
+        if exploit_threats_output:
+            node['threats'].extend()
+        # similarly other function calls according to methods for
+        # finding threats and use extend and append as required.
+    return data
 
 def generate_warnings(data):
     return "wrapper function for warnings"
