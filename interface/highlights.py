@@ -41,4 +41,21 @@ def exploit_threats(node):
         output.append(threat)
     return output
 
+# Warning Functions
+
+def new_domain_warning(node):
+    ''' Add a new domain warning to each node's warning list'''
+    if node['WhoisPlugin']:
+        domain_creation_time = node['WhoisPlugin']['creation_time'][-1]
+        current_time = datetime.datetime.now()
+        time_diff = current_time - domain_creation_time
+        if time_diff.days < 30:
+            warning['type'] = 'Recent Domain'
+            warning['details'] = {
+            'Message' : 'The domain was registered less than 30 days ago.',
+            'Registrar' : node['WhoisPlugin']['registrar'],
+            }
+        return warning
+    else:
+        return False
 
