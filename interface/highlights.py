@@ -51,10 +51,10 @@ def exploit_threats(node):
         threat = {}
         threat['type'] = 'exploit'
         threat['details'] = {
-        'Module' : exploit['module']
-        'Description' : exploit['description']
-        'CVE' : exploit['cve']
-        'Additional Info' : exploit['data']
+        'Module' : exploit['module'],
+        'Description' : exploit['description'],
+        'CVE' : exploit['cve'],
+        'Additional Info' : exploit['data'],
         }
         output.append(threat)
     return output
@@ -63,7 +63,7 @@ def exploit_threats(node):
 
 def new_domain_warning(node):
     ''' Add a new domain warning to each node's warning list'''
-    if node['WhoisPlugin']:
+    if ('WhoisPlugin' in node.keys())and node['WhoisPlugin']:
         domain_creation_time = node['WhoisPlugin']['creation_time'][-1]
         current_time = datetime.datetime.now()
         time_diff = current_time - domain_creation_time
