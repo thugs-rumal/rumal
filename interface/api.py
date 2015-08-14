@@ -29,6 +29,7 @@ from rumal.authorization import *
 
 from interface.models import *
 from interface.resources import MongoDBResource
+from interface.highlights import generate_warnings, generate_threats
 
 from django.http import HttpRequest
 """
@@ -315,6 +316,11 @@ class ComboResource(MongoDBResource):
     peepdf      = fields.ListField(attribute="peepdf")
     url_map      = fields.ListField(attribute="url_map")
     flat_tree      = fields.ListField(attribute="flat_tree", null=True)
+
+    def dehydrate(self, bundle):
+        bundle.data['threats'] = generate_threats(bundle.data)
+        bundle.data['warnings'] = generate_warnings(bundle.data)
+        return bundle
 
     class Meta:
         resource_name   = 'analysiscombo'
