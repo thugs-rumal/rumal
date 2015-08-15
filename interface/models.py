@@ -26,6 +26,11 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User, Group
 from interface.utils import *
+from tastypie.models import create_api_key
+
+
+# Automatically create API keys for new users
+models.signals.post_save.connect(create_api_key, sender=User)
 
 SHARING_MODEL_PUBLIC    = 0
 SHARING_MODEL_PRIVATE   = 1
