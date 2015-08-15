@@ -27,7 +27,7 @@ def generate_threats(data):
         node['threats'] = []
         exploit_threats_output = exploit_threats(node)
         if exploit_threats_output:
-            node['threats'].extend()
+            node['threats'].extend(exploit_threats_output)
         # similarly other function calls according to methods for
         # finding threats and use extend and append as required.
     return data
