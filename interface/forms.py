@@ -27,4 +27,4 @@ from interface.models import *
 class TaskForm(forms.ModelForm):
     class Meta:
         model       = Task
-        exclude     = ['user', 'submitted_on', 'started_on', 'completed_on', 'status']
+        exclude     = ['user', 'submitted_on', 'started_on', 'completed_on', 'status', 'plugin_status']
