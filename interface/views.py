@@ -119,6 +119,16 @@ def json_tree_graph(request, analysis_id=None):
     graph['graph']['nodes'] = graph_get_children(analysis_id, root_node)
     return JsonResponse(graph)
 
+@login_required
+def star_view(request):
+    task_id = int(request.GET['taskId'])
+    task = get_object_or_404(Task, pk=task_id)
+    if request.user in task.star.all():
+        task.star.remove(request.user)
+    else:
+        task.star.add(request.user)
+    return HttpResponse(1 if request.user in task.star.all() else 0)
+
 def content(request, content_id=None):
     # TODO: migrate this view to the APIs? (would need a GridFSResource)
     if not content_id:

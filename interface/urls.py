@@ -25,6 +25,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'^report/(?:(?P<task_id>\d+)/)?$', 'interface.views.report', name='report'),
     url(r'^reports/$', 'interface.views.reports', name='reports'),
+    url(r'^togglebookmark/$', 'interface.views.star_view', name='star'),
 
     url(r'^json_tree_graph/(?:(?P<analysis_id>[\w]+)/)?$', 'interface.views.json_tree_graph', name='json_tree_graph'),
     url(r'^content/(?:(?P<content_id>[\w]+)/)?$', 'interface.views.content', name='content'),
