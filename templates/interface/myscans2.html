@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Your Scans{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" style="height:175px;margin-bootom:10px;">
+            <div class="panel panel-default" style="height:177px;">
+                <div class="panel-body">
+                    <div class="text-center">
+
+                        <h4 id="scan_title">My Scans</h4>
+                        <br>
+                        <br>
+                        <a id="scan_title_toggle" href="javascript:void(0)" class="btn btn-danger btn-fab btn-raised mdi-action-swap-horiz"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="height:175px;margin-bottom:25px;">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding-bottom:0px">
+                    <div class="text-center">
+                        <h4> Stats </h4>
+                    </div>
+                    <table class="table table-striped table-hover" style="font-size:12px;">
+                        <tbody>
+                            <tr>
+                                <td>Private Scans</td>
+                                <td>{{ stats.private }}</td>
+                            </tr>
+                            <tr>
+                                <td>Public Scans</td>
+                                <td>{{ stats.public }}</td>
+                            </tr>
+                            <tr>
+                                <td>Starred by You</td>
+                                <td>{{ stats.star }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="myscans" class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">My Scans</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th>#</th>
+                        <th>URL</th>
+                        <th>Status</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="starredscans" class="panel panel-info" style="display:none">
+            <div class="panel-heading">
+                <h3 class="panel-title">Starred Scans</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th>#</th>
+                        <th>URL</th>
+                        <th>Status</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block bottomscripts %}
+        $.getJSON('/api/v1/task/?format=json&myscans=true', function(response) {
+            var objects = response.objects;
+            for (var i in objects) {
+                var id = objects[i].id;
+                var url = objects[i].url;
+                var status = objects[i].status;
+                var label = {};
+                switch (status) {
+                    case 0:
+                    case 1:
+                        label.class = 'info';
+                        label.text = 'Pending';
+                        break;
+                    case 2:
+                        label.class = 'danger';
+                        label.text = 'Failed';
+                        break;
+                    case 3:
+                        label.class = 'success';
+                        label.text = 'Finished';
+                }
+                $("#myscans table").append(
+                    $("<tr>")
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<a>")
+                            .attr("href", '/report/'+id+'/')
+                            .html(id)))
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<a>")
+                            .attr("href", url)
+                            .html(url)))
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<span>")
+                            .attr("class", "label label-" + label.class)
+                            .html(label.text)))
+                );
+            }
+        });
+        $.getJSON('/api/v1/task/?format=json&starred=true', function(response) {
+            var objects = response.objects;
+            for (var i in objects) {
+                var id = objects[i].id;
+                var url = objects[i].url;
+                var status = objects[i].status;
+                var label = {};
+                switch (status) {
+                    case 0:
+                    case 1:
+                        label.class = 'info';
+                        label.text = 'Pending';
+                        break;
+                    case 2:
+                        label.class = 'danger';
+                        label.text = 'Failed';
+                        break;
+                    case 3:
+                        label.class = 'success';
+                        label.text = 'Finished';
+                }
+                $("#starredscans table").append(
+                    $("<tr>")
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<a>")
+                            .attr("href", id)
+                            .html(id)))
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<a>")
+                            .attr("href", url)
+                            .html(url)))
+                    .append(
+                        $("<td>")
+                        .html(
+                            $("<span>")
+                            .attr("class", "label label-" + label.class)
+                            .html(label.text)))
+                );
+            }
+        });
+        $("#scan_title_toggle").click(function(){
+            if($("#scan_title").html()=='Starred Scans'){
+                $("#scan_title").html('My Scans');
+                $("#starredscans").css('display','none');
+                $("#myscans").css('display','block');
+            }else{
+                $("#scan_title").html('Starred Scans');
+                $("#myscans").css('display','none');
+                $("#starredscans").css('display','block');
+            }
+        });
+{% endblock %}
