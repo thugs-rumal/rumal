@@ -84,3 +84,12 @@ def is_text(mime):
         return True
 
     return False
+
+def make_nested_tree(flat_tree):
+    for node in reversed(flat_tree):
+        if node['parent'] != None:
+            parent_node = flat_tree[node['parent']]
+            if 'children' not in parent_node.keys():
+                parent_node['children'] = []
+            parent_node['children'].append(node)
+    return flat_tree[0]

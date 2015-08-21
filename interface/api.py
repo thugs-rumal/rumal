@@ -30,6 +30,7 @@ from rumal.authorization import *
 from interface.models import *
 from interface.resources import MongoDBResource
 from interface.highlights import generate_warnings, generate_threats
+from interface.utils import make_nested_tree
 
 from django.http import HttpRequest
 """
@@ -323,6 +324,7 @@ class ComboResource(MongoDBResource):
         threat_data = generate_threats(bundle.data['flat_tree'])
         warning_and_theat_data = generate_warnings(threat_data)
         bundle.data['flat_tree'] = warning_and_theat_data
+        bundle.data['nested_tree'] = make_nested_tree(bundle.data['flat_tree'])
         return bundle
 
     class Meta:
