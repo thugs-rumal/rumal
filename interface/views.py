@@ -35,6 +35,10 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
+SHARING_MODEL_PUBLIC    = 0
+SHARING_MODEL_PRIVATE   = 1
+SHARING_MODEL_GROUPS    = 2
+
 @login_required
 def new_task(request):
     context = {
@@ -92,14 +96,14 @@ def reports(request, status='any', pagination_start=0, pagination_len=50):
 
     return render(request, 'interface/results.html', context)
 
-@login_required
-def report(request, task_id):
-    context = {
-        'active_tab': 'reports',
-        'task'      : get_object_or_404(Task, pk=task_id)
-    }
+# @login_required
+# def report(request, task_id):
+#     context = {
+#         'active_tab': 'reports',
+#         'task'      : get_object_or_404(Task, pk=task_id)
+#     }
 
-    return render(request, 'interface/result.html', context)
+#     return render(request, 'interface/result.html', context)
 
 @login_required
 def my_scans(request):
@@ -117,6 +121,21 @@ def my_scans(request):
         'stats': stats,
     }
     return render(request, 'interface/myscans2.html', context)
+
+@login_required
+def report(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    if request.user in task.star.all():
+        bookmarked = True
+    else:
+        bookmarked = False
+    context = {
+        'task': task,
+        'bookmarked' : bookmarked
+    }
+
+    return render(request, 'interface/report.html', context)
+
 
 @login_required
 def json_tree_graph(request, analysis_id=None):
