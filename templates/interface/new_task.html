@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
 {% block title %}Choose Thug options and parameters{% endblock %}
-{% block navbar %}{% include 'navbar.html' %}{% endblock %} 
 {% block content %}
 <form method="post">
     {% csrf_token %}
+    <div class="container-fluid">
     <div class="row">
         <div class="col-md-10">
             <!-- Display any form errors -->
@@ -14,15 +14,15 @@
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
             {% endfor %}
-            
+
             <!-- Basic options -->
-            <div class="panel panel-default" id="thug_base_options">
+            <div class="panel panel-primary" id="thug_base_options">
                 <div class="panel-heading">
                     <h3 class="panel-title">Options</h3>
                 </div>
                 <div class="panel-body">
-                    
-                    
+
+
                     {% for error in form.url.errors %}
                     <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                     {% endfor %}
@@ -30,7 +30,7 @@
                         {{ form.url.label_tag }}
                         {% render_field form.url class+="form-control" %}
                     </div>
-                    
+
                     {% for error in form.referer.errors %}
                     <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                     {% endfor %}
@@ -38,7 +38,7 @@
                         {{ form.referer.label_tag }}
                         {% render_field form.referer class+="form-control" %}
                     </div>
-                    
+
                     {% for error in form.useragent.errors %}
                     <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                     {% endfor %}
@@ -46,7 +46,7 @@
                         {{ form.useragent.label_tag }}
                         {% render_field form.useragent class+="form-control" %}
                     </div>
-                    
+
                     {% for error in form.proxy.errors %}
                     <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                     {% endfor %}
@@ -56,9 +56,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Advanced options -->
-            <div class="panel panel-default" id="thug_advanced_options">
+            <div class="panel panel-primary" id="thug_advanced_options">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a data-toggle="collapse" href="#advanced_options" aria-expanded="false" aria-controls="advanced_options" class="collapsed">
@@ -75,7 +75,7 @@
                             {{ form.events.label_tag }}
                             {% render_field form.events class+="form-control" %}
                         </div>
-                        
+
                         {% for error in form.delay.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -83,7 +83,7 @@
                             {{ form.delay.label_tag }}
                             {% render_field form.delay class+="form-control" type="number" min="0" max="65535" %}
                         </div>
-                        
+
                         {% for error in form.timeout.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -91,7 +91,7 @@
                             {{ form.timeout.label_tag }}
                             {% render_field form.timeout class+="form-control" type="number" min="0" max="65535" %}
                         </div>
-                        
+
                         {% for error in form.threshold.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -99,7 +99,7 @@
                             {{ form.threshold.label_tag }}
                             {% render_field form.threshold class+="form-control" type="number" min="0" max="65535" %}
                         </div>
-                        
+
                         {% for error in form.no_cache.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -108,7 +108,7 @@
                             {{ form.no_cache }} {{ form.no_cache.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.verbose.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -117,7 +117,7 @@
                             {{ form.verbose }} {{ form.verbose.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.quiet.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -126,7 +126,7 @@
                             {{ form.quiet }} {{ form.quiet.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.debug.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -135,7 +135,7 @@
                             {{ form.debug }} {{ form.debug.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.ast_debug.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -144,7 +144,7 @@
                             {{ form.ast_debug }} {{ form.ast_debug.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.http_debug.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -153,7 +153,7 @@
                             {{ form.http_debug }} {{ form.http_debug.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.extensive.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -162,7 +162,7 @@
                             {{ form.extensive }} {{ form.extensive.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.broken_url.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -174,9 +174,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Plugins options -->
-            <div class="panel panel-default" id="thug_plugins_options">
+            <div class="panel panel-primary" id="thug_plugins_options">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a data-toggle="collapse" href="#plugins_options" aria-expanded="false" aria-controls="plugins_options" class="collapsed">
@@ -193,7 +193,7 @@
                             {{ form.adobepdf.label_tag }}
                             {% render_field form.adobepdf class+="form-control" %}
                         </div>
-                        
+
                         {% for error in form.no_adobepdf.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -210,7 +210,7 @@
                             {{ form.shockwave.label_tag }}
                             {% render_field form.shockwave class+="form-control" %}
                         </div>
-                        
+
                         {% for error in form.no_shockwave.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -227,7 +227,7 @@
                             {{ form.javaplugin.label_tag }}
                             {% render_field form.javaplugin class+="form-control" %}
                         </div>
-                        
+
                         {% for error in form.no_javaplugin.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -241,7 +241,7 @@
             </div>
 
             <!-- External services options -->
-            <div class="panel panel-default" id="thug_external_services_options">
+            <div class="panel panel-primary" id="thug_external_services_options">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a data-toggle="collapse" href="#external_services_options" aria-expanded="false" aria-controls="external_services_options" class="collapsed">
@@ -259,7 +259,7 @@
                             {{ form.vtquery }} {{ form.vtquery.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.vtsubmit.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -268,7 +268,7 @@
                             {{ form.vtsubmit }} {{ form.vtsubmit.label }}
                             </label>
                         </div>
-                        
+
                         {% for error in form.no_honeyagent.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -280,9 +280,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Sharing options -->
-            <div class="panel panel-default" id="result_sharing_options">
+            <div class="panel panel-primary" id="result_sharing_options">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a data-toggle="collapse" href="#sharing_options" aria-expanded="false" aria-controls="sharing_options" class="collapsed">
@@ -299,7 +299,7 @@
                             {{ form.sharing_model.label_tag }}
                             {% render_field form.sharing_model class+="form-control" %}
                         </div>
-                        
+
                         {% for error in form.sharing_groups.errors %}
                         <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
                         {% endfor %}
@@ -323,6 +323,7 @@
                 </ul>
             </nav>
         </div>
+    </div>
     </div>
 </form>
 {% endblock %}
@@ -462,6 +463,9 @@ $('body').scrollspy({
 }
 /* show active nested list */
 .bs-docs-sidebar .nav>.active>ul.nav {
-    display: block;           
+    display: block;
+}
+.panel {
+    margin: 15px;
 }
 {% endblock %}
