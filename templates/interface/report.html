@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block title %} Report {% endblock %}
+{% block customheaders %}
+    <link href="/static/css/json.human.css" rel="stylesheet">
+    <link href="/static/css/prettify.css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/js/d3.min.js"></script>
+    <script type="text/javascript" src="/static/js/topojson.min.js"></script>
+
+    <script type="text/javascript" src="/static/js/json.human.js"></script>
+    <script type="text/javascript" src="/static/js/prettify.js"></script>
+    <script type="text/javascript" src="/static/js/real_setTree.js"></script>
+    <script type="text/javascript" src="/static/js/real_setMap.js"></script>
+    <script type="text/javascript" src="/static/js/real_setPanels.js"></script>
+{% endblock %}
+{% block customcss %}
+        table {
+            table-layout: fixed;
+            margin-top: 10px;
+            font-size: 10px;
+        }
+
+        #first > div td:nth-of-type(1){
+            font-weight: bold;
+        }
+
+        td {
+            text-overflow: ellipsis;
+            width: 20px;
+            overflow: hidden;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3.5px;
+        }
+
+        .node text {
+            font: 10px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke-width: 2px;
+        }
+
+        #sidebar {
+            height: 100%;
+            font-size: 10px;
+        }
+
+        #main {
+            height: calc(100% - 80px);
+        }
+
+        .test {
+            margin-bottom: 2px;
+            height: 30px;
+            transition: height 0.3s linear;
+            /* Animation time */
+            -webkit-transition: height 0.3s linear;
+            /* For Safari */
+        }
+
+        .test-in {
+            padding: 8px;
+        }
+
+        .panel-title {
+            font-size: 11px;
+        }
+
+        .panel-body {
+            padding: 8px;
+        }
+
+        .panel {
+            margin-bottom: 2px;
+            overflow-y: auto;
+        }
+
+        .pgroup {
+            margin-bottom: 8px;
+        }
+
+        .actionspecial {
+            margin: 0px;
+            padding: 8px;
+            font-size: 15px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .test:hover {
+            height: 100px;
+        }
+        div.panel div a{
+            cursor: pointer;
+        }
+
+        /*style for map*/
+        .map path{
+            stroke: white;
+            stroke-width: 0.25px;
+            fill: grey;
+        }
+        #wrap .tree,
+        #wrap .map{
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        #wrap .tree{
+            /*display: none;*/
+        }
+        #wrap .map{
+            display: none;
+            margin: 0;
+        }
+        #wrap #map-tree{
+            z-index: 2;
+        }
+        div.tooltip {
+            top: 0;
+            left: 0;
+            background: lightsteelblue;
+            border-radius: 8px;
+            border: 0px;
+            font: 20px sans-serif;
+            padding: 8px 10px;
+            position: absolute;
+        }
+
+{% endblock %}
+{% block content %}
+<div class="container" style="width:100%;height100%;" id="main">
+    <div class="row" style="height:100%;overflow:hidden;">
+        <div class="col-md-4" id="sidebar">
+
+            <div class="panel panel-default test" id="first">
+                <div class="panel-body test-in">
+                    <b>Basic info</b>
+                </div>
+            </div>
+            <div class="panel panel-default test">
+                <div class="panel-body test-in">
+                    <b>Samples</b>
+                </div>
+            </div>
+            <div class="panel panel-default test">
+                <div class="panel-body test-in">
+                    <b>Codes</b>
+                </div>
+            </div>
+            <div class="panel panel-default test">
+                <div class="panel-body test-in">
+                    <b>Plugins</b>
+                </div>
+            </div>
+            <br>
+            <br>
+
+            <div class="panel panel-danger pgroup" style="max-height:110px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel danger</h3>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+
+
+            <div class="panel panel-warning pgroup" style="max-height:110px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel warning</h3>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-8" style="height:95%;">
+            <div class="panel panel-default" style="width:92%;height:100%">
+                <div class="col-md-12" style="height:95%;" id="wrap"></div>
+            </div>
+        </div>
+        <button id="bookmark-toggle" class="btn btn-warning btn-fab {% if bookmarked %} mdi-action-turned-in {% else %} mdi-action-turned-in-not {% endif %}" style="position:absolute;right:1%;bottom:15%;"></button>
+        <button id="map-tree" class="btn btn-info btn-fab mdi-action-swap-horiz" style="position:absolute;right:1%;bottom:5%;"></button>
+    </div>
+</div>
+<!-- Your site ends -->
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" data-dismiss="modal" style="float:right;background:transparent;border:none">&times;</button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block bottomscripts %}
+        var object_id = '{{ task.object_id }}';
+        $(function() {
+            $.material.init();
+            var tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+            $('#map-tree').click(function(){
+                if($('#wrap .tree').css('display')=='none'){
+                    $('#wrap .tree').fadeIn();
+                    $('#wrap .map').fadeOut();
+                }else{
+                    $('#wrap .tree').fadeOut();
+                    $('#wrap .map').fadeIn();
+                }
+            });
+            $.getJSON("/api/v1/analysiscombo/" + object_id + "/?format=json",
+                function(full_analysis) {
+                    window.full_analysis=full_analysis;
+                    setMap(tooltip);
+                    setTree();
+                });
+            $("#bookmark-toggle").click(function(){
+                $.get('/togglebookmark/',{
+                    taskId:{{ task.id }}
+                },function(){
+                    if($("#bookmark-toggle").hasClass('mdi-action-turned-in')){
+                        $("#bookmark-toggle").removeClass('mdi-action-turned-in');
+                        $("#bookmark-toggle").addClass('mdi-action-turned-in-not');
+                    }else{
+                        $("#bookmark-toggle").removeClass('mdi-action-turned-in-not');
+                        $("#bookmark-toggle").addClass('mdi-action-turned-in');
+                    }
+                });
+            });
+        });
+{% endblock %}
