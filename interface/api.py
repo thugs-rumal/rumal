@@ -360,6 +360,8 @@ class ComboResource(MongoDBResource):
 
     class Meta:
         resource_name   = 'analysiscombo'
+        authentication  = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization   = OwnAndSharedAnalysesOnlyNonRelAuthorization()
         object_class    = Document
         collection      = "analysiscombo"
         detail_uri_name = "_id"

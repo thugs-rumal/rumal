@@ -105,7 +105,7 @@ class OwnAndSharedAnalysesOnlyNonRelAuthorization(NonRelAuthorizationAbstract):
 
     def read_detail(self, object_list, bundle):
         return Task.objects.filter(
-                analysis_id__exact=bundle.obj['_id']
+                object_id__exact= object_list['_id'] # hack instead of using bundle.obje['id'] # TOP Priority to Resolve
             ).filter(
                 Q(user__exact = bundle.request.user) |
                 Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
