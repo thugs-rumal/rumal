@@ -27,7 +27,13 @@ def generate_threats(data):
         node['threats'] = []
         exploit_threats_output = exploit_threats(node)
         if exploit_threats_output:
-            node['threats'].extend(exploit_threats_output)
+            node['threats'].extend()
+
+
+        if len(node['threats']):
+            node['threat_path'] = 1
+        else:
+            node['threat_path'] = 0
         # similarly other function calls according to methods for
         # finding threats and use extend and append as required.
     return data
@@ -41,6 +47,10 @@ def generate_warnings(data):
             node['warnings'].append(new_domain_warning_output)
         # similarly other function calls according to methods for
         # finding warnings and use extend and append as required.
+        if len(node['warnings']):
+            node['warning_path'] = 1
+        else:
+            node['warning_path'] = 0
     return data
 
 # Threat Functions
