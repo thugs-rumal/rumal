@@ -137,25 +137,26 @@ class Command(BaseCommand):
         response = r.json()
         #now files for locations
         for x in response["locations"]:
-            download_url = BACKEND_HOST + "/api/v1/location/" + x.sample_id + "/file/"
+            download_url = BACKEND_HOST + "/api/v1/location/" + x['content_id'] + "/file/"
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
-            x.location_id = new_fs_id
+            x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            download_url = BACKEND_HOST + "/api/v1/sample/" + x.sample_id + "/file/"
+            download_url = BACKEND_HOST + "/api/v1/sample/" + x['sample_id'] + "/file/"
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
-            x.sample_id = new_fs_id
+            x['sample_id'] = new_fs_id
         #for vt,andro etc. point sample_id to gridfs id
+        # check for issues in this
         for x in response["virustotal"]:
-            x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
+            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["honeyagent"]:
-            x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
+            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["androguard"]:
-            x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
+            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["peepdf"]:
-            x.sample_id = search_samples_dict_list(x.sample_id,response["samples"])
+            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
         #remove id from all samples
         for x in response["samples"]:
             x.pop("_id")
