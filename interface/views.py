@@ -102,6 +102,23 @@ def report(request, task_id):
     return render(request, 'interface/result.html', context)
 
 @login_required
+def my_scans(request):
+    tasks = Task.objects
+    user_tasks = tasks.filter(user=request.user)
+    public_user_tasks = user_tasks.filter(sharing_model__exact=SHARING_MODEL_PUBLIC)
+    private_user_tasks = user_tasks.filter(sharing_model__exact=SHARING_MODEL_PRIVATE)
+    star_tasks = request.user.star_tasks.all()
+    stats = {
+        'public' : len(public_user_tasks),
+        'private' : len(private_user_tasks),
+        'star' : len(star_tasks)
+    }
+    context = {
+        'stats': stats,
+    }
+    return render(request, 'interface/myscans2.html', context)
+
+@login_required
 def json_tree_graph(request, analysis_id=None):
     # TODO: migrate this view to the APIs? (Not sure if it's easily feasible)
     # TODO: use NetworkX to construct the graph?
