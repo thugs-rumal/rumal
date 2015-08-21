@@ -1,79 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<title>Thug's Rumāl: {% block title %}{% endblock %}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% block customheaders %}{% endblock %}
-<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-<link href="/static/css/bootstrap-select.min.css" rel="stylesheet">
-<link href="/static/css/dataTables.bootstrap.min.css" rel="stylesheet">
-<link href="/static/css/flags32.min.css" rel="stylesheet">
-<style>
-body {
-    margin-top: 20px;
-}
-.footer {
-    margin-top: 45px;
-    padding: 35px 0 36px;
-    border-top: 1px solid #e5e5e5;
-}
-.footer p {
-    margin-bottom: 0;
-    color: #555;
-}
-.mono {
-    font-family: monospace;
-}
-.signature {
-    padding: 6px;
-    margin-bottom: 3px;
-}
-img.fade {
-    opacity:0.4;
-    filter:alpha(opacity=40);
-}
-img.fade:hover {
-    opacity:1.0;
-    filter:alpha(opacity=100);
-}
-.section-title {
-    border-bottom: 1px solid #eee;
-    margin-bottom: 15px;
-    margin-top: 20px;
-    padding-bottom: 3px;
-}
-{% block customcss %}{% endblock %}
-</style>
+
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2//static/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- Include roboto.css to use the Roboto web font, material.css to include the theme and ripples.css to style the ripple effect -->
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link href="/static/css/roboto.min.css" rel="stylesheet">
+    <link href="/static/css/material.min.css" rel="stylesheet">
+    <link href="/static/css/ripples.min.css" rel="stylesheet">
+    {% block customheaders %}{% endblock %}
+    <style type="text/css">
+        html,
+        body {
+            height: 100%
+        }
+        #bigwrap {
+            height: 100%;
+            width: 100%;
+        }
+
+        @media (max-width: 767px) {
+            body {
+                padding-right: 0px;
+                padding-left: 0px;
+            }
+        }
+        #searchform {
+            width: 370px;
+        }
+
+        #searchfield {
+            width: 350px;
+        }
+
+        {% block customcss %}{% endblock %}
+    </style>
 </head>
+
 <body>
-    <div class="container-fluid">
-        {% block navbar %}{% endblock %}
-        <br>
-        {% block breadcrumb %}{% endblock %}
-        {% block content %}{% endblock %}
 
-        <footer class="footer">
-            <div class="row">
-                <div class="col-md-1 col-md-offset-11"><a href="#">Back to top</a></div>
+    <!-- BIG WRAP -->
+    <div id="bigwrap">
+
+        <div class="navbar navbar-default" id="topnav">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <i class="mdi-action-find-replace mdi-material-black" style="font-size: 36px;padding-top:8px;"></i>
+                <form class="navbar-form navbar-left" id="searchform">
+                    <input class="form-control col-lg-8" placeholder="Rumal Advanced Search" type="text" id="searchfield">
+                </form>
             </div>
-        </footer>
-    </div>
-    
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/jquery-ui.min.js"></script>
-    <script src="/static/js/moment.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="/static/js/bootstrap-select.min.js"></script>
-    <script src="/static/js/jquery.dataTables.min.js"></script>
-    <script src="/static/js/dataTables.bootstrap.min.js"></script>
-    <script src="/static/js/Chart.min.js"></script>
-    <script src="/static/js/d3.min.js" charset="utf-8"></script>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="javascript:void(0)">Search Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
 
+
+                    <li class="link"><a href="javascript:void(0)">About</a></li>
+                    <li class="link"><a href="javascript:void(0)">New Scan</a></li>
+                    <li class="dropdown">
+                        <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0)">My Scans</a></li>
+                            <li><a href="javascript:void(0)">Profile</a></li>
+                            <li><a href="javascript:void(0)">Settings</a></li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:void(0)">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/ripples.min.js"></script>
+    <script src="/static/js/material.min.js"></script>
     <script>
-    {% block bottomscripts %}{% endblock %}
+        $(document).ready(function() {
+            // This command is used to initialize some elements and make them work properly
+            $.material.init();
+        });
     </script>
+    <script>
+        {% block bottomscripts %}{% endblock %}
+    </script>
+
 </body>
+
 </html>
