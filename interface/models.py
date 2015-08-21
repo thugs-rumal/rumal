@@ -77,7 +77,7 @@ class Task(models.Model):
     user            = models.ForeignKey(User, null=True, blank=True, default=None)
     sharing_model   = models.IntegerField(null=False, blank=False, default=SHARING_MODEL_PUBLIC, choices=SHARING_MODEL_CHOICES)
     sharing_groups  = models.ManyToManyField(Group, null=True, blank=True, default=None)
-
+    star            = models.ManyToManyField(User, null=True, blank=True, default=None, related_name='star_tasks')
     # Metadata
     submitted_on    = models.DateTimeField("Submitted on", null=False, blank=True, default=add_now)
     started_on      = models.DateTimeField("Started on", null=True, blank=True, default=None)

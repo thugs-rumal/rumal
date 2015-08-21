@@ -21,7 +21,7 @@
 #
 
 from tastypie import fields
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
 from tastypie.authorization import DjangoAuthorization, ReadOnlyAuthorization
 from django.contrib.auth.models import User, Group
@@ -33,6 +33,7 @@ from interface.highlights import generate_warnings, generate_threats
 from interface.utils import make_nested_tree
 
 from django.http import HttpRequest
+
 """
 Resources for SQLite models
 """
@@ -56,6 +57,9 @@ class UserResource(ModelResource):
         allowed_methods = ['get']
         fields          = ['id', 'username']
         ordering        = ['id', 'username']
+        filtering = {
+          'username': ALL,
+        }
 
 class ProxyResource(ModelResource):
     class Meta:
@@ -66,16 +70,39 @@ class ProxyResource(ModelResource):
         allowed_methods = ['get']
         include_resource_uri = False
         excludes = ["id",]
+
 class TaskResource(ModelResource):
     proxy           = fields.ForeignKey(ProxyResource, 'proxy', full=True, null=True)
     user            = fields.ForeignKey(UserResource, 'user', full=True)
     sharing_groups  = fields.ToManyField(GroupResource, 'sharing_groups', full=True, null=True)
+    star            = fields.ToManyField(UserResource, 'star', full=True, null=True)
 
     def renderDetail(self,pkval):
         request = HttpRequest()
         request.GET = {'format': 'json'}
         resp =  self.get_detail(request, pk=pkval)
         return resp.content
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        accept extra query in request
+        """
+        my_scan = request.GET.get('myscans', None)
+        starred = request.GET.get('starred', None)
+
+        semi_filtered = super(TaskResource, self).apply_filters(request, applicable_filters)
+
+        if my_scan:
+            filtered_objects = semi_filtered.filter(user__username__exact=request.user.username)
+            return filtered_objects
+
+        elif starred:
+            filtered_objects = semi_filtered.filter(star=request.user)
+            return filtered_objects
+
+        else:
+            return semi_filtered
+
 
     class Meta:
         queryset        = Task.objects.all()
@@ -98,6 +125,10 @@ class TaskResource(ModelResource):
             'useragent',
             'proxy',
         ]
+        filtering = {
+          'user': ALL_WITH_RELATIONS,
+          'star': ALL_WITH_RELATIONS,
+        }
 
 """
 Resources for MongoDB models
