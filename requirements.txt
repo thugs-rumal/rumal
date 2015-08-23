@@ -2,7 +2,10 @@ python-dateutil
 django==1.7.6
 django-tastypie
 django-widget-tweaks
+geoip2
 hexdump
-pymongo
+pymongo==3.0.3
 python-magic
+pythonwhois
 pytz
+requests
