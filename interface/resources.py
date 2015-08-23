@@ -20,7 +20,7 @@
 #           The Honeynet Project
 #
 
-from pymongo import Connection
+from pymongo import MongoClient
 from bson import ObjectId
 
 from tastypie.bundle import Bundle
@@ -34,7 +34,7 @@ from django.http import QueryDict
 # TODO: support more QUERY_TERMS such as 'text', 'near', 'all', 'elemMatch', 'size', etc.
 QUERY_TERMS = ['exact', 'ne', 'gt', 'gte', 'lt', 'lte', 'in', 'nin', 'regex', 'iregex']
 
-db = Connection().thug
+db = MongoClient().thug
 
 class MongoDBResource(Resource):
     """

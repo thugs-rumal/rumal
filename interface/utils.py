@@ -21,11 +21,11 @@
 #
 
 from DOM.Personality import Personality
-from pymongo import Connection
+from pymongo import MongoClient
 from bson import ObjectId
 from urlparse import urlparse
 
-db = Connection().thug
+db = MongoClient().thug
 
 def get_personalities():
     return [('', 'Default')] + \

@@ -22,13 +22,13 @@
 
 from django.db.models import Q
 from tastypie.authorization import ReadOnlyAuthorization
-from pymongo import Connection
+from pymongo import MongoClient
 from bson import ObjectId
 
 from interface.models import *
 
 
-db = Connection().thug
+db = MongoClient().thug
 
 """
 Custom authorization classes.

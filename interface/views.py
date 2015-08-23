@@ -29,7 +29,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from gridfs import GridFS
-from pymongo import Connection
+from pymongo import MongoClient
 from bson import ObjectId
 
 from interface.forms import *
@@ -176,7 +176,7 @@ def content(request, content_id=None):
         except:
             raise Http404("Content not found")
 
-    dbfs    = Connection().thugfs
+    dbfs    = MongoClient().thugfs
     fs      = GridFS(dbfs)
 
     try:
@@ -213,7 +213,7 @@ def raw_content(request, content_id=None):
         except:
             raise Http404("Content not found")
 
-    dbfs    = Connection().thugfs
+    dbfs    = MongoClient().thugfs
     fs      = GridFS(dbfs)
 
     fo = fs.get(content_id)
