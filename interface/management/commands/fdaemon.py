@@ -147,6 +147,12 @@ class Command(BaseCommand):
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
             x['sample_id'] = new_fs_id
+        # same for pcaps
+        for x in response["pcaps"]:
+            download_url = BACKEND_HOST + "/api/v1/pcap/" + x['pcap_id'] + "/file/"
+            new_fs_id = self.fetch_save_file(download_url)
+            #now change id in repsonse
+            x['pcap_id'] = new_fs_id
         #for vt,andro etc. point sample_id to gridfs id
         # check for issues in this
         for x in response["virustotal"]:
@@ -157,8 +163,10 @@ class Command(BaseCommand):
             x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["peepdf"]:
             x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
-        #remove id from all samples
+        #remove id from all samples and pcaps
         for x in response["samples"]:
+            x.pop("_id")
+        for x in response["pcaps"]:
             x.pop("_id")
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
