@@ -1,0 +1,4 @@
+[api]
+url = http://<host:port>/api/v1/
+key = <your_api_key_here>
+username = <your_username_here>

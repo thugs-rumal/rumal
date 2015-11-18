@@ -73,16 +73,15 @@ class IDSPlugin(PluginBase):
         }
 
     def submit(self, pcap):
-        # FIXME: self.options
-        api_url = self.options.get("api_url", None)
-        api_key = self.options.get("api_key", None)
-        username = self.options.get("username", None)
+        try:
+            api_url = self.config_dict["api_url"]
+            api_key = self.config_dict["api_key"]
+            username = self.config_dict["username"]
+        except KeyError:
+            raise RuntimeError("IDS module not properly configured, skip")
 
         log.debug("Will run with API user: {}, key: {}, URL: {}".format(
             username, api_key, api_url))
-
-        if not api_url or not api_key or not username:
-            raise RuntimeError("IDS module not properly configured, skip")
 
         self.headers = {
             'Authorization': 'ApiKey {}:{}'.format(username, api_key),
