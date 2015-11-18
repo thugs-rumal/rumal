@@ -20,3 +20,6 @@ rumal/secret_key.py
 
 # Ignore logs
 logs/*
+
+# Ignore editor files
+.ropeproject
