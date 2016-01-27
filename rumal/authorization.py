@@ -52,7 +52,10 @@ class OwnAndSharedObjectsOnlyRelAuthorization(ReadOnlyAuthorization):
         if bundle.obj.sharing_model == SHARING_MODEL_PUBLIC:
             return True
         # Is the requested object owned by the user?
-        if bundle.obj.user == bundle.request.user:
+        request_user = getattr(bundle.request, 'user', None)
+        if not request_user:
+            return False
+        if bundle.obj.user == request_user:
             return True
         # Is the requesting user in one of the sharing groups for the requested object?
         if bundle.obj.sharing_model == SHARING_MODEL_GROUPS:
