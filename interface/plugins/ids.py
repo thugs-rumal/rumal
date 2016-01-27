@@ -176,5 +176,4 @@ class IDSPlugin(PluginBase):
             elapsed += SLEEP_TIME
 
         # 3. Call save data
-        print "now trying to save_data", self.data
         self.save_data()
