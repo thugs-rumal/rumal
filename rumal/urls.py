@@ -20,8 +20,9 @@
 #           The Honeynet Project
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import login, logout_then_login
 from tastypie.api import Api
 from interface.api import *
 
@@ -42,11 +43,11 @@ v1_api.register(ExploitResource())
 v1_api.register(GraphResource())
 v1_api.register(ComboResource())
 
-urlpatterns = patterns('',
+urlpatterns = (
     # Admin views
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
-    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
+    url(r'^login/$', login, name="login"),
+    url(r'^logout/$', logout_then_login, name="logout"),
 
     # APIs
     url(r'^api/', include(v1_api.urls)),

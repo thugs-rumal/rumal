@@ -61,7 +61,7 @@ class Proxy(models.Model):
     # User and sharing info
     user            = models.ForeignKey(User, null=True, blank=True, default=None)
     sharing_model   = models.IntegerField(null=False, blank=False, default=SHARING_MODEL_PUBLIC, choices=SHARING_MODEL_CHOICES)
-    sharing_groups  = models.ManyToManyField(Group, null=True, blank=True, default=None)
+    sharing_groups  = models.ManyToManyField(Group, blank=True, default=None)
 
     # Proxy info
     scheme          = models.CharField('Scheme', null=False, blank=False, max_length=10, choices=SCHEME_CHOICES)
@@ -76,8 +76,8 @@ class Task(models.Model):
     # User and sharing info
     user            = models.ForeignKey(User, null=True, blank=True, default=None)
     sharing_model   = models.IntegerField(null=False, blank=False, default=SHARING_MODEL_PUBLIC, choices=SHARING_MODEL_CHOICES)
-    sharing_groups  = models.ManyToManyField(Group, null=True, blank=True, default=None)
-    star            = models.ManyToManyField(User, null=True, blank=True, default=None, related_name='star_tasks')
+    sharing_groups  = models.ManyToManyField(Group, blank=True, default=None)
+    star            = models.ManyToManyField(User, blank=True, default=None, related_name='star_tasks')
     # Metadata
     submitted_on    = models.DateTimeField("Submitted on", null=False, blank=True, default=add_now)
     started_on      = models.DateTimeField("Started on", null=True, blank=True, default=None)

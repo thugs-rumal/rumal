@@ -41,9 +41,9 @@ sys.path.append(os.path.join(BASE_DIR, 'thug', 'src'))
 # Unique secret key generator.
 # Secret key will be placed in secret_key.py file.
 try:
-    from secret_key import *
+    from secret_key import SECRET_KEY
 except ImportError:
-    SETTINGS_DIR=os.path.abspath(os.path.dirname(__file__))
+    SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
     # Using the same generation schema of Django startproject.
     from django.utils.crypto import get_random_string
     key = get_random_string(50, "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)")
@@ -53,21 +53,33 @@ except ImportError:
         key_file.write("SECRET_KEY = \"{0}\"".format(key))
 
     # Reload key.
-    from secret_key import *
+    from secret_key import SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
-
-# Application definition
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.messages.context_processors.messages',
-    'django.contrib.auth.context_processors.auth',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'debug': True,
+        },
+    }
+]
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -128,9 +140,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "templates", "static"),
 )
-
-# Templates
-TEMPLATE_DIRS = ('templates',)
 
 # Login and logout
 LOGIN_URL = '/login/'

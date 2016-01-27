@@ -20,17 +20,18 @@
 #           The Honeynet Project
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
+from interface import views
 
-urlpatterns = patterns('',
-    url(r'^report/(?:(?P<task_id>\d+)/)?$', 'interface.views.report', name='report'),
-    url(r'^reports/$', 'interface.views.reports', name='reports'),
-    url(r'^myscans/$', 'interface.views.my_scans', name='myscans'),
-    url(r'^togglebookmark/$', 'interface.views.star_view', name='star'),
+urlpatterns = (
+    url(r'^report/(?:(?P<task_id>\d+)/)?$', views.report, name='report'),
+    url(r'^reports/$', views.reports, name='reports'),
+    url(r'^myscans/$', views.my_scans, name='myscans'),
+    url(r'^togglebookmark/$', views.star_view, name='star'),
 
-    url(r'^json_tree_graph/(?:(?P<analysis_id>[\w]+)/)?$', 'interface.views.json_tree_graph', name='json_tree_graph'),
-    url(r'^content/(?:(?P<content_id>[\w]+)/)?$', 'interface.views.content', name='content'),
-    url(r'^raw_content/(?:(?P<content_id>[\w]+)/)?$', 'interface.views.raw_content', name='raw_content'),
+    url(r'^json_tree_graph/(?:(?P<analysis_id>[\w]+)/)?$', views.json_tree_graph, name='json_tree_graph'),
+    url(r'^content/(?:(?P<content_id>[\w]+)/)?$', views.content, name='content'),
+    url(r'^raw_content/(?:(?P<content_id>[\w]+)/)?$', views.raw_content, name='raw_content'),
 
-    url(r'^$', 'interface.views.new_task', name='new_task'),
+    url(r'^$', views.new_task, name='new_task'),
 )
