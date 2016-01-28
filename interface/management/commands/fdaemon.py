@@ -90,14 +90,15 @@ class Command(BaseCommand):
         task.status = STATUS_COMPLETED
         task.save()
 
-    def post_new_task(self,task):
+    def post_new_task(self, task):
         t = TaskResource()
-        temp = loads(t.renderDetail(task.id))
+        temp1 = loads(t.renderDetail(task.id))
+        temp = temp1['fields']
         temp.pop("user")
         temp.pop("sharing_model")
         temp.pop("plugin_status")
         temp.pop("sharing_groups")
-        temp["frontend_id"] = temp.pop("id")
+        temp["frontend_id"] = temp1.pop("pk")
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
@@ -114,24 +115,24 @@ class Command(BaseCommand):
         elif r.status_code == 401:
             logger.debug("Got 401 - not authorized to acess resource.")
 
-    def fetch_save_file(url):
+    def fetch_save_file(self, url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Fetching file from {}".format(url))
         try:
-            r = requests.get(url, headers = retrive_headers)
+            r = requests.get(url, headers = file_headers)
         except requests.exceptions.ConnectionError:
             logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
             return None
         downloaded_file = r.content
         return str(fs.put(downloaded_file))
 
-    def search_samples_dict_list(search_id,sample_dict):
+    def search_samples_dict_list(self, search_id,sample_dict):
         "returns new gridfs sample_id"
         for x in sample_dict:
             if x["_id"] == search_id:
                 return x["sample_id"]
 
-    def retrive_save_document(self,analysis_id):
+    def retrive_save_document(self, analysis_id):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Fetching resource from {}".format(combo_resource_url))
@@ -162,7 +163,7 @@ class Command(BaseCommand):
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
             x['pcap_id'] = new_fs_id
-        #for vt,andro etc. point sample_id to gridfs id
+        #for vt,andro etc. eoint sample_id to gridfs id
         # check for issues in this
         for x in response["virustotal"]:
             x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
@@ -180,7 +181,7 @@ class Command(BaseCommand):
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
-    def get_backend_status(self,pending_id_list):
+    def get_backend_status(self, pending_id_list):
     	if not pending_id_list:
     	    return []
         semicolon_seperated = ";".join(pending_id_list)
@@ -196,7 +197,8 @@ class Command(BaseCommand):
                 time.sleep(SLEEP_TIME_ERROR)
 
         response = r.json()
-        finished_on_backend = [x for x in response["objects"] if x["status"] == 3]
+
+        finished_on_backend = [x for x in response["objects"] if x["status"] == STATUS_COMPLETED]
         return finished_on_backend
 
     def handle(self, *args, **options):
