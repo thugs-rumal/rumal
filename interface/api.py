@@ -25,6 +25,7 @@ from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
 from tastypie.authorization import DjangoAuthorization, ReadOnlyAuthorization
 from django.contrib.auth.models import User, Group
+from django.core import serializers
 from rumal.authorization import *
 
 from interface.models import *
@@ -78,10 +79,7 @@ class TaskResource(ModelResource):
     star            = fields.ToManyField(UserResource, 'star', full=True, null=True)
 
     def renderDetail(self,pkval):
-        request = HttpRequest()
-        request.GET = {'format': 'json'}
-        resp =  self.get_detail(request, pk=pkval)
-        return resp.content
+        return loads(serializers.serialize('json', [Task.objects.get(pk=pkval),]))[0]
 
     def apply_filters(self, request, applicable_filters):
         """

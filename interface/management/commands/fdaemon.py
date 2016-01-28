@@ -47,8 +47,8 @@ BACKEND_HOST = "http://172.17.42.1:8000"
 API_KEY = "testkey"
 API_USER = "testuser"
 
-
-TASK_POST_URL = BACKEND_HOST + "/api/v1/task/"
+SLEEP_TIME_ERROR = 5
+TASK_POST_URL = os.path.join(BACKEND_HOST, "api/v1/task/")
 
 
 # mongodb connection settings
@@ -100,10 +100,15 @@ class Command(BaseCommand):
         temp["frontend_id"] = temp.pop("id")
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
-        try:
-            r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
-        except requests.exceptions.ConnectionError:
-            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+
+        r = False
+        while not r:
+            try:
+                r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
+            except requests.exceptions.ConnectionError:
+                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
+                time.sleep(SLEEP_TIME_ERROR)
+
         if r.status_code == 201:
             self.mark_as_running(task)
         elif r.status_code == 401:
@@ -130,10 +135,14 @@ class Command(BaseCommand):
         combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Fetching resource from {}".format(combo_resource_url))
-        try:
-            r = requests.get(combo_resource_url, headers = retrive_headers)
-        except requests.exceptions.ConnectionError:
-            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+
+        r = False
+        while not r:
+            try:
+                r = requests.get(combo_resource_url, headers = retrive_headers)
+            except requests.exceptions.ConnectionError:
+                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
+                time.sleep(SLEEP_TIME_ERROR)
         response = r.json()
         #now files for locations
         for x in response["locations"]:
@@ -177,10 +186,15 @@ class Command(BaseCommand):
         semicolon_seperated = ";".join(pending_id_list)
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_seperated)
-        try:
-            r = requests.get(status_url, headers=status_headers)
-        except requests.exceptions.ConnectionError:
-            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
+
+        r = False
+        while not r:
+            try:
+                r = requests.get(status_url, headers=status_headers)
+            except requests.exceptions.ConnectionError:
+                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
+                time.sleep(SLEEP_TIME_ERROR)
+
         response = r.json()
         finished_on_backend = [x for x in response["objects"] if x["status"] == 3]
         return finished_on_backend
