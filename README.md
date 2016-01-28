@@ -17,7 +17,7 @@ To clone both Rumāl and Thug at once, you can run the following command:
 
     $ git clone --recursive git@github.com:pdelsante/rumal.git
 
-**Please consider using VirtualEnv from now on, especially if you already have other projects running on Django versions other than 1.7**. Installing VirtualEnv is extremely easy:
+**Please consider using VirtualEnv from now on, especially if you already have other projects running on Django versions other than 1.9**. Installing VirtualEnv is extremely easy:
 
     $ sudo pip install virtualenv
 
@@ -32,7 +32,7 @@ When you're done with Rumāl, just run `deactivate` to exit from `venv`. Please 
 
 Before any further setup on Rumāl's part, you will need to set up Thug first. Please refer to [Thug's own documentation](http://buffer.github.io/thug/). **Please make sure you fully configure MongoDB and let Thug's MongoDB logger enabled.**
 
-Now, you can install Rumāl's own dependencies by running the following command from Rumāl's root directory. **WARNING: Rumāl requires specific versions of some libraries such as Django 1.7. If you've got other projects running on the same box, please consider using VirtualEnv (see above) if you didn't already!**
+Now, you can install Rumāl's own dependencies by running the following command from Rumāl's root directory. **WARNING: Rumāl requires specific versions of some libraries such as Django 1.9. If you've got other projects running on the same box, please consider using VirtualEnv (see above) if you didn't already!**
 
     $ pip install -r requirements.txt
 
