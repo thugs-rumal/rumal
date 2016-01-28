@@ -20,6 +20,7 @@
 #           The Honeynet Project
 #
 
+from json import dumps, loads
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
@@ -79,7 +80,14 @@ class TaskResource(ModelResource):
     star            = fields.ToManyField(UserResource, 'star', full=True, null=True)
 
     def renderDetail(self,pkval):
-        return loads(serializers.serialize('json', [Task.objects.get(pk=pkval),]))[0]
+        return dumps(
+            loads(
+                serializers.serialize(
+                    'json',
+                    [Task.objects.get(pk=pkval),]
+                )
+            )[0]
+        )
 
     def apply_filters(self, request, applicable_filters):
         """
