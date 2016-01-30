@@ -23,3 +23,6 @@ logs/*
 
 # Ignore editor files
 .ropeproject
+
+# Ignore real configuration files
+conf/backend.conf

@@ -19,6 +19,7 @@
 # Author:   Tarun Kumar <reach.tarun.here@gmail.com>
 # NOTE: THIS IS AN INITIAL RELEASE AND IS LIKELY TO BE UNSTABLE
 
+import ConfigParser
 import logging
 import os
 import time
@@ -42,10 +43,11 @@ STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
-#Connection settings to be done manually
-BACKEND_HOST = "http://172.17.42.1:8000"
-API_KEY = "testkey"
-API_USER = "testuser"
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(settings.BASE_DIR, "conf", "backend.conf"))
+BACKEND_HOST = config.get('backend', 'host', 'http://localhost:8080')
+API_KEY = config.get('backend', 'api_key', 'testkey')
+API_USER = config.get('backend', 'api_user', 'testuser')
 
 SLEEP_TIME_ERROR = 5
 TASK_POST_URL = os.path.join(BACKEND_HOST, "api/v1/task/")
