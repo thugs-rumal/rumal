@@ -41,6 +41,23 @@ Now you can setup the database (which, for now, uses SQLite as the backend) and 
     $ python manage.py migrate
     $ python manage.py createsuperuser
 
+### Basic configuration
+
+Before running Rumāl's front-end, you will need to let it know how to reach the back-end's APIs. You will need to configure the back-end by following the instructions on its own repo, that you will find here: https://github.com/thugs-rumal/rumal_back.
+
+Once the back-end is ready, you will need to configure the front-end by creating a new configuration file by running (from the front-end's root):
+
+    $ cp conf/backend.conf.example conf/backend.conf
+
+This file will contain the following values:
+
+    [backend]
+    host = "http://localhost:8080"
+    api_key = "testkey"
+    api_user = "testuser"
+
+Please change them according on how you configured the back-end.
+
 ### Running Rumal's front-end
 
 The front-end module is composed of three separate daemons: `fdaemon`, `enrich` and the web server.
@@ -61,10 +78,6 @@ Or, if you want your server to be reachable from the external network:
     $ python manage.py runserver 0.0.0.0:8000
 
 Now you can connect to the GUI by pointing your browser to http://127.0.0.1:8000/ (or to whatever IP/port you chose).
-
-### The backend daemon
-
-The backend daemon has its own separate repository, you can find it here: https://github.com/thugs-rumal/rumal_back. Please refer to that repo's Readme.md to install and configure it.
 
 ## Contributing
 
