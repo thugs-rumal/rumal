@@ -50,20 +50,27 @@ class PluginBase(object):
         """Adds data to object and calls self.config and self.run"""
         self.data = data
         self.get_config()
+        if not self.config_dict['enabled']:
+            return False
+
         return self.run()
 
     def get_config(self):
         """Gets config file data and stores it under self.config of object instance"""
         parser = SafeConfigParser()
+        self.config_dict = {}
         plugins_conf_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'conf', 'plugins'))
-        parser.read(os.path.join(plugins_conf_dir, '{}.conf'.format(self.__class__.__name__)))
-        config_dict = {}
-        for section_name in parser.sections():
-            section_content = {}
-            for name, value in parser.items(section_name):
-                section_content[name] = value
-            config_dict[section_name] = section_content
-        self.config_dict = config_dict
+        conf_path = os.path.join(plugins_conf_dir, '{}.conf'.format(self.__class__.__name__))
+        if os.path.isfile(conf_path):
+            self.config_dict['enabled'] = True
+            parser.read(conf_path)
+            for section_name in parser.sections():
+                section_content = {}
+                for name, value in parser.items(section_name):
+                    section_content[name] = value
+                self.config_dict[section_name] = section_content
+        else:
+            self.config_dict['enabled'] = False
 
     def save_data(self):
         """Add to plugins list and return modified data."""
