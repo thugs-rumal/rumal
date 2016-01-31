@@ -50,7 +50,7 @@ API_KEY = config.get('backend', 'api_key', 'testkey')
 API_USER = config.get('backend', 'api_user', 'testuser')
 
 SLEEP_TIME_ERROR = 5
-TASK_POST_URL = os.path.join(BACKEND_HOST, "api/v1/task/")
+TASK_POST_URL = os.path.join(BACKEND_HOST, "/api/v1/task/")
 
 
 # mongodb connection settings
@@ -135,7 +135,7 @@ class Command(BaseCommand):
                 return x["sample_id"]
 
     def retrive_save_document(self, analysis_id):
-        combo_resource_url = BACKEND_HOST + "/api/v1/analysiscombo/{}/?format=json".format(analysis_id)
+        combo_resource_url = os.path.join(BACKEND_HOST, "/api/v1/analysiscombo/{}/?format=json".format(analysis_id))
         retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Fetching resource from {}".format(combo_resource_url))
 
@@ -150,13 +150,13 @@ class Command(BaseCommand):
         logger.debug(response)
         #now files for locations
         for x in response["locations"]:
-            download_url = BACKEND_HOST + "/api/v1/location/" + x['content_id'] + "/file/"
+            download_url = os.path.join(BACKEND_HOST, "/api/v1/location/", x['content_id'], "/file/")
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
             x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            download_url = BACKEND_HOST + "/api/v1/sample/" + x['sample_id'] + "/file/"
+            download_url = os.path.join(BACKEND_HOST, "/api/v1/sample/", x['sample_id'], "/file/")
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
             x['sample_id'] = new_fs_id
@@ -164,7 +164,7 @@ class Command(BaseCommand):
         for x in response["pcaps"]:
             if x['content_id'] is None:
                 continue
-            download_url = BACKEND_HOST + "/api/v1/pcap/" + x['content_id'] + "/file/"
+            download_url = os.path.join(BACKEND_HOST, "/api/v1/pcap/", x['content_id'], "/file/")
             new_fs_id = self.fetch_save_file(download_url)
             #now change id in repsonse
             x['content_id'] = new_fs_id
@@ -189,7 +189,7 @@ class Command(BaseCommand):
     	    return []
         semicolon_seperated = ";".join(pending_id_list)
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        status_url = BACKEND_HOST + "/api/v1/status/set/{}/?format=json".format(semicolon_seperated)
+        status_url = os.path.join(BACKEND_HOST, "/api/v1/status/set/{}/?format=json".format(semicolon_seperated))
 
         r = False
         while not r:
