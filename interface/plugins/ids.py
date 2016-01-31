@@ -32,6 +32,8 @@ try:
 except ImportError:
     import json
 
+from posixpath import join as urljoin
+
 sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.path.pardir)))
 
@@ -103,7 +105,7 @@ class IDSPlugin(PluginBase):
             try:
                 log.debug("Trying to POST pcap")
                 response = requests.post(
-                    os.path.join(api_url, 'task/'),
+                    urljoin(api_url, 'task/'),
                     data=json.dumps(payload),
                     headers=self.headers
                 )
