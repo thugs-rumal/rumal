@@ -15,7 +15,7 @@ Rumāl needs to make sure you are using a supported Thug version, to avoid any i
 
 To clone both Rumāl and Thug at once, you can run the following command:
 
-    $ git clone --recursive git@github.com:pdelsante/rumal.git
+    $ git clone --recursive git@github.com:thugs-rumal/rumal.git
 
 **Please consider using VirtualEnv from now on, especially if you already have other projects running on Django versions other than 1.9**. Installing VirtualEnv is extremely easy:
 
@@ -41,7 +41,16 @@ Now you can setup the database (which, for now, uses SQLite as the backend) and 
     $ python manage.py migrate
     $ python manage.py createsuperuser
 
-### The web server
+### Running Rumal's front-end
+
+The front-end module is composed of three separate daemons: `fdaemon`, `enrich` and the web server.
+
+Both `fdaemon` and `enrich` were both developed as management commands, so you can run them by using:
+
+    $ python manage.py fdaemon > /dev/null 2>&1 &
+    $ python manage.py enrich > /dev/null 2>&1 &
+
+Of course, redirecting the output to a log file or, better yet, using separate consoles and letting them run without detaching will give you a lot more info about what's happening.
 
 Running the web server is as simple as doing:
 
@@ -55,36 +64,12 @@ Now you can connect to the GUI by pointing your browser to http://127.0.0.1:8000
 
 ### The backend daemon
 
-The backend daemon still has to be implemented from scratch, so there isn't much to do about it for now.
-
-### Importing tasks from your existing MongoDB
-
-If you have any existing analyses in your MongoDB instance (which is normal if you previously ran another Thug instance on the same machine you're working on), you can import them into Rumāl by running:
-
-
-    $ cd test_utils
-    $ ./import_existing_analyses.py
-
-
-This should make things a bit easier if you're going to test the web GUI or work on its code.
+The backend daemon has its own separate repository, you can find it here: https://github.com/thugs-rumal/rumal_back. Please refer to that repo's Readme.md to install and configure it.
 
 ## Contributing
 
 ### Random thoughts
 
-#### Web GUI:
-
 * The **server-side** part of the GUI should be as lightweight as possible. We should try keeping the overall number of Django views low and to work on extensive APIs.
 * Rendering should be performed at **client-side**, trying to avoid full page refreshes in favor of API calls via JQuery and subsequent DOM modifications.
 * Let's think of Rumāl as a sort of **social network**. Elements (analyses, results, metadata, configurations) should be easily shared with other users/groups or even made public. Look at the `user` (owner), `sharing_model` and `sharing_groups` fields of `Task` and `Proxy` in `interface/models.py` to get an idea of what I mean.
-
-#### Backend Daemon:
-
-* **Very important**: Thug has a peculiar way of using python's `logging` module to create a sort of global variable that is maintained by the interpreter. Almost everything in Thug is added to the `log` instance so that it can be accessed from any point. This will most probably cause problems when trying to run multiple Thug instances at once (e.g. using threads or parallel processes).
-* The daemon's main process should simply:
-    * `from ThugAPI import ThugAPI`
-    * get Thug's almighty logger by running a `log = logging.getLogger("Thug")`
-    * instantiate the `ThugAPI` object with the appropriate arguments (taken from the `Task` model)
-    * run the analysis
-    * retrieve the MongoDB's `ObjectID` value from the logger by doing accessing `log.ThugLogging.modules['mongodb'].analysis_id`
-    * save the ObjectID value in the `Task` object.
