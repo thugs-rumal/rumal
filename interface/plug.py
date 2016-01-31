@@ -55,8 +55,8 @@ class PluginBase(object):
     def get_config(self):
         """Gets config file data and stores it under self.config of object instance"""
         parser = SafeConfigParser()
-        plugin_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'interface/plugins'))
-        parser.read(plugin_dir+ '/{}-config'.format(self.__class__.__name__))
+        plugins_conf_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'conf', 'plugins'))
+        parser.read(os.path.join(plugins_conf_dir, '{}.conf'.format(self.__class__.__name__)))
         config_dict = {}
         for section_name in parser.sections():
             section_content = {}
@@ -77,7 +77,7 @@ class PluginBase(object):
         """Check if all the dependencies are met."""
         for x in self.dependencies:
             if x not in self.data["Plugins"]:
-                raise UnmetDependenyError, UnmetDependenyError.value % x
+                raise UnmetDependencyError(x)
 
     @abc.abstractmethod
     def run(self):
@@ -93,7 +93,7 @@ class PluginBase(object):
 
 def find_plugins():
     '''find all files in the plugin directory and imports them'''
-    plugin_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'interface/plugins'))
+    plugin_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'interface', 'plugins'))
     plugin_files = [x[:-3] for x in os.listdir(plugin_dir) if x.endswith(".py") and x != "__init__.py"]
     sys.path.insert(0, plugin_dir)
     for plugin in plugin_files:
@@ -115,5 +115,3 @@ def init_plugins():
     '''
     find_plugins()
     return register_plugins()
-
-

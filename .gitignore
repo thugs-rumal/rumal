@@ -25,4 +25,4 @@ logs/*
 .ropeproject
 
 # Ignore real configuration files
-conf/backend.conf
+conf/**/*.conf
