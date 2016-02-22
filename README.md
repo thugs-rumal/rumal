@@ -11,11 +11,9 @@ While it is perfectly possible to use it as a simple web GUI for Thug on your ow
 
 ### Install
 
-Rumāl needs to make sure you are using a supported Thug version, to avoid any incompatibilities in arguments and behaviours. To do so, Thug was included as a submodule.
+To get Rumāl's source code, you can run the following command:
 
-To clone both Rumāl and Thug at once, you can run the following command:
-
-    $ git clone --recursive git@github.com:thugs-rumal/rumal.git
+    $ git clone git@github.com:thugs-rumal/rumal.git
 
 **Please consider using VirtualEnv from now on, especially if you already have other projects running on Django versions other than 1.9**. Installing VirtualEnv is extremely easy:
 
@@ -30,9 +28,7 @@ Actually, you only need sudo if you're installing `virtualenv` globally (which I
 That's all. The first command will create a folder named `venv`, with a copy of the Python executable, pip and some other tools; the second command will activate the virtual environment for you. From now on, every time you run `pip install`, the requested modules will be installed locally, without touching your global Python environment.
 When you're done with Rumāl, just run `deactivate` to exit from `venv`. Please also consider using [Autoenv](https://github.com/kennethreitz/autoenv) to automatically activate your virtual environment every time you enter the folder (and to automatically deactivate it when you leave).
 
-Before any further setup on Rumāl's part, you will need to set up Thug first. Please refer to [Thug's own documentation](http://buffer.github.io/thug/). **Please make sure you fully configure MongoDB and let Thug's MongoDB logger enabled.**
-
-Now, you can install Rumāl's own dependencies by running the following command from Rumāl's root directory. **WARNING: Rumāl requires specific versions of some libraries such as Django 1.9. If you've got other projects running on the same box, please consider using VirtualEnv (see above) if you didn't already!**
+Now, you can install Rumāl's dependencies by running the following command from Rumāl's root directory. **WARNING: Rumāl requires specific versions of some libraries such as Django 1.9. If you've got other projects running on the same box, please consider using VirtualEnv (see above) if you didn't already!**
 
     $ pip install -r requirements.txt
 
