@@ -34,10 +34,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# Add BASE_DIR/thug/src/ to path to be able to import Thug's modules and dependencies
-import sys
-sys.path.append(os.path.join(BASE_DIR, 'thug', 'src'))
-
 # Unique secret key generator.
 # Secret key will be placed in secret_key.py file.
 try:

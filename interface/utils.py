@@ -20,7 +20,7 @@
 #           The Honeynet Project
 #
 
-from DOM.Personality import Personality
+from personalities.Personality import Personality
 from pymongo import MongoClient
 from bson import ObjectId
 from urlparse import urlparse
