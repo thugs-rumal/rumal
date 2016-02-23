@@ -1,6 +1,6 @@
 python-dateutil
 django==1.9.1
-django-tastypie==1.13.1
+django-tastypie==0.13.1
 django-widget-tweaks
 geoip2
 hexdump
