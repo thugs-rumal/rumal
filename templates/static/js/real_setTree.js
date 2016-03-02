@@ -114,8 +114,8 @@ function setTree() {
             .attr("transform", function(d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
             })
-            .on("click", click)
-            .on("dblclick", dblclick);
+            .on("dblclick", dblclick)
+            .on("click", click);
         nodeEnter.append("circle")
             .attr("r", 1e-6)
             .style("fill", function(d) {
@@ -204,11 +204,11 @@ function setTree() {
         });
     }
     /* Toggle children on click.*/
-    function dblclick(d) {
+    function click(d) {
         setPanels(d.nid);
     }
 
-    function click(d) {
+    function dblclick(d) {
         if ($.inArray(d, threat_path_elements) === -1) {
             if (d.children) {
                 d._children = d.children;
