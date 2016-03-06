@@ -118,8 +118,8 @@ function setPanels(nid) {
         .append($codes_table);
     $("#sidebar > div:nth-child(3) > div a")
         .click(function() {
-            var idx = +$(this)
-                .data();
+            var i = $(this)
+                .data('idx');
             var $codes_table = $("<table>")
                 .addClass("table table-striped table-bordered")
                 .append($("<tr>")
