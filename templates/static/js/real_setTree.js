@@ -122,7 +122,9 @@ function setTree() {
                 return d._children ? "#BA00FF" : "steelblue";
             }).on("click",function(){
                 if(d3.select('[current=true]')[0][0]){
-                    d3.select('[current=true]').style('stroke','steelblue').attr('current','false');
+                    d3.select('[current=true]').style("stroke", function(d) {
+                        return d._children ? "#BA00FF" : "steelblue";
+                    }).attr('current','false');
                 }
                 d3.select(this).style("stroke","#ff5722").attr('current','true');
             });
