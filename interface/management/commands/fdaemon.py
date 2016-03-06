@@ -188,7 +188,7 @@ class Command(BaseCommand):
 
     def get_backend_status(self, pending_id_list):
     	if not pending_id_list:
-    	    return []
+    	    return [],[]
         semicolon_seperated = ";".join(pending_id_list)
         status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         status_url = urljoin(BACKEND_HOST, "api/v1/status/set/{}/?format=json".format(semicolon_seperated))
@@ -204,7 +204,8 @@ class Command(BaseCommand):
         response = r.json()
 
         finished_on_backend = [x for x in response["objects"] if x["status"] == STATUS_COMPLETED]
-        return finished_on_backend
+        failed_on_backend = [x for x in response["objects"] if x["status"] == STATUS_FAILED]
+        return finished_on_backend,failed_on_backend
 
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
@@ -213,18 +214,20 @@ class Command(BaseCommand):
             tasks = self.fetch_new_tasks()
             logger.debug("Got {} new tasks".format(len(tasks)))
             for task in tasks:
-                # self._mark_as_running(task)
                 self.post_new_task(task)
             logger.debug("Fetching pending tasks posted to backend.")
             tasks = self.fetch_pending_tasks()
             pending_id_list = [str(x.id) for x in tasks]
-            finished_on_backend = self.get_backend_status(pending_id_list)
+            finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
             for x in finished_on_backend:
                 frontend_analysis_id = self.retrive_save_document(x["object_id"])
                 task = Task.objects.get(id=x["frontend_id"])
                 task.object_id = frontend_analysis_id
                 task.save()
                 self.mark_as_completed(task)
+            for x in failed_on_backend:
+                task = Task.objects.get(id=x["frontend_id"])
+                self.mark_as_failed(task)                
             logger.debug("Sleeping for {} seconds".format(60))
             time.sleep(6)
 
