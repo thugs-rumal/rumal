@@ -117,9 +117,16 @@ function setTree() {
             .on("dblclick", dblclick)
             .on("click", click);
         nodeEnter.append("circle")
-            .attr("r", 1e-6)
-            .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
+            .attr({"r": 1e-6,"current":"false"})
+            .style("stroke", function(d) {
+                return d._children ? "#BA00FF" : "steelblue";
+            }).on("click",function(){
+                if(d3.select('[current=true]')[0][0]){
+                    d3.select('[current=true]').style("stroke", function(d) {
+                        return d._children ? "#BA00FF" : "steelblue";
+                    }).attr('current','false');
+                }
+                d3.select(this).style("stroke","#ff5722").attr('current','true');
             });
         nodeEnter.append("text")
             .attr("x", function(d) {
@@ -141,8 +148,8 @@ function setTree() {
             });
         nodeUpdate.select("circle")
             .attr("r", 4.5)
-            .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
+            .style("stroke", function(d) {
+                return d._children ? "#BA00FF" : "steelblue";
             });
         nodeUpdate.select("text")
             .style("fill-opacity", 1);
