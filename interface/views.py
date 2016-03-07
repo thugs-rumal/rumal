@@ -54,7 +54,7 @@ def new_task(request):
             saved_form.user = request.user
             saved_form.save()
 
-            return HttpResponseRedirect(reverse('interface:report', kwargs={'task_id': saved_form.id}))
+            return HttpResponseRedirect(reverse('interface:myscans'))
 
     return render(request, 'interface/new_task.html', context)
 
