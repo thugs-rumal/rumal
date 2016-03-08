@@ -135,15 +135,15 @@ class Command(BaseCommand):
             if x["_id"] == search_id:
                 return x["sample_id"]
 
-    def retrive_save_document(self, analysis_id):
+    def retrieve_save_document(self, analysis_id):
         combo_resource_url = urljoin(BACKEND_HOST, "api/v1/analysiscombo/{}/?format=json".format(analysis_id))
-        retrive_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        retrieve_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Fetching resource from {}".format(combo_resource_url))
 
         r = False
         while not r:
             try:
-                r = requests.get(combo_resource_url, headers = retrive_headers)
+                r = requests.get(combo_resource_url, headers = retrieve_headers)
             except requests.exceptions.ConnectionError:
                 logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
                 time.sleep(SLEEP_TIME_ERROR)
@@ -220,7 +220,7 @@ class Command(BaseCommand):
             pending_id_list = [str(x.id) for x in tasks]
             finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
             for x in finished_on_backend:
-                frontend_analysis_id = self.retrive_save_document(x["object_id"])
+                frontend_analysis_id = self.retrieve_save_document(x["object_id"])
                 task = Task.objects.get(id=x["frontend_id"])
                 task.object_id = frontend_analysis_id
                 task.save()
