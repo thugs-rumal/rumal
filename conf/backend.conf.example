@@ -1,4 +1,0 @@
-[backend]
-host = "http://localhost:8080"
-api_key = "testkey"
-api_user = "testuser"

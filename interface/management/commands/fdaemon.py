@@ -38,11 +38,16 @@ from bson import ObjectId
 from bson.json_util import loads,dumps
 
 import json
+from django.core import serializers
+from interface.producer import Producer
 
 STATUS_NEW              = 0
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
+
+RPC_QUEUE = 'rpc_queue'
+RPC_PORT = 5672
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(settings.BASE_DIR, "conf", "backend.conf"))
@@ -67,6 +72,8 @@ class InvalidMongoIdException(Exception):
     pass
 
 class Command(BaseCommand):
+
+    active_scans = []
 
     def fetch_new_tasks(self):
         return Task.objects.filter(status__exact=STATUS_NEW).order_by('submitted_on')
@@ -93,30 +100,48 @@ class Command(BaseCommand):
         task.status = STATUS_COMPLETED
         task.save()
 
+    def renderTaskDetail(self, pkval):
+        return dumps(
+            loads(
+                serializers.serialize(
+                    'json',
+                    [Task.objects.get(pk=pkval), ]
+                )
+            )[0]
+        )
+
     def post_new_task(self, task):
-        t = TaskResource()
-        temp1 = loads(t.renderDetail(task.id))
+        temp1 = loads(self.renderTaskDetail(task.id))
+        logger.info(BACKEND_HOST)
+
         temp = temp1['fields']
         temp.pop("user")
         temp.pop("sharing_model")
         temp.pop("plugin_status")
         temp.pop("sharing_groups")
+        temp.pop("star")
         temp["frontend_id"] = temp1.pop("pk")
+        logger.info(temp)
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
-        r = False
-        while not r:
-            try:
-                r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
+        scan = Producer(json.dumps(temp), 'localhost', RPC_PORT, RPC_QUEUE)
+        self.active_scans.append(scan)
+        self.mark_as_running(task)
 
-        if r.status_code == 201:
-            self.mark_as_running(task)
-        elif r.status_code == 401:
-            logger.debug("Got 401 - not authorized to acess resource.")
+
+        # r = False
+        # while not r:
+        #     try:
+        #         r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
+        #     except requests.exceptions.ConnectionError:
+        #         logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
+        #         time.sleep(SLEEP_TIME_ERROR)
+        #
+        # if r.status_code == 201:
+        #     self.mark_as_running(task)
+        # elif r.status_code == 401:
+        #     logger.debug("Got 401 - not authorized to acess resource.")
 
     def fetch_save_file(self, url):
         file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
@@ -207,6 +232,9 @@ class Command(BaseCommand):
         failed_on_backend = [x for x in response["objects"] if x["status"] == STATUS_FAILED]
         return finished_on_backend,failed_on_backend
 
+    def process_response(self, response):
+        pass
+
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
         while True:
@@ -215,19 +243,26 @@ class Command(BaseCommand):
             logger.debug("Got {} new tasks".format(len(tasks)))
             for task in tasks:
                 self.post_new_task(task)
-            logger.debug("Fetching pending tasks posted to backend.")
-            tasks = self.fetch_pending_tasks()
-            pending_id_list = [str(x.id) for x in tasks]
-            finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
-            for x in finished_on_backend:
-                frontend_analysis_id = self.retrieve_save_document(x["object_id"])
-                task = Task.objects.get(id=x["frontend_id"])
-                task.object_id = frontend_analysis_id
-                task.save()
-                self.mark_as_completed(task)
-            for x in failed_on_backend:
-                task = Task.objects.get(id=x["frontend_id"])
-                self.mark_as_failed(task)                
-            logger.debug("Sleeping for {} seconds".format(60))
+
+            logger.debug("Checking for complete tasks")
+            for task in self.active_scans:
+                if hasattr(task, 'response') and task.response is not None:
+                    self.process_response(task.response)
+                    self.active_scans.remove(task)
+
+            # logger.debug("Fetching pending tasks posted to backend.")
+            # tasks = self.fetch_pending_tasks()
+            # pending_id_list = [str(x.id) for x in tasks]
+            # finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
+            # for x in finished_on_backend:
+            #     frontend_analysis_id = self.retrieve_save_document(x["object_id"])
+            #     task = Task.objects.get(id=x["frontend_id"])
+            #     task.object_id = frontend_analysis_id
+            #     task.save()
+            #     self.mark_as_completed(task)
+            # for x in failed_on_backend:
+            #     task = Task.objects.get(id=x["frontend_id"])
+            #     self.mark_as_failed(task)
+            logger.debug("Sleeping for {} seconds".format(6))
             time.sleep(6)
 
