@@ -28,6 +28,9 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.encoding import smart_str
+
 from gridfs import GridFS
 from pymongo import MongoClient
 from bson import ObjectId
@@ -35,9 +38,16 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
+import pymongo
+import json
+
+
 SHARING_MODEL_PUBLIC    = 0
 SHARING_MODEL_PRIVATE   = 1
 SHARING_MODEL_GROUPS    = 2
+
+client = pymongo.MongoClient()
+db = client.thug
 
 @login_required
 def new_task(request):
@@ -125,17 +135,24 @@ def my_scans(request):
 @login_required
 def report(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
+    analysis =db.analysiscombo.find({
+                              "frontend_id": task_id
+                          })[0]
+    analysis = dehydrate(analysis)
+    analysis = json.dumps(analysis, cls=Encoder)
+    analysis = smart_str(analysis)
+
     if request.user in task.star.all():
         bookmarked = True
     else:
         bookmarked = False
     context = {
         'task': task,
-        'bookmarked' : bookmarked
+        'bookmarked' : bookmarked,
+        'analysis': analysis
     }
 
     return render(request, 'interface/report.html', context)
-
 
 @login_required
 def json_tree_graph(request, analysis_id=None):

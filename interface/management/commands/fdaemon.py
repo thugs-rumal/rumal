@@ -41,10 +41,14 @@ import json
 from django.core import serializers
 from interface.producer import Producer
 
+import interface.utils
+
 STATUS_NEW              = 0
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
+
+NEW_SCAN_TASK = 1
 
 RPC_QUEUE = 'rpc_queue'
 RPC_PORT = 5672
@@ -121,7 +125,7 @@ class Command(BaseCommand):
         temp.pop("sharing_groups")
         temp.pop("star")
         temp["frontend_id"] = temp1.pop("pk")
-        logger.info(temp)
+        temp["task"] = NEW_SCAN_TASK
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
@@ -130,30 +134,6 @@ class Command(BaseCommand):
         self.mark_as_running(task)
 
 
-        # r = False
-        # while not r:
-        #     try:
-        #         r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
-        #     except requests.exceptions.ConnectionError:
-        #         logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-        #         time.sleep(SLEEP_TIME_ERROR)
-        #
-        # if r.status_code == 201:
-        #     self.mark_as_running(task)
-        # elif r.status_code == 401:
-        #     logger.debug("Got 401 - not authorized to acess resource.")
-
-    def fetch_save_file(self, url):
-        file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.debug("Fetching file from {}".format(url))
-        try:
-            r = requests.get(url, headers = file_headers)
-        except requests.exceptions.ConnectionError:
-            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
-            return None
-        downloaded_file = r.content
-        return str(fs.put(downloaded_file))
-
     def search_samples_dict_list(self, search_id,sample_dict):
         "returns new gridfs sample_id"
         for x in sample_dict:
@@ -161,38 +141,23 @@ class Command(BaseCommand):
                 return x["sample_id"]
 
     def retrieve_save_document(self, analysis_id):
-        combo_resource_url = urljoin(BACKEND_HOST, "api/v1/analysiscombo/{}/?format=json".format(analysis_id))
-        retrieve_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.debug("Fetching resource from {}".format(combo_resource_url))
-
-        r = False
-        while not r:
-            try:
-                r = requests.get(combo_resource_url, headers = retrieve_headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
-        response = r.json()
-        logger.debug(response)
+        response = analysis_id
         #now files for locations
         for x in response["locations"]:
             if x['content_id'] != None:
-                download_url = urljoin(BACKEND_HOST, "api/v1/location/", x['content_id'], "file/")
-                new_fs_id = self.fetch_save_file(download_url)
+                new_fs_id = get_file(x['content_id'])
                 #now change id in repsonse
                 x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            download_url = urljoin(BACKEND_HOST, "api/v1/sample/", x['sample_id'], "file/")
-            new_fs_id = self.fetch_save_file(download_url)
+            new_fs_id = get_file(x['sample_id'])
             #now change id in repsonse
             x['sample_id'] = new_fs_id
         # same for pcaps
         for x in response["pcaps"]:
             if x['content_id'] is None:
                 continue
-            download_url = urljoin(BACKEND_HOST, "api/v1/pcap/", x['content_id'], "file/")
-            new_fs_id = self.fetch_save_file(download_url)
+            new_fs_id = get_file(x['content_id'])
             #now change id in repsonse
             x['content_id'] = new_fs_id
         #for vt,andro etc. eoint sample_id to gridfs id
@@ -208,6 +173,7 @@ class Command(BaseCommand):
         #remove id from all samples and pcaps
         for x in response["samples"]:
             x.pop("_id")
+        response.pop("_id")
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
@@ -233,7 +199,20 @@ class Command(BaseCommand):
         return finished_on_backend,failed_on_backend
 
     def process_response(self, response):
-        pass
+        task = Task.objects.get(id=response["frontend_id"])
+        frontend_analysis_id = self.retrieve_save_document(response)
+        task.object_id = frontend_analysis_id
+        task.save()
+        self.mark_as_completed(task)
+
+    def decoder(self, dct):
+        for k, v in dct.items():
+            if '_id' in dct:
+                try:
+                    dct['_id'] = ObjectId(dct['_id'])
+                except:
+                    pass
+            return dct
 
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
@@ -247,8 +226,17 @@ class Command(BaseCommand):
             logger.debug("Checking for complete tasks")
             for task in self.active_scans:
                 if hasattr(task, 'response') and task.response is not None:
-                    self.process_response(task.response)
-                    self.active_scans.remove(task)
+                    analysis = json.loads(task.response, object_hook=self.decoder)
+                    if analysis["status"] is STATUS_COMPLETED:
+                        logger.info("Task Completed")
+                        response = analysis["data"]
+                        self.process_response(response)
+                        self.active_scans.remove(task)
+                    else:
+                        logger.info("Task Failed")
+                        local_scan = Task.objects.get(id=analysis["data"])
+                        self.mark_as_failed(local_scan)
+
 
             # logger.debug("Fetching pending tasks posted to backend.")
             # tasks = self.fetch_pending_tasks()

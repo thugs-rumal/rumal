@@ -43,7 +43,7 @@ class Producer(Thread):
                                    body=self.message)
         while self.response is None:
             self.connection.process_data_events()
-        return self.response
+        #return self.response
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
