@@ -128,16 +128,6 @@ def get_file(object_id):
 
     return download_file
 
-
-def dehydrate(bundle):
-    ''' Modify flat tree first add threat data and then to
-        appending warning data to that.'''
-    threat_data = generate_threats(bundle['flat_tree'])
-    warning_and_theat_data = generate_warnings(threat_data)
-    bundle['flat_tree'] = warning_and_theat_data
-    bundle['nested_tree'] = make_nested_tree(bundle['flat_tree'])
-    return bundle
-
 class Encoder(json.JSONEncoder):
     def default(self, obj, **kwargs):
         if isinstance(obj, ObjectId):

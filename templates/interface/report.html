@@ -215,8 +215,6 @@
 {% endblock %}
 {% block bottomscripts %}
         var object_id = '{{ task.object_id }}';
-        var analysis = {{ analysis|safe }}
-        console.log(analysis)
         $(function() {
             $.material.init();
             var tooltip = d3.select("body")
@@ -232,11 +230,12 @@
                     $('#wrap .map').fadeIn();
                 }
             });
-            {# Currently passed in with context. Could be moved to use local api to get analysis data.            #}
-            window.full_analysis=analysis;
-            setMap(tooltip);
-            setTree();
-
+            $.getJSON("/api/v1/analysiscombo/" + object_id + "/?format=json",
+                function(full_analysis) {
+                    window.full_analysis=full_analysis;
+                    setMap(tooltip);
+                    setTree();
+                });
             $("#bookmark-toggle").click(function(){
                 $.get('/togglebookmark/',{
                     taskId:{{ task.id }}

@@ -135,13 +135,6 @@ def my_scans(request):
 @login_required
 def report(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    analysis =db.analysiscombo.find({
-                              "frontend_id": task_id
-                          })[0]
-    analysis = dehydrate(analysis)
-    analysis = json.dumps(analysis, cls=Encoder)
-    analysis = smart_str(analysis)
-
     if request.user in task.star.all():
         bookmarked = True
     else:
@@ -149,7 +142,6 @@ def report(request, task_id):
     context = {
         'task': task,
         'bookmarked' : bookmarked,
-        'analysis': analysis
     }
 
     return render(request, 'interface/report.html', context)
