@@ -34,8 +34,6 @@ from bson import ObjectId
 
 import json
 
-from interface.highlights import generate_warnings, generate_threats
-
 db = MongoClient().thug
 
 def get_personalities():
@@ -134,3 +132,14 @@ class Encoder(json.JSONEncoder):
             return str(obj)
         else:
             return json.JSONEncoder.default(obj, **kwargs)
+
+
+def decoder(dct):
+    for k, v in dct.items():
+        if '_id' in dct:
+            try:
+                dct['_id'] = ObjectId(dct['_id'])
+            except:
+                pass
+        return dct
+

@@ -26,6 +26,7 @@ import time
 
 from django.core.management.base import BaseCommand, CommandError
 from interface.models import *
+from django.core import serializers
 
 import pymongo
 import gridfs
@@ -33,7 +34,6 @@ from bson import ObjectId
 from bson.json_util import loads,dumps
 
 import json
-from django.core import serializers
 from interface.producer import Producer
 import pika
 
@@ -69,7 +69,7 @@ class TimeOutException(Exception):
 
 class Command(BaseCommand):
 
-    active_scans = []
+    active_scans = []  # List of started threads waiting for a result to be returned from backend otr timeout
 
     def fetch_new_tasks(self):
         return Task.objects.filter(status__exact=STATUS_NEW).order_by('submitted_on')
@@ -168,21 +168,29 @@ class Command(BaseCommand):
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
-    def process_response(self, response):
-        task = Task.objects.get(id=response["frontend_id"])
-        frontend_analysis_id = self.retrieve_save_document(response)
-        task.object_id = frontend_analysis_id
-        task.save()
-        self.mark_as_completed(task)
+    def process_response(self, task):
 
-    def decoder(self, dct):
-        for k, v in dct.items():
-            if '_id' in dct:
-                try:
-                    dct['_id'] = ObjectId(dct['_id'])
-                except:
-                    pass
-            return dct
+        analysis = json.loads(task.response, object_hook=decoder)
+        if analysis["status"] is STATUS_COMPLETED:
+            logger.info("Task Completed")
+
+            analysis_response = analysis["data"]
+            local_task = Task.objects.get(id=analysis_response["frontend_id"])
+
+            frontend_analysis_id = self.retrieve_save_document(analysis_response)
+
+            local_task.object_id = frontend_analysis_id
+            local_task.save()
+
+            self.mark_as_completed(local_task)
+            self.active_scans.remove(task)
+        else:
+            logger.info("Task Failed")
+            local_scan = Task.objects.get(id=analysis["data"])
+            self.mark_as_failed(local_scan)
+            self.active_scans.remove(task)
+
+
 
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
@@ -197,19 +205,12 @@ class Command(BaseCommand):
             for task in self.active_scans:
                 if task.thread_exception is None:
                     if hasattr(task, 'response') and task.response is not None:
-                        analysis = json.loads(task.response, object_hook=self.decoder)
-                        if analysis["status"] is STATUS_COMPLETED:
-                            logger.info("Task Completed")
-                            response = analysis["data"]
-                            self.process_response(response)
-                            self.active_scans.remove(task)
-                        else:
-                            logger.info("Task Failed")
-                            local_scan = Task.objects.get(id=analysis["data"])
-                            self.mark_as_failed(local_scan)
+                        self.process_response(task)
                 else:
                     if task.thread_exception == pika.exceptions.ConnectionClosed:
-                        logger.info("Canot make connection to backend via {} {} {}".format(task.host, task.port, task.routing_key))
+                        logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
+                                                                                           task.port,
+                                                                                           task.routing_key))
                         self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
                         self.active_scans.remove(task)
 
