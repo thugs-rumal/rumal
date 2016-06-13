@@ -23,14 +23,9 @@ import ConfigParser
 import logging
 import os
 import time
-import requests
-from posixpath import join as urljoin
 
-from datetime import datetime
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from interface.models import *
-from interface.api import TaskResource
 
 import pymongo
 import gridfs
@@ -40,15 +35,16 @@ from bson.json_util import loads,dumps
 import json
 from django.core import serializers
 from interface.producer import Producer
+import pika
 
-import interface.utils
 
-STATUS_NEW              = 0
+
+STATUS_NEW              = 0  # identifies local status of task
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
-NEW_SCAN_TASK = 1
+NEW_SCAN_TASK = 1  # identifies data being sent to back end
 
 RPC_QUEUE = 'rpc_queue'
 RPC_PORT = 5672
@@ -59,10 +55,6 @@ BACKEND_HOST = config.get('backend', 'host', 'http://localhost:8080')
 API_KEY = config.get('backend', 'api_key', 'testkey')
 API_USER = config.get('backend', 'api_user', 'testuser')
 
-SLEEP_TIME_ERROR = 5
-TASK_POST_URL = urljoin(BACKEND_HOST, "api/v1/task/")
-
-
 # mongodb connection settings
 client = pymongo.MongoClient()
 db = client.thug
@@ -72,7 +64,7 @@ fs = gridfs.GridFS(dbfs)
 
 logger = logging.getLogger(__name__)
 
-class InvalidMongoIdException(Exception):
+class TimeOutException(Exception):
     pass
 
 class Command(BaseCommand):
@@ -116,8 +108,6 @@ class Command(BaseCommand):
 
     def post_new_task(self, task):
         temp1 = loads(self.renderTaskDetail(task.id))
-        logger.info(BACKEND_HOST)
-
         temp = temp1['fields']
         temp.pop("user")
         temp.pop("sharing_model")
@@ -129,7 +119,9 @@ class Command(BaseCommand):
         headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
-        scan = Producer(json.dumps(temp), 'localhost', RPC_PORT, RPC_QUEUE)
+        #start the thread to post the scan and add it to the list of posted tasks
+        scan = Producer(json.dumps(temp), 'localhost', RPC_PORT, RPC_QUEUE, temp["frontend_id"])
+        scan.start()
         self.active_scans.append(scan)
         self.mark_as_running(task)
 
@@ -140,8 +132,7 @@ class Command(BaseCommand):
             if x["_id"] == search_id:
                 return x["sample_id"]
 
-    def retrieve_save_document(self, analysis_id):
-        response = analysis_id
+    def retrieve_save_document(self, response):
         #now files for locations
         for x in response["locations"]:
             if x['content_id'] != None:
@@ -177,27 +168,6 @@ class Command(BaseCommand):
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
-    def get_backend_status(self, pending_id_list):
-    	if not pending_id_list:
-    	    return [],[]
-        semicolon_seperated = ";".join(pending_id_list)
-        status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        status_url = urljoin(BACKEND_HOST, "api/v1/status/set/{}/?format=json".format(semicolon_seperated))
-
-        r = False
-        while not r:
-            try:
-                r = requests.get(status_url, headers=status_headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
-
-        response = r.json()
-
-        finished_on_backend = [x for x in response["objects"] if x["status"] == STATUS_COMPLETED]
-        failed_on_backend = [x for x in response["objects"] if x["status"] == STATUS_FAILED]
-        return finished_on_backend,failed_on_backend
-
     def process_response(self, response):
         task = Task.objects.get(id=response["frontend_id"])
         frontend_analysis_id = self.retrieve_save_document(response)
@@ -225,32 +195,28 @@ class Command(BaseCommand):
 
             logger.debug("Checking for complete tasks")
             for task in self.active_scans:
-                if hasattr(task, 'response') and task.response is not None:
-                    analysis = json.loads(task.response, object_hook=self.decoder)
-                    if analysis["status"] is STATUS_COMPLETED:
-                        logger.info("Task Completed")
-                        response = analysis["data"]
-                        self.process_response(response)
+                if task.thread_exception is None:
+                    if hasattr(task, 'response') and task.response is not None:
+                        analysis = json.loads(task.response, object_hook=self.decoder)
+                        if analysis["status"] is STATUS_COMPLETED:
+                            logger.info("Task Completed")
+                            response = analysis["data"]
+                            self.process_response(response)
+                            self.active_scans.remove(task)
+                        else:
+                            logger.info("Task Failed")
+                            local_scan = Task.objects.get(id=analysis["data"])
+                            self.mark_as_failed(local_scan)
+                else:
+                    if task.thread_exception == pika.exceptions.ConnectionClosed:
+                        logger.info("Canot make connection to backend via {} {} {}".format(task.host, task.port, task.routing_key))
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
                         self.active_scans.remove(task)
-                    else:
-                        logger.info("Task Failed")
-                        local_scan = Task.objects.get(id=analysis["data"])
-                        self.mark_as_failed(local_scan)
 
-
-            # logger.debug("Fetching pending tasks posted to backend.")
-            # tasks = self.fetch_pending_tasks()
-            # pending_id_list = [str(x.id) for x in tasks]
-            # finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
-            # for x in finished_on_backend:
-            #     frontend_analysis_id = self.retrieve_save_document(x["object_id"])
-            #     task = Task.objects.get(id=x["frontend_id"])
-            #     task.object_id = frontend_analysis_id
-            #     task.save()
-            #     self.mark_as_completed(task)
-            # for x in failed_on_backend:
-            #     task = Task.objects.get(id=x["frontend_id"])
-            #     self.mark_as_failed(task)
+                    if task.thread_exception == TimeOutException:
+                        logger.info("Task took too long to reply")
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
             logger.debug("Sleeping for {} seconds".format(6))
             time.sleep(6)
 
