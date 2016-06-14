@@ -48,7 +48,10 @@ class Producer(Thread):
 
     def setupConnection(self):
         try:
-            self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host, port=self.port))
+            credentials = pika.PlainCredentials('admin', 'admin')
+            self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
+                                                                                port=self.port,
+                                                                                credentials=credentials))
 
             self.channel = self.connection.channel()
             self.channel.confirm_delivery()

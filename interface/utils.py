@@ -123,7 +123,6 @@ def get_file(object_id):
     # Ensure to use Unicode for the content, else JsonResopnse may fail
     if not isinstance(download_file, unicode):
         download_file = unicode(download_file, errors='ignore')
-
     return download_file
 
 class Encoder(json.JSONEncoder):

@@ -34,6 +34,7 @@ from bson import ObjectId
 from bson.json_util import loads,dumps
 
 import json
+from bson import json_util
 from interface.producer import Producer
 import pika
 
@@ -120,7 +121,7 @@ class Command(BaseCommand):
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
         #start the thread to post the scan and add it to the list of posted tasks
-        scan = Producer(json.dumps(temp), 'localhost', RPC_PORT, RPC_QUEUE, temp["frontend_id"])
+        scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, RPC_QUEUE, temp["frontend_id"])
         scan.start()
         self.active_scans.append(scan)
         self.mark_as_running(task)
@@ -132,23 +133,23 @@ class Command(BaseCommand):
             if x["_id"] == search_id:
                 return x["sample_id"]
 
-    def retrieve_save_document(self, response):
+    def retrieve_save_document(self, response, files):
         #now files for locations
         for x in response["locations"]:
-            if x['content_id'] != None:
-                new_fs_id = get_file(x['content_id'])
+            if x['content_id'] is not None:
+                print [item["data"] for item in files if str(item["content_id"]) == x["content_id"]]
+                new_fs_id = str(fs.put(([item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]).encode('utf-8')))#get_file(x['content_id'])
                 #now change id in repsonse
                 x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            new_fs_id = get_file(x['sample_id'])
+            new_fs_id = str(fs.put(([item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]).encode('utf-8')))#get_file(x['sample_id'])
             #now change id in repsonse
             x['sample_id'] = new_fs_id
         # same for pcaps
         for x in response["pcaps"]:
-            if x['content_id'] is None:
-                continue
-            new_fs_id = get_file(x['content_id'])
+            if x['content_id'] != None:
+                new_fs_id = str(fs.put(([item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]).encode('utf-8')))#get_file(x['content_id'])
             #now change id in repsonse
             x['content_id'] = new_fs_id
         #for vt,andro etc. eoint sample_id to gridfs id
@@ -175,9 +176,10 @@ class Command(BaseCommand):
             logger.info("Task Completed")
 
             analysis_response = analysis["data"]
+            files = json_util.loads(analysis["files"])
             local_task = Task.objects.get(id=analysis_response["frontend_id"])
 
-            frontend_analysis_id = self.retrieve_save_document(analysis_response)
+            frontend_analysis_id = self.retrieve_save_document(analysis_response, files)
 
             local_task.object_id = frontend_analysis_id
             local_task.save()
