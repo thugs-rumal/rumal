@@ -103,28 +103,6 @@ def make_nested_tree(flat_tree):
             parent_node['children'].append(node)
     return flat_tree[0]
 
-
-def get_file(object_id):
-    # Database MongoClient
-    dbfs = MongoClient().thugfs
-    fs = GridFS(dbfs)
-
-    #try:
-    download_file = base64.b64decode(fs.get(ObjectId(object_id)).read())
-    #except:
-     #   raise Http404("File not found")
-
-    hexdumped = False
-    mime = magic.from_buffer(download_file, mime=True)
-    if not is_text(mime):
-        download_file = hexdump.hexdump(download_file, result='return')
-        hexdumped = True
-
-    # Ensure to use Unicode for the content, else JsonResopnse may fail
-    if not isinstance(download_file, unicode):
-        download_file = unicode(download_file, errors='ignore')
-    return download_file
-
 class Encoder(json.JSONEncoder):
     def default(self, obj, **kwargs):
         if isinstance(obj, ObjectId):

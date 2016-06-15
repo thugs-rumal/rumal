@@ -137,19 +137,21 @@ class Command(BaseCommand):
         #now files for locations
         for x in response["locations"]:
             if x['content_id'] is not None:
-                print [item["data"] for item in files if str(item["content_id"]) == x["content_id"]]
-                new_fs_id = str(fs.put(([item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]).encode('utf-8')))#get_file(x['content_id'])
+                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+                new_fs_id = str(fs.put(dfile.encode('utf-8')))
                 #now change id in repsonse
                 x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            new_fs_id = str(fs.put(([item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]).encode('utf-8')))#get_file(x['sample_id'])
+            dfile = [item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]
+            new_fs_id = str(fs.put(dfile.encode('utf-8')))
             #now change id in repsonse
             x['sample_id'] = new_fs_id
         # same for pcaps
         for x in response["pcaps"]:
             if x['content_id'] != None:
-                new_fs_id = str(fs.put(([item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]).encode('utf-8')))#get_file(x['content_id'])
+                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+                new_fs_id = str(fs.put(dfile.encode('utf-8')))
             #now change id in repsonse
             x['content_id'] = new_fs_id
         #for vt,andro etc. eoint sample_id to gridfs id
@@ -211,8 +213,8 @@ class Command(BaseCommand):
                 else:
                     if task.thread_exception == pika.exceptions.ConnectionClosed:
                         logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
-                                                                                           task.port,
-                                                                                           task.routing_key))
+                                                                                            task.port,
+                                                                                            task.routing_key))
                         self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
                         self.active_scans.remove(task)
 
