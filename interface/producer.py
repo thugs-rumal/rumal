@@ -24,13 +24,11 @@ from threading import Thread
 import pika
 import uuid
 import time
-
-class TimeOutException(Exception):
-    pass
+from interface.utils import TimeOutException
 
 class Producer(Thread):
 
-    TIME_OUT = 60  # Set timeout for receiving messages to 60 seconds
+    TIME_OUT = 5 * 60  # Set timeout for receiving messages to 10mn
 
     def __init__(self, message, host, port, routing_key, frontend_id):
         Thread.__init__(self)

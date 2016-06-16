@@ -120,3 +120,6 @@ def decoder(dct):
                 pass
         return dct
 
+class TimeOutException(Exception):
+    pass
+

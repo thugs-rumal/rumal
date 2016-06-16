@@ -65,9 +65,6 @@ fs = gridfs.GridFS(dbfs)
 
 logger = logging.getLogger(__name__)
 
-class TimeOutException(Exception):
-    pass
-
 class Command(BaseCommand):
 
     active_scans = []  # List of started threads waiting for a result to be returned from backend otr timeout
@@ -219,7 +216,7 @@ class Command(BaseCommand):
                         self.active_scans.remove(task)
 
                     if task.thread_exception == TimeOutException:
-                        logger.info("Task took too long to reply")
+                        logger.info("Task {} took too long to reply".format(int(task.frontend_id)))
                         self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
                         self.active_scans.remove(task)
             logger.debug("Sleeping for {} seconds".format(6))
