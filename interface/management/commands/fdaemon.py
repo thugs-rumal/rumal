@@ -47,12 +47,12 @@ STATUS_COMPLETED        = 3
 
 NEW_SCAN_TASK = 1  # identifies data being sent to back end
 
-RPC_QUEUE = 'rpc_queue'
+ANY_QUEUE = 'any_queue'
 RPC_PORT = 5672
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(settings.BASE_DIR, "conf", "backend.conf"))
-BACKEND_HOST = config.get('backend', 'host', 'http://localhost:8080')
+BACKEND_HOST = config.get('backend', 'host', 'localhost')
 API_KEY = config.get('backend', 'api_key', 'testkey')
 API_USER = config.get('backend', 'api_user', 'testuser')
 
@@ -118,7 +118,7 @@ class Command(BaseCommand):
         logger.debug("Posting task {}".format(temp["frontend_id"]))
 
         #start the thread to post the scan and add it to the list of posted tasks
-        scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, RPC_QUEUE, temp["frontend_id"])
+        scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, ANY_QUEUE, temp["frontend_id"])
         scan.start()
         self.active_scans.append(scan)
         self.mark_as_running(task)
