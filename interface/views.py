@@ -19,7 +19,6 @@
 # Author:   Pietro Delsante <pietro.delsante@gmail.com>
 #           The Honeynet Project
 #
-
 import base64
 import hexdump
 import magic
@@ -28,8 +27,6 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.encoding import smart_str
 
 from gridfs import GridFS
 from pymongo import MongoClient
@@ -38,22 +35,16 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
-import pymongo
-import json
-
-
 SHARING_MODEL_PUBLIC    = 0
 SHARING_MODEL_PRIVATE   = 1
 SHARING_MODEL_GROUPS    = 2
 
-client = pymongo.MongoClient()
-db = client.thug
 
 @login_required
 def new_task(request):
     context = {
         'active_tab': 'new_task',
-        'form'      : TaskForm(request.POST or None)
+        'form'      : TaskForm(request.POST or None),
     }
 
     if request.method == 'POST':
@@ -68,16 +59,11 @@ def new_task(request):
 
     return render(request, 'interface/new_task.html', context)
 
+
 @login_required
 def reports(request, status='any', pagination_start=0, pagination_len=50):
     pagination_start    = int(pagination_start)
     pagination_len      = int(pagination_len)
-    #if not status:
-        #status = 'any'
-    #if not pagination_start:
-        #pagination_start = 0
-    #if not pagination_len:
-        #pagination_len = 50
 
     context = {
         'active_tab': 'reports',
@@ -106,14 +92,6 @@ def reports(request, status='any', pagination_start=0, pagination_len=50):
 
     return render(request, 'interface/results.html', context)
 
-# @login_required
-# def report(request, task_id):
-#     context = {
-#         'active_tab': 'reports',
-#         'task'      : get_object_or_404(Task, pk=task_id)
-#     }
-
-#     return render(request, 'interface/result.html', context)
 
 @login_required
 def my_scans(request):
@@ -123,14 +101,15 @@ def my_scans(request):
     private_user_tasks = user_tasks.filter(sharing_model__exact=SHARING_MODEL_PRIVATE)
     star_tasks = request.user.star_tasks.all()
     stats = {
-        'public' : len(public_user_tasks),
-        'private' : len(private_user_tasks),
-        'star' : len(star_tasks)
+        'public': len(public_user_tasks),
+        'private': len(private_user_tasks),
+        'star': len(star_tasks)
     }
     context = {
         'stats': stats,
     }
     return render(request, 'interface/myscans2.html', context)
+
 
 @login_required
 def report(request, task_id):
@@ -141,17 +120,18 @@ def report(request, task_id):
         bookmarked = False
     context = {
         'task': task,
-        'bookmarked' : bookmarked,
+        'bookmarked': bookmarked,
     }
 
     return render(request, 'interface/report.html', context)
+
 
 @login_required
 def json_tree_graph(request, analysis_id=None):
     # TODO: migrate this view to the APIs? (Not sure if it's easily feasible)
     # TODO: use NetworkX to construct the graph?
     if not analysis_id:
-        raise Http404("Analyis not found");
+        raise Http404("Analysis not found")
     graph = {
         'analysis_id': analysis_id,
         'graph': {
@@ -164,6 +144,7 @@ def json_tree_graph(request, analysis_id=None):
     graph['graph']['nodes'] = graph_get_children(analysis_id, root_node)
     return JsonResponse(graph)
 
+
 @login_required
 def star_view(request):
     task_id = int(request.GET['taskId'])
@@ -173,6 +154,7 @@ def star_view(request):
     else:
         task.star.add(request.user)
     return HttpResponse(1 if request.user in task.star.all() else 0)
+
 
 def content(request, content_id=None):
     # TODO: migrate this view to the APIs? (would need a GridFSResource)

@@ -47,7 +47,9 @@ STATUS_COMPLETED        = 3
 
 NEW_SCAN_TASK = 1  # identifies data being sent to back end
 
+SEND_ANY = 'Any'
 ANY_QUEUE = 'any_queue'
+PRIVATE_QUEUE = 'private_queue'
 RPC_PORT = 5672
 
 config = ConfigParser.ConfigParser()
@@ -107,6 +109,7 @@ class Command(BaseCommand):
     def post_new_task(self, task):
         temp1 = loads(self.renderTaskDetail(task.id))
         temp = temp1['fields']
+        backend = temp.pop("backend")
         temp.pop("user")
         temp.pop("sharing_model")
         temp.pop("plugin_status")
@@ -114,15 +117,19 @@ class Command(BaseCommand):
         temp.pop("star")
         temp["frontend_id"] = temp1.pop("pk")
         temp["task"] = NEW_SCAN_TASK
-        headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
         logger.debug("Posting task {}".format(temp["frontend_id"]))
-
-        #start the thread to post the scan and add it to the list of posted tasks
-        scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, ANY_QUEUE, temp["frontend_id"])
-        scan.start()
-        self.active_scans.append(scan)
-        self.mark_as_running(task)
-
+        if backend == SEND_ANY:
+            #  start the thread to post the scan on any queue
+            scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, ANY_QUEUE, temp["frontend_id"])
+            scan.start()
+            self.active_scans.append(scan)
+            self.mark_as_running(task)
+        else:
+            #  start the thread to post the scan on private queue
+            scan = Producer(json.dumps(temp), backend, RPC_PORT, PRIVATE_QUEUE, temp["frontend_id"])
+            scan.start()
+            self.active_scans.append(scan)
+            self.mark_as_running(task)
 
     def search_samples_dict_list(self, search_id,sample_dict):
         "returns new gridfs sample_id"
@@ -131,37 +138,37 @@ class Command(BaseCommand):
                 return x["sample_id"]
 
     def retrieve_save_document(self, response, files):
-        #now files for locations
+        #  now files for locations
         for x in response["locations"]:
             if x['content_id'] is not None:
                 dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
                 new_fs_id = str(fs.put(dfile.encode('utf-8')))
-                #now change id in repsonse
+                #  now change id in repsonse
                 x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
             dfile = [item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]
             new_fs_id = str(fs.put(dfile.encode('utf-8')))
-            #now change id in repsonse
+            #n  ow change id in repsonse
             x['sample_id'] = new_fs_id
         # same for pcaps
         for x in response["pcaps"]:
             if x['content_id'] != None:
                 dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
                 new_fs_id = str(fs.put(dfile.encode('utf-8')))
-            #now change id in repsonse
+            #  now change id in repsonse
             x['content_id'] = new_fs_id
-        #for vt,andro etc. eoint sample_id to gridfs id
-        # check for issues in this
+        #  for vt,andro etc. eoint sample_id to gridfs id
+        #  check for issues in this
         for x in response["virustotal"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["honeyagent"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["androguard"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["peepdf"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
-        #remove id from all samples and pcaps
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+        #  remove id from all samples and pcaps
         for x in response["samples"]:
             x.pop("_id")
         response.pop("_id")
@@ -190,8 +197,6 @@ class Command(BaseCommand):
             local_scan = Task.objects.get(id=analysis["data"])
             self.mark_as_failed(local_scan)
             self.active_scans.remove(task)
-
-
 
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
