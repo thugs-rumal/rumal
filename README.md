@@ -11,6 +11,8 @@ While it is perfectly possible to use it as a simple web GUI for Thug on your ow
 
 ### Install
 
+Rumal uses RabbitMQ to communicate with the backend, you will need to follow the official [installation guide](https://www.rabbitmq.com/download.html)
+
 To get Rumāl's source code, you can run the following command:
 
     $ git clone git@github.com:thugs-rumal/rumal.git
@@ -39,7 +41,8 @@ Now you can setup the database (which, for now, uses SQLite as the backend) and 
 
 ### Basic configuration
 
-Before running Rumāl's front-end, you will need to let it know how to reach the back-end's APIs. You will need to configure the back-end by following the instructions on its own repo, that you will find here: https://github.com/thugs-rumal/rumal_back.
+Before running Rumāl's front-end, you will need to let it know how to reach the back-end's. You will need to configure the back-end by following the instructions on its own repo, that you will find here: https://github.com/thugs-rumal/rumal_back.
+You will also need to specify a list available backend's in the BE field. This is used to make private queues to a specific backend.
 
 Once the back-end is ready, you will need to configure the front-end by creating a new configuration file by running (from the front-end's root):
 
@@ -48,9 +51,10 @@ Once the back-end is ready, you will need to configure the front-end by creating
 This file will contain the following values:
 
     [backend]
-    host = "http://localhost:8080"
+    host = localhost
     api_key = "testkey"
     api_user = "testuser"
+    BE = "192.159.0.0.5, 45.67.54.2"
 
 Please change them according on how you configured the back-end.
 
