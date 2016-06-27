@@ -27,6 +27,10 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from interface.utils import *
 
+import ConfigParser
+import os
+from rumal.settings import BASE_DIR
+
 SHARING_MODEL_PUBLIC    = 0
 SHARING_MODEL_PRIVATE   = 1
 SHARING_MODEL_GROUPS    = 2
@@ -46,6 +50,17 @@ STATUS_CHOICES = (
     (STATUS_FAILED,             'Failed'),
     (STATUS_COMPLETED,          'Completed'),
 )
+
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(BASE_DIR, "conf", "backend.conf"))
+be_list = [x.strip() for x in config.get('backend', 'BE', '').split(',')]
+
+BACKEND_CHOICES = [
+    ('Any', 'Any'),
+]
+
+for x in be_list:
+    BACKEND_CHOICES.append((x, x))
 
 def add_now():
     return datetime.now(getattr(pytz, settings.TIME_ZONE))
@@ -92,6 +107,7 @@ class Task(models.Model):
     url             = models.CharField("Target URL", null=False, blank=False, max_length=4096)
     referer         = models.CharField("Referer", null=True, blank=True, default=None, max_length=4096)
     useragent       = models.CharField("User Agent", null=True, blank=True, default=None, max_length=50, choices=get_personalities())
+    backend         = models.CharField("Backend Choice", null=False, blank=False, default='Any', max_length=16, choices=BACKEND_CHOICES)
 
     # Proxy
     proxy           = models.ForeignKey(Proxy, null=True, blank=True, default=None)

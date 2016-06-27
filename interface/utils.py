@@ -25,6 +25,15 @@ from pymongo import MongoClient
 from bson import ObjectId
 from urlparse import urlparse
 
+import base64
+import hexdump
+import magic
+from gridfs import GridFS
+from pymongo import MongoClient
+from bson import ObjectId
+
+import json
+
 db = MongoClient().thug
 
 def get_personalities():
@@ -93,3 +102,24 @@ def make_nested_tree(flat_tree):
                 parent_node['children'] = []
             parent_node['children'].append(node)
     return flat_tree[0]
+
+class Encoder(json.JSONEncoder):
+    def default(self, obj, **kwargs):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        else:
+            return json.JSONEncoder.default(obj, **kwargs)
+
+
+def decoder(dct):
+    for k, v in dct.items():
+        if '_id' in dct:
+            try:
+                dct['_id'] = ObjectId(dct['_id'])
+            except:
+                pass
+        return dct
+
+class TimeOutException(Exception):
+    pass
+

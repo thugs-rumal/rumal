@@ -9,3 +9,4 @@ python-magic
 pythonwhois
 pytz
 requests
+pika

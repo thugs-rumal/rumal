@@ -23,14 +23,10 @@ import ConfigParser
 import logging
 import os
 import time
-import requests
-from posixpath import join as urljoin
 
-from datetime import datetime
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from interface.models import *
-from interface.api import TaskResource
+from django.core import serializers
 
 import pymongo
 import gridfs
@@ -38,21 +34,29 @@ from bson import ObjectId
 from bson.json_util import loads,dumps
 
 import json
+from bson import json_util
+from interface.producer import Producer
+import pika
 
-STATUS_NEW              = 0
+
+
+STATUS_NEW              = 0  # identifies local status of task
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
 
+NEW_SCAN_TASK = 1  # identifies data being sent to back end
+
+SEND_ANY = 'Any'
+ANY_QUEUE = 'any_queue'
+PRIVATE_QUEUE = 'private_queue'
+RPC_PORT = 5672
+
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(settings.BASE_DIR, "conf", "backend.conf"))
-BACKEND_HOST = config.get('backend', 'host', 'http://localhost:8080')
+BACKEND_HOST = config.get('backend', 'host', 'localhost')
 API_KEY = config.get('backend', 'api_key', 'testkey')
 API_USER = config.get('backend', 'api_user', 'testuser')
-
-SLEEP_TIME_ERROR = 5
-TASK_POST_URL = urljoin(BACKEND_HOST, "api/v1/task/")
-
 
 # mongodb connection settings
 client = pymongo.MongoClient()
@@ -63,10 +67,9 @@ fs = gridfs.GridFS(dbfs)
 
 logger = logging.getLogger(__name__)
 
-class InvalidMongoIdException(Exception):
-    pass
-
 class Command(BaseCommand):
+
+    active_scans = []  # List of started threads waiting for a result to be returned from backend otr timeout
 
     def fetch_new_tasks(self):
         return Task.objects.filter(status__exact=STATUS_NEW).order_by('submitted_on')
@@ -93,41 +96,40 @@ class Command(BaseCommand):
         task.status = STATUS_COMPLETED
         task.save()
 
+    def renderTaskDetail(self, pkval):
+        return dumps(
+            loads(
+                serializers.serialize(
+                    'json',
+                    [Task.objects.get(pk=pkval), ]
+                )
+            )[0]
+        )
+
     def post_new_task(self, task):
-        t = TaskResource()
-        temp1 = loads(t.renderDetail(task.id))
+        temp1 = loads(self.renderTaskDetail(task.id))
         temp = temp1['fields']
+        backend = temp.pop("backend")
         temp.pop("user")
         temp.pop("sharing_model")
         temp.pop("plugin_status")
         temp.pop("sharing_groups")
+        temp.pop("star")
         temp["frontend_id"] = temp1.pop("pk")
-        headers = {'Content-type': 'application/json', 'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
+        temp["task"] = NEW_SCAN_TASK
         logger.debug("Posting task {}".format(temp["frontend_id"]))
-
-        r = False
-        while not r:
-            try:
-                r = requests.post(TASK_POST_URL, json.dumps(temp), headers=headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
-
-        if r.status_code == 201:
+        if backend == SEND_ANY:
+            #  start the thread to post the scan on any queue
+            scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, ANY_QUEUE, temp["frontend_id"])
+            scan.start()
+            self.active_scans.append(scan)
             self.mark_as_running(task)
-        elif r.status_code == 401:
-            logger.debug("Got 401 - not authorized to acess resource.")
-
-    def fetch_save_file(self, url):
-        file_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.debug("Fetching file from {}".format(url))
-        try:
-            r = requests.get(url, headers = file_headers)
-        except requests.exceptions.ConnectionError:
-            logger.debug("Got a requests.exceptions.ConnectionError exception, will try again later.")
-            return None
-        downloaded_file = r.content
-        return str(fs.put(downloaded_file))
+        else:
+            #  start the thread to post the scan on private queue
+            scan = Producer(json.dumps(temp), backend, RPC_PORT, PRIVATE_QUEUE, temp["frontend_id"])
+            scan.start()
+            self.active_scans.append(scan)
+            self.mark_as_running(task)
 
     def search_samples_dict_list(self, search_id,sample_dict):
         "returns new gridfs sample_id"
@@ -135,77 +137,66 @@ class Command(BaseCommand):
             if x["_id"] == search_id:
                 return x["sample_id"]
 
-    def retrieve_save_document(self, analysis_id):
-        combo_resource_url = urljoin(BACKEND_HOST, "api/v1/analysiscombo/{}/?format=json".format(analysis_id))
-        retrieve_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        logger.debug("Fetching resource from {}".format(combo_resource_url))
-
-        r = False
-        while not r:
-            try:
-                r = requests.get(combo_resource_url, headers = retrieve_headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
-        response = r.json()
-        logger.debug(response)
-        #now files for locations
+    def retrieve_save_document(self, response, files):
+        #  now files for locations
         for x in response["locations"]:
-            if x['content_id'] != None:
-                download_url = urljoin(BACKEND_HOST, "api/v1/location/", x['content_id'], "file/")
-                new_fs_id = self.fetch_save_file(download_url)
-                #now change id in repsonse
+            if x['content_id'] is not None:
+                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+                new_fs_id = str(fs.put(dfile.encode('utf-8')))
+                #  now change id in repsonse
                 x['location_id'] = new_fs_id
         # now for samples
         for x in response["samples"]:
-            download_url = urljoin(BACKEND_HOST, "api/v1/sample/", x['sample_id'], "file/")
-            new_fs_id = self.fetch_save_file(download_url)
-            #now change id in repsonse
+            dfile = [item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]
+            new_fs_id = str(fs.put(dfile.encode('utf-8')))
+            #n  ow change id in repsonse
             x['sample_id'] = new_fs_id
         # same for pcaps
         for x in response["pcaps"]:
-            if x['content_id'] is None:
-                continue
-            download_url = urljoin(BACKEND_HOST, "api/v1/pcap/", x['content_id'], "file/")
-            new_fs_id = self.fetch_save_file(download_url)
-            #now change id in repsonse
+            if x['content_id'] != None:
+                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+                new_fs_id = str(fs.put(dfile.encode('utf-8')))
+            #  now change id in repsonse
             x['content_id'] = new_fs_id
-        #for vt,andro etc. eoint sample_id to gridfs id
-        # check for issues in this
+        #  for vt,andro etc. eoint sample_id to gridfs id
+        #  check for issues in this
         for x in response["virustotal"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["honeyagent"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["androguard"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
         for x in response["peepdf"]:
-            x['sample_id'] = search_samples_dict_list(x['sample_id'],response["samples"])
-        #remove id from all samples and pcaps
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+        #  remove id from all samples and pcaps
         for x in response["samples"]:
             x.pop("_id")
+        response.pop("_id")
         frontend_analysis_id = db.analysiscombo.insert(response)
         return frontend_analysis_id
 
-    def get_backend_status(self, pending_id_list):
-    	if not pending_id_list:
-    	    return [],[]
-        semicolon_seperated = ";".join(pending_id_list)
-        status_headers = {'Authorization': 'ApiKey {}:{}'.format(API_USER,API_KEY)}
-        status_url = urljoin(BACKEND_HOST, "api/v1/status/set/{}/?format=json".format(semicolon_seperated))
+    def process_response(self, task):
 
-        r = False
-        while not r:
-            try:
-                r = requests.get(status_url, headers=status_headers)
-            except requests.exceptions.ConnectionError:
-                logger.debug("Got a requests.exceptions.ConnectionError exception, will try again in {} seconds".format(SLEEP_TIME_ERROR))
-                time.sleep(SLEEP_TIME_ERROR)
+        analysis = json.loads(task.response, object_hook=decoder)
+        if analysis["status"] is STATUS_COMPLETED:
+            logger.info("Task Completed")
 
-        response = r.json()
+            analysis_response = analysis["data"]
+            files = json_util.loads(analysis["files"])
+            local_task = Task.objects.get(id=analysis_response["frontend_id"])
 
-        finished_on_backend = [x for x in response["objects"] if x["status"] == STATUS_COMPLETED]
-        failed_on_backend = [x for x in response["objects"] if x["status"] == STATUS_FAILED]
-        return finished_on_backend,failed_on_backend
+            frontend_analysis_id = self.retrieve_save_document(analysis_response, files)
+
+            local_task.object_id = frontend_analysis_id
+            local_task.save()
+
+            self.mark_as_completed(local_task)
+            self.active_scans.remove(task)
+        else:
+            logger.info("Task Failed")
+            local_scan = Task.objects.get(id=analysis["data"])
+            self.mark_as_failed(local_scan)
+            self.active_scans.remove(task)
 
     def handle(self, *args, **options):
         logger.debug("Starting up frontend daemon")
@@ -215,19 +206,24 @@ class Command(BaseCommand):
             logger.debug("Got {} new tasks".format(len(tasks)))
             for task in tasks:
                 self.post_new_task(task)
-            logger.debug("Fetching pending tasks posted to backend.")
-            tasks = self.fetch_pending_tasks()
-            pending_id_list = [str(x.id) for x in tasks]
-            finished_on_backend,failed_on_backend = self.get_backend_status(pending_id_list)
-            for x in finished_on_backend:
-                frontend_analysis_id = self.retrieve_save_document(x["object_id"])
-                task = Task.objects.get(id=x["frontend_id"])
-                task.object_id = frontend_analysis_id
-                task.save()
-                self.mark_as_completed(task)
-            for x in failed_on_backend:
-                task = Task.objects.get(id=x["frontend_id"])
-                self.mark_as_failed(task)                
-            logger.debug("Sleeping for {} seconds".format(60))
+
+            logger.debug("Checking for complete tasks")
+            for task in self.active_scans:
+                if task.thread_exception is None:
+                    if hasattr(task, 'response') and task.response is not None:
+                        self.process_response(task)
+                else:
+                    if task.thread_exception == pika.exceptions.ConnectionClosed:
+                        logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
+                                                                                            task.port,
+                                                                                            task.routing_key))
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
+
+                    if task.thread_exception == TimeOutException:
+                        logger.info("Task {} took too long to reply".format(int(task.frontend_id)))
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
+            logger.debug("Sleeping for {} seconds".format(6))
             time.sleep(6)
 
