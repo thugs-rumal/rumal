@@ -112,9 +112,3 @@ class Producer(Thread):
             self.thread_exception = pika.exceptions.ProbableAccessDeniedError
 
 
-if __name__ == '__main__':
-    test = Producer("message", '192.168.58.129', 5672, 'rpc_queue', 1)
-    test.start()
-    time.sleep(4)
-    print test.thread_exception
-
