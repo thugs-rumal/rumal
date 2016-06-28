@@ -25,6 +25,14 @@ import pika
 import uuid
 import time
 from interface.utils import TimeOutException
+import ConfigParser
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(BASE_DIR, "conf", "backend.conf"))
+RABBIT_USER = config.get('backend', 'rabbit_user', 'guest')
+RABBIT_PASSWORD = config.get('backend', 'rabbit_password', 'guest')
 
 class Producer(Thread):
 
@@ -46,10 +54,10 @@ class Producer(Thread):
 
     def setupConnection(self):
         try:
-            credentials = pika.PlainCredentials('admin', 'admin')
+            credentials = pika.PlainCredentials(RABBIT_USER, RABBIT_PASSWORD)
             self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                                 port=self.port,
-                                                                                #credentials=credentials
+                                                                                credentials=credentials
                                                                                 )
                                                       )
 
@@ -61,8 +69,13 @@ class Producer(Thread):
 
             self.channel.basic_consume(self.on_response, no_ack=True,
                                        queue=self.callback_queue)
-        except pika.exceptions.ConnectionClosed :
+        except pika.exceptions.ConnectionClosed:
             raise pika.exceptions.ConnectionClosed
+        except pika.exceptions.ProbableAuthenticationError:
+            raise pika.exceptions.ProbableAuthenticationError
+        except pika.exceptions.ProbableAccessDeniedError:
+            raise pika.exceptions.ProbableAccessDeniedError
+
 
     def call(self):
         self.corr_id = str(uuid.uuid4())
@@ -93,10 +106,14 @@ class Producer(Thread):
             self.thread_exception = pika.exceptions.ConnectionClosed
         except TimeOutException:
             self.thread_exception = TimeOutException
+        except pika.exceptions.ProbableAuthenticationError:
+            self.thread_exception = pika.exceptions.ProbableAuthenticationError
+        except pika.exceptions.ProbableAccessDeniedError:
+            self.thread_exception = pika.exceptions.ProbableAccessDeniedError
 
 
 if __name__ == '__main__':
-    test = Producer("message", '127.0.0.1', 5672, 'rpc_queue')
+    test = Producer("message", '192.168.58.129', 5672, 'rpc_queue', 1)
     test.start()
     time.sleep(4)
     print test.thread_exception

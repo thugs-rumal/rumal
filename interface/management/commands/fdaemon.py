@@ -55,8 +55,6 @@ RPC_PORT = 5672
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(settings.BASE_DIR, "conf", "backend.conf"))
 BACKEND_HOST = config.get('backend', 'host', 'localhost')
-API_KEY = config.get('backend', 'api_key', 'testkey')
-API_USER = config.get('backend', 'api_user', 'testuser')
 
 # mongodb connection settings
 client = pymongo.MongoClient()
@@ -217,13 +215,14 @@ class Command(BaseCommand):
                         logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
                                                                                             task.port,
                                                                                             task.routing_key))
-                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
-                        self.active_scans.remove(task)
-
                     if task.thread_exception == TimeOutException:
                         logger.info("Task {} took too long to reply".format(int(task.frontend_id)))
-                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
-                        self.active_scans.remove(task)
+                    if task.thread_exception == pika.exceptions.ProbableAuthenticationError or \
+                                    task.thread_exception == pika.exceptions.ProbableAccessDeniedError:
+                        logger.info("Task {} Authentication Error".format(int(task.frontend_id)))
+                    self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                    self.active_scans.remove(task)
+
             logger.debug("Sleeping for {} seconds".format(6))
             time.sleep(6)
 
