@@ -36,7 +36,7 @@ RABBIT_PASSWORD = config.get('backend', 'rabbit_password', 'guest')
 
 class Producer(Thread):
 
-    TIME_OUT = 5 * 60  # Set timeout for receiving messages to 10mn
+    TIME_OUT = 15 * 60  # Set timeout for receiving messages to 15mn
 
     def __init__(self, message, host, port, routing_key, frontend_id):
         Thread.__init__(self)
