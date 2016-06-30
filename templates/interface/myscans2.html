@@ -95,6 +95,11 @@
                     case 3:
                         label.class = 'success';
                         label.text = 'Finished';
+                    case 4:
+                        label.class = 'danger';
+                        label.text = 'Timeout';
+                        break;
+
                 }
                 $("#myscans table").append(
                     $("<tr>")
@@ -138,6 +143,10 @@
                     case 3:
                         label.class = 'success';
                         label.text = 'Finished';
+                    case 4:
+                        label.class = 'danger';
+                        label.text = 'Timeout';
+                        break;
                 }
                 $("#starredscans table").append(
                     $("<tr>")
