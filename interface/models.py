@@ -44,11 +44,13 @@ STATUS_NEW              = 0
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
+STATUS_TIMEOUT          = 4
 STATUS_CHOICES = (
     (STATUS_NEW,                'New'),
     (STATUS_PROCESSING,         'Processing'),
     (STATUS_FAILED,             'Failed'),
     (STATUS_COMPLETED,          'Completed'),
+    (STATUS_TIMEOUT,            'Timeout')
 )
 
 config = ConfigParser.ConfigParser()
