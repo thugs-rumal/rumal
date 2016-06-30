@@ -44,6 +44,7 @@ STATUS_NEW              = 0  # identifies local status of task
 STATUS_PROCESSING       = 1
 STATUS_FAILED           = 2
 STATUS_COMPLETED        = 3
+STATUS_TIMEOUT          = 4
 
 NEW_SCAN_TASK = 1  # identifies data being sent to back end
 
@@ -86,6 +87,12 @@ class Command(BaseCommand):
         logger.debug("[{}] Marking task as failed".format(task.id))
         task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
         task.status = STATUS_FAILED
+        task.save()
+
+    def mark_as_timeout(self, task):
+        logger.debug("[{}] Marking task timeout".format(task.id))
+        task.completed_on = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        task.status = STATUS_TIMEOUT
         task.save()
 
     def mark_as_completed(self, task):
@@ -215,13 +222,18 @@ class Command(BaseCommand):
                         logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
                                                                                             task.port,
                                                                                             task.routing_key))
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
+
+                    if task.thread_exception == pika.exceptions.ProbableAuthenticationError or \
+                            task.thread_exception == pika.exceptions.ProbableAccessDeniedError:
+                        logger.info("Task {} Authentication Error".format(int(task.frontend_id)))
+                        self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
                     if task.thread_exception == TimeOutException:
                         logger.info("Task {} took too long to reply".format(int(task.frontend_id)))
-                    if task.thread_exception == pika.exceptions.ProbableAuthenticationError or \
-                                    task.thread_exception == pika.exceptions.ProbableAccessDeniedError:
-                        logger.info("Task {} Authentication Error".format(int(task.frontend_id)))
-                    self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
-                    self.active_scans.remove(task)
+                        self.mark_as_timeout(Task.objects.filter(pk=int(task.frontend_id))[0])
+                        self.active_scans.remove(task)
 
             logger.debug("Sleeping for {} seconds".format(6))
             time.sleep(6)
