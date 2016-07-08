@@ -38,13 +38,11 @@ from bson import json_util
 from interface.producer import Producer
 import pika
 
-
-
-STATUS_NEW              = 0  # identifies local status of task
-STATUS_PROCESSING       = 1
-STATUS_FAILED           = 2
-STATUS_COMPLETED        = 3
-STATUS_TIMEOUT          = 4
+STATUS_NEW = 0  # identifies local status of task
+STATUS_PROCESSING = 1
+STATUS_FAILED = 2
+STATUS_COMPLETED = 3
+STATUS_TIMEOUT = 4
 
 NEW_SCAN_TASK = 1  # identifies data being sent to back end
 
@@ -65,6 +63,7 @@ fs = gridfs.GridFS(dbfs)
 
 
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
 
@@ -112,6 +111,7 @@ class Command(BaseCommand):
         )
 
     def post_new_task(self, task):
+
         temp1 = loads(self.renderTaskDetail(task.id))
         temp = temp1['fields']
         backend = temp.pop("backend")
@@ -123,21 +123,31 @@ class Command(BaseCommand):
         temp["frontend_id"] = temp1.pop("pk")
         temp["task"] = NEW_SCAN_TASK
         logger.debug("Posting task {}".format(temp["frontend_id"]))
+
         if backend == SEND_ANY:
             #  start the thread to post the scan on any queue
-            scan = Producer(json.dumps(temp), BACKEND_HOST, RPC_PORT, ANY_QUEUE, temp["frontend_id"])
+            scan = Producer(json.dumps(temp),
+                            BACKEND_HOST,
+                            RPC_PORT,
+                            ANY_QUEUE,
+                            temp["frontend_id"])
             scan.start()
             self.active_scans.append(scan)
             self.mark_as_running(task)
+
         else:
             #  start the thread to post the scan on private queue
-            scan = Producer(json.dumps(temp), backend, RPC_PORT, PRIVATE_QUEUE, temp["frontend_id"])
+            scan = Producer(json.dumps(temp),
+                            backend,
+                            RPC_PORT,
+                            PRIVATE_QUEUE,
+                            temp["frontend_id"])
             scan.start()
             self.active_scans.append(scan)
             self.mark_as_running(task)
 
     def search_samples_dict_list(self, search_id,sample_dict):
-        "returns new gridfs sample_id"
+        #  returns new gridfs sample_id
         for x in sample_dict:
             if x["_id"] == search_id:
                 return x["sample_id"]
@@ -146,43 +156,66 @@ class Command(BaseCommand):
         #  now files for locations
         for x in response["locations"]:
             if x['content_id'] is not None:
-                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+                dfile = [
+                    item["data"] for item in files
+                    if str(item["content_id"]) == x["content_id"]
+                    ][0]
+
                 new_fs_id = str(fs.put(dfile.encode('utf-8')))
                 #  now change id in repsonse
                 x['location_id'] = new_fs_id
+
         # now for samples
         for x in response["samples"]:
-            dfile = [item["data"] for item in files if str(item["sample_id"]) == x["sample_id"]][0]
+            dfile = [
+                item["data"] for item in files
+                if str(item["sample_id"]) == x["sample_id"]
+                ][0]
+
             new_fs_id = str(fs.put(dfile.encode('utf-8')))
-            #n  ow change id in repsonse
+            #  now change id in repsonse
             x['sample_id'] = new_fs_id
+
         # same for pcaps
         for x in response["pcaps"]:
-            if x['content_id'] != None:
-                dfile = [item["data"] for item in files if str(item["content_id"]) == x["content_id"]][0]
+            if x['content_id'] is not None:
+                dfile = [
+                    item["data"] for item in files
+                    if str(item["content_id"]) == x["content_id"]
+                    ][0]
+
                 new_fs_id = str(fs.put(dfile.encode('utf-8')))
             #  now change id in repsonse
             x['content_id'] = new_fs_id
         #  for vt,andro etc. eoint sample_id to gridfs id
+
         #  check for issues in this
         for x in response["virustotal"]:
-            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],
+                                                           response["samples"])
         for x in response["honeyagent"]:
-            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],
+                                                           response["samples"])
         for x in response["androguard"]:
-            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],
+                                                           response["samples"])
         for x in response["peepdf"]:
-            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],response["samples"])
+            x['sample_id'] = self.search_samples_dict_list(x['sample_id'],
+                                                           response["samples"])
+
         #  remove id from all samples and pcaps
         for x in response["samples"]:
             x.pop("_id")
+
         response.pop("_id")
         frontend_analysis_id = db.analysiscombo.insert(response)
+
         return frontend_analysis_id
 
     def process_response(self, task):
 
         analysis = json.loads(task.response, object_hook=decoder)
+
         if analysis["status"] is STATUS_COMPLETED:
             logger.info("Task Completed")
 
@@ -190,34 +223,43 @@ class Command(BaseCommand):
             files = json_util.loads(analysis["files"])
             local_task = Task.objects.get(id=analysis_response["frontend_id"])
 
-            frontend_analysis_id = self.retrieve_save_document(analysis_response, files)
+            frontend_analysis_id = self.retrieve_save_document(analysis_response,
+                                                               files)
 
             local_task.object_id = frontend_analysis_id
             local_task.save()
 
             self.mark_as_completed(local_task)
             self.active_scans.remove(task)
+
         else:
+
             logger.info("Task Failed")
             local_scan = Task.objects.get(id=analysis["data"])
             self.mark_as_failed(local_scan)
             self.active_scans.remove(task)
 
     def handle(self, *args, **options):
+
         logger.debug("Starting up frontend daemon")
+
         while True:
+
             logger.debug("Fetching new tasks to post to backend.")
             tasks = self.fetch_new_tasks()
             logger.debug("Got {} new tasks".format(len(tasks)))
+
             for task in tasks:
                 self.post_new_task(task)
 
             logger.debug("Checking for complete tasks")
+
             for task in self.active_scans:
                 if task.thread_exception is None:
                     if hasattr(task, 'response') and task.response is not None:
                         self.process_response(task)
                 else:
+
                     if task.thread_exception == pika.exceptions.ConnectionClosed:
                         logger.info("Cannot make connection to backend via {} {} {}".format(task.host,
                                                                                             task.port,
@@ -227,9 +269,11 @@ class Command(BaseCommand):
 
                     if task.thread_exception == pika.exceptions.ProbableAuthenticationError or \
                             task.thread_exception == pika.exceptions.ProbableAccessDeniedError:
+
                         logger.info("Task {} Authentication Error".format(int(task.frontend_id)))
                         self.mark_as_failed(Task.objects.filter(pk=int(task.frontend_id))[0])
                         self.active_scans.remove(task)
+
                     if task.thread_exception == TimeOutException:
                         logger.info("Task {} took too long to reply".format(int(task.frontend_id)))
                         self.mark_as_timeout(Task.objects.filter(pk=int(task.frontend_id))[0])
