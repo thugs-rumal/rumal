@@ -10,9 +10,6 @@
     <link href="/static/css/material.min.css" rel="stylesheet">
     <link href="/static/css/ripples.min.css" rel="stylesheet">
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/ripples.min.js"></script>
-    <script src="/static/js/material.min.js"></script>
     {% block customheaders %}{% endblock %}
     <style type="text/css">
         html,
@@ -83,12 +80,16 @@
         </div>
         {% block content %}{% endblock %}
     </div>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/ripples.min.js"></script>
+    <script src="/static/js/material.min.js"></script>
     <script>
         $(document).ready(function() {
             // This command is used to initialize some elements and make them work properly
             $.material.init();
         });
     </script>
+
     <script>
         {% block bottomscripts %}{% endblock %}
     </script>
