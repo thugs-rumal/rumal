@@ -263,4 +263,22 @@ function setPanels(nid) {
             $(this)
                 .scrollTop(0);
         });
+
+    $("#samples")
+        .mouseleave(function() {
+            $(this)
+                .scrollTop(0);
+        });
+
+    $("#codes")
+        .mouseleave(function() {
+            $(this)
+                .scrollTop(0);
+        });
+
+    $("#plugins")
+        .mouseleave(function() {
+            $(this)
+                .scrollTop(0);
+        });
 }
