@@ -117,6 +117,7 @@ class TaskResource(ModelResource):
         authorization   = OwnAndSharedObjectsOnlyRelAuthorization()
         allowed_methods = ['get']
         include_resource_uri = False
+        limit = 0
         ordering        = [
             'id',
             'user__username',
