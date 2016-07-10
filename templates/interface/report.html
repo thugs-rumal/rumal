@@ -25,6 +25,10 @@
             font-weight: bold;
         }
 
+        #first {
+             overflow: auto;
+        }
+
         td {
             text-overflow: ellipsis;
             width: 20px;
@@ -136,6 +140,14 @@
             padding: 8px 10px;
             position: absolute;
         }
+    
+        #first table {
+            table-layout: fixed;
+        }
+
+        #first table td{
+             word-wrap: break-word;
+        }
 
 {% endblock %}
 {% block content %}
@@ -143,7 +155,7 @@
     <div class="row" style="height:100%;overflow:hidden;">
         <div class="col-md-4" id="sidebar">
 
-            <div class="panel panel-default test" id="first">
+            <div class="panel panel-default" id="first">
                 <div class="panel-body test-in">
                     <b>Basic info</b>
                 </div>
