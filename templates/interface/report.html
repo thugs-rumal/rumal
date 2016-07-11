@@ -65,10 +65,10 @@
 
         .test {
             margin-bottom: 2px;
-            height: 30px;
-            transition: height 0.3s linear;
+            max-height: 30px;
+            transition: max-height 0.5s linear;
             /* Animation time */
-            -webkit-transition: height 0.3s linear;
+            -webkit-transition: max-height 0.5s linear;
             /* For Safari */
         }
 
@@ -102,7 +102,8 @@
         }
 
         .test:hover {
-            height: 100px;
+{#            height: auto;#}
+            max-height: 100%;
         }
         div.panel div a{
             cursor: pointer;
@@ -151,8 +152,8 @@
 
 {% endblock %}
 {% block content %}
-<div class="container" style="width:100%;height100%;" id="main">
-    <div class="row" style="height:100%;overflow:hidden;">
+<div class="container" style="width:100%" id="main">
+    <div class="row" style="height:100%;overflow:auto;">
         <div class="col-md-4" id="sidebar">
 
             <div class="panel panel-default" id="first">
@@ -197,9 +198,9 @@
 
 
         </div>
-        <div class="col-md-8" style="height:95%;">
+        <div class="col-md-8" style="height:86%;position: fixed; margin-left: 33%">
             <div class="panel panel-default" style="width:92%;height:100%">
-                <div class="col-md-12" style="height:95%;" id="wrap"></div>
+                <div class="col-md-12" style="height:99%;" id="wrap"></div>
             </div>
         </div>
         <button id="bookmark-toggle" class="btn btn-warning btn-fab {% if bookmarked %} mdi-action-turned-in {% else %} mdi-action-turned-in-not {% endif %}" style="position:absolute;right:1%;bottom:15%;"></button>

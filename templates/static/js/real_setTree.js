@@ -31,6 +31,7 @@ function setTree() {
         .append("g");
     if(navigator.userAgent.indexOf('Chrome')>0){
         d3.select('.tree svg').style("padding-left",margin.left);
+        d3.select('.tree svg').style("position","fixed");
     } else{
         d3.select('.tree svg').attr("transform", "translate(" + margin.left + ",0)");
     }
