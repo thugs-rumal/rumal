@@ -74,6 +74,7 @@ TEMPLATES = [
             ],
             'debug': True,
         },
+        'APP_DIRS': True,
     }
 ]
 
