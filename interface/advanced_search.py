@@ -40,6 +40,10 @@ ident = pyparsing.Word(pyparsing.alphanums+'.')
 comparison_operator = pyparsing.oneOf(['==', '=', '~', '!=', '>', '>=', '<', '<='])
 
 
+keyword = pyparsing.Keyword('url', caseless=True) | \
+          pyparsing.Keyword('status', caseless=True)
+
+
 pending = pyparsing.Keyword('pending', caseless=True).setParseAction(lambda t: int(1))
 failed = pyparsing.Keyword('failed', caseless=True).setParseAction(lambda t: int(2))
 finished = pyparsing.Keyword('finished', caseless=True).setParseAction(lambda t: int(3))
@@ -57,7 +61,7 @@ literal_false = pyparsing.Keyword('false', caseless=True)
 boolean_literal = literal_true | literal_false
 
 comparison_operand = status_keyword | quote | ident | float_ | integer
-comparison_expr = ComparisonNode.group(comparison_operand + comparison_operator + comparison_operand)
+comparison_expr = ComparisonNode.group(keyword + comparison_operator + comparison_operand)
 
 
 boolean_expr = pyparsing.operatorPrecedence(

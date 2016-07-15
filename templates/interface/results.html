@@ -8,8 +8,8 @@
 {% endblock %}
 {% block navbar %}{% include 'navbar.html' %}{% endblock %} 
 {% block content %}
-    {% if not status %}
-        <p>Search Error</p>
+    {% if status != None %}
+        <p> {{ status }}</p>
     {% endif %}
 
     <div class="row">

@@ -37,6 +37,7 @@ from interface.models import *
 
 from django.core import serializers
 import advanced_search
+from django.core.exceptions import FieldError
 
 SHARING_MODEL_PUBLIC = 0
 SHARING_MODEL_PRIVATE = 1
@@ -69,7 +70,7 @@ def reports(request, pagination_start=0, pagination_len=50):
     tasks = Task.objects
     context = {
         'active_tab': 'reports',
-        'status': True
+        'status': None
     }
 
     search_query = request.GET.get('search', '')
@@ -81,11 +82,14 @@ def reports(request, pagination_start=0, pagination_len=50):
             try:
                 tasks = tasks.filter(query)  # query
             except ValueError:
-                context['status'] = False
+                context['status'] = 'Invalid value given for field'
+            except FieldError:
+                context['status'] = 'Invalid Field Given'
+
         else:
-            context['status'] = False
+            context['status'] = 'Could not make AST'
     else:
-        context['status'] = False
+        context['status'] = 'No content, returning all scans'
 
     pagination_start = int(pagination_start)
     pagination_len = int(pagination_len)
