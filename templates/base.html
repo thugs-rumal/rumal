@@ -51,7 +51,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <i class="mdi-action-find-replace mdi-material-black" style="font-size: 36px;padding-top:8px;"></i>
+                <i id="submit" class="mdi-action-find-replace mdi-material-black" style="font-size: 36px;padding-top:8px;"></i>
                 <form class="navbar-form navbar-left" id="searchform">
                     <input class="form-control col-lg-8" placeholder="Rumal Advanced Search" type="text" id="searchfield">
                 </form>
@@ -84,10 +84,26 @@
     <script src="/static/js/ripples.min.js"></script>
     <script src="/static/js/material.min.js"></script>
     <script>
+
         $(document).ready(function() {
             // This command is used to initialize some elements and make them work properly
             $.material.init();
         });
+
+        document.getElementById("submit").onclick = function() {
+            var search_query = document.getElementById('searchfield').value;
+            $(location).attr('href', '/reports/' + '?search=' + search_query);
+        };
+
+        $("#searchfield").bind("keypress", {}, keypressInBox);
+        function keypressInBox(e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) { //Enter keycode
+                e.preventDefault();
+                var search_query = document.getElementById('searchfield').value;
+                $(location).attr('href', '/reports/' + '?search=' + search_query);
+            }
+        }
     </script>
 
     <script>

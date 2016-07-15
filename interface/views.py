@@ -35,16 +35,19 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
-SHARING_MODEL_PUBLIC    = 0
-SHARING_MODEL_PRIVATE   = 1
-SHARING_MODEL_GROUPS    = 2
+from django.core import serializers
+import advanced_search
+
+SHARING_MODEL_PUBLIC = 0
+SHARING_MODEL_PRIVATE = 1
+SHARING_MODEL_GROUPS = 2
 
 
 @login_required
 def new_task(request):
     context = {
         'active_tab': 'new_task',
-        'form'      : TaskForm(request.POST or None),
+        'form': TaskForm(request.POST or None),
     }
 
     if request.method == 'POST':
@@ -61,34 +64,43 @@ def new_task(request):
 
 
 @login_required
-def reports(request, status='any', pagination_start=0, pagination_len=50):
-    pagination_start    = int(pagination_start)
-    pagination_len      = int(pagination_len)
+def reports(request, pagination_start=0, pagination_len=50):
 
+    tasks = Task.objects
     context = {
         'active_tab': 'reports',
+        'status': True
     }
-    tasks = Task.objects
-    if status == 'new':
-        tasks = tasks.filter(status__exact=STATUS_NEW)
-    elif status == 'processing':
-        tasks = tasks.filter(status__exact=STATUS_PROCESSING)
-    elif status == 'failed':
-        tasks = tasks.filter(status__exact=STATUS_FAILED)
-    elif status == 'completed':
-        tasks = tasks.filter(status__exact=STATUS_COMPLETED)
 
-    # Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        tree = advanced_search.search(search_query)  # Make Abstract syntax tree
+        if tree:
+            query = advanced_search.get_query(tree)  # Create Q query from AST
+            try:
+                tasks = tasks.filter(query)  # query
+            except ValueError:
+                context['status'] = False
+        else:
+            context['status'] = False
+    else:
+        context['status'] = False
+
+    pagination_start = int(pagination_start)
+    pagination_len = int(pagination_len)
+
+    #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
     tasks = tasks.filter(
-        Q(user__exact = request.user) |
+        Q(user__exact=request.user) |
         Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
         (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
         )
 
-    context['tasks']    = tasks.order_by('-id')[pagination_start:pagination_start+pagination_len]
-    context['total']    = tasks.count()
-    context['start']    = pagination_start
-    context['len']      = pagination_len
+    context['tasks'] = serializers.serialize('json', tasks.order_by('-id')[pagination_start:pagination_start+pagination_len])
+    context['total'] = tasks.count()
+    context['start'] = pagination_start
+    context['len'] = pagination_len
 
     return render(request, 'interface/results.html', context)
 
@@ -139,8 +151,8 @@ def json_tree_graph(request, analysis_id=None):
             'nodes': {}
         }
     }
-    root_link   = graph_get_root_node(analysis_id)
-    root_node   = graph_populate_node(analysis_id, root_link['source_id'])
+    root_link = graph_get_root_node(analysis_id)
+    root_node = graph_populate_node(analysis_id, root_link['source_id'])
     graph['graph']['nodes'] = graph_get_children(analysis_id, root_node)
     return JsonResponse(graph)
 
@@ -167,8 +179,8 @@ def content(request, content_id=None):
         except:
             raise Http404("Content not found")
 
-    dbfs    = MongoClient().thugfs
-    fs      = GridFS(dbfs)
+    dbfs = MongoClient().thugfs
+    fs = GridFS(dbfs)
 
     try:
         content = base64.b64decode(fs.get(content_id).read())
@@ -204,8 +216,8 @@ def raw_content(request, content_id=None):
         except:
             raise Http404("Content not found")
 
-    dbfs    = MongoClient().thugfs
-    fs      = GridFS(dbfs)
+    dbfs = MongoClient().thugfs
+    fs = GridFS(dbfs)
 
     fo = fs.get(content_id)
     try:
