@@ -38,6 +38,10 @@ from interface.models import *
 from django.core import serializers
 import advanced_search
 from django.core.exceptions import FieldError
+import pymongo
+
+client = pymongo.MongoClient()
+db = client.thug
 
 SHARING_MODEL_PUBLIC = 0
 SHARING_MODEL_PRIVATE = 1
@@ -65,7 +69,7 @@ def new_task(request):
 
 
 @login_required
-def reports(request, pagination_start=0, pagination_len=50):
+def reports(request):
 
     tasks = Task.objects
     context = {
@@ -76,23 +80,19 @@ def reports(request, pagination_start=0, pagination_len=50):
     search_query = request.GET.get('search', '')
 
     if search_query:
+
         tree = advanced_search.search(search_query)  # Make Abstract syntax tree
         if tree:
+
             query = advanced_search.get_query(tree)  # Create Q query from AST
-            try:
-                tasks = tasks.filter(query)  # query
-            except ValueError:
-                context['status'] = 'Invalid value given for field'
-            except FieldError:
-                context['status'] = 'Invalid Field Given'
+            mongo_result = [str(x['_id']) for x in list(db.analysiscombo.find(query))]  # get object IDs of valid scans
 
         else:
             context['status'] = 'Could not make AST'
+            return render(request, 'interface/results.html', context)
     else:
-        context['status'] = 'No content, returning all scans'
-
-    pagination_start = int(pagination_start)
-    pagination_len = int(pagination_len)
+        context['status'] = 'Empty search'
+        return render(request, 'interface/results.html', context)
 
     #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
     tasks = tasks.filter(
@@ -101,10 +101,11 @@ def reports(request, pagination_start=0, pagination_len=50):
         (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
         )
 
-    context['tasks'] = serializers.serialize('json', tasks.order_by('-id')[pagination_start:pagination_start+pagination_len])
-    context['total'] = tasks.count()
-    context['start'] = pagination_start
-    context['len'] = pagination_len
+    # Now apply the filter of valid mongo Objects IDs
+    tasks = [task for task in tasks if task.object_id in mongo_result]
+
+    context['tasks'] = serializers.serialize('json', tasks)
+    context['total'] = len(tasks)
 
     return render(request, 'interface/results.html', context)
 

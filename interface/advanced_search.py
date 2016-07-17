@@ -34,22 +34,23 @@ not_operator        = pyparsing.oneOf(['not', '^'], caseless=True)
 and_operator        = pyparsing.oneOf(['and', '&'], caseless=True)
 or_operator         = pyparsing.oneOf(['or', '|'], caseless=True)
 
-ident = pyparsing.Word(pyparsing.alphanums+'.')
+ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(lambda t: t[0].replace('_', ' '))
 
 
-comparison_operator = pyparsing.oneOf(['==', '=', '~', '!=', '>', '>=', '<', '<='])
+comparison_operator = pyparsing.oneOf(['$gte', '==', '=', '~', '!=', '>', '>=', '<', '<='])
 
 
 keyword = pyparsing.Keyword('url', caseless=True) | \
-          pyparsing.Keyword('status', caseless=True)
+          pyparsing.Keyword('id', caseless=True).setParseAction(lambda t: 'frontend_id') | \
+            pyparsing.Keyword('timestamp', caseless=True)
 
 
-pending = pyparsing.Keyword('pending', caseless=True).setParseAction(lambda t: int(1))
-failed = pyparsing.Keyword('failed', caseless=True).setParseAction(lambda t: int(2))
-finished = pyparsing.Keyword('finished', caseless=True).setParseAction(lambda t: int(3))
-timeout = pyparsing.Keyword('timeout', caseless=True).setParseAction(lambda t: int(4))
+# pending = pyparsing.Keyword('pending', caseless=True).setParseAction(lambda t: int(1))
+# failed = pyparsing.Keyword('failed', caseless=True).setParseAction(lambda t: int(2))
+# finished = pyparsing.Keyword('finished', caseless=True).setParseAction(lambda t: int(3))
+# timeout = pyparsing.Keyword('timeout', caseless=True).setParseAction(lambda t: int(4))
 
-status_keyword = finished | pending | timeout | failed
+# status_keyword = finished | pending | timeout | failed
 
 integer = pyparsing.Regex(r'[+-]?\d+').setParseAction(lambda t: int(t[0]))
 float_ = pyparsing.Regex(r'[+-]?\d+\.\d*').setParseAction(lambda t: float(t[0]))
@@ -60,7 +61,7 @@ literal_true = pyparsing.Keyword('true', caseless=True)
 literal_false = pyparsing.Keyword('false', caseless=True)
 boolean_literal = literal_true | literal_false
 
-comparison_operand = status_keyword | quote | ident | float_ | integer
+comparison_operand = quote | ident | float_ | integer
 comparison_expr = ComparisonNode.group(keyword + comparison_operator + comparison_operand)
 
 
@@ -81,20 +82,30 @@ def search(string):
     except pyparsing.ParseException:
         return False
 
+
 def get_query(query):
-    return_Q = Q()
+    return_Q = {}
     iterable = iter(xrange(len(query)))
     for i in iterable:
+
         if type(query[i]) is pyparsing.ParseResults:
             return_Q = get_query(query[i])
+
         if type(query[i]) is AndNode:
-            return_Q &= get_element(query[i + 1])
+            return_Q = {"$and": [return_Q, get_element(query[i + 1])]}
             next(iterable)
+
         if type(query[i]) is OrNode:
-            return_Q |= get_element(query[i + 1])
+            return_Q = {"$or": [return_Q, get_element(query[i + 1])]}
             next(iterable)
+
         if type(query[i]) is ComparisonNode:
-            return_Q &= Q(**{query[i][0] + '__exact': query[i][2]})
+            # greater than or equal comparison can be used for timestamps
+            if query[i][1] == '$gte':
+                return_Q.update({query[i][0]: {query[i][1]: query[i][2]}})
+
+            else:
+                return_Q.update({query[i][0]: query[i][2]})
 
     return return_Q
 
@@ -102,7 +113,11 @@ def get_query(query):
 def get_element(element):
 
     if type(element) is ComparisonNode:
-        return Q(**{element[0] + '__exact': element[2]})
+
+        if element[1] == '$gte':
+            return {element[0]: {element[1]: element[2]}}
+
+        return {element[0]: element[2]}
 
     if type(element) is pyparsing.ParseResults:
         return get_query(element)
