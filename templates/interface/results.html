@@ -44,14 +44,13 @@
 {% block bottomscripts %}
 
     var status = '{{ status|safe }}'
-    console.log(status)
     var tasks = {{ tasks|safe }}
 
     for (var i in tasks) {
             var id = tasks[i].pk;
             var url = tasks[i].fields.url;
             var status = tasks[i].fields.status;
-            submitted_on = tasks[i].fields.submitted_on;
+            submitted_on = tasks[i].fields.submitted_on.replace("T", " ").replace("Z", "");
             var label = {};
 
             switch (status) {
@@ -92,7 +91,7 @@
                     $("<td>")
                     .html(
                         $("<p>")
-                        .html(Date(submitted_on))))
+                        .html(submitted_on)))
                 .append(
                     $("<td>")
                     .html(

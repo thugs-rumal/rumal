@@ -36,8 +36,8 @@ or_operator         = pyparsing.oneOf(['or', '|'], caseless=True)
 
 ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(lambda t: t[0].replace('_', ' '))
 
-
-comparison_operator = pyparsing.oneOf(['$gte', '==', '=', '~', '!=', '>', '>=', '<', '<='])
+comparison_list = ['$gte', '$gt', '$lte', '$lt']
+comparison_operator = pyparsing.oneOf(comparison_list + ['=='])
 
 
 keyword = pyparsing.Keyword('url', caseless=True) | \
@@ -101,7 +101,7 @@ def get_query(query):
 
         if type(query[i]) is ComparisonNode:
             # greater than or equal comparison can be used for timestamps
-            if query[i][1] == '$gte':
+            if query[i][1] in comparison_list:
                 return_Q.update({query[i][0]: {query[i][1]: query[i][2]}})
 
             else:
@@ -114,7 +114,7 @@ def get_element(element):
 
     if type(element) is ComparisonNode:
 
-        if element[1] == '$gte':
+        if element[1] in comparison_list:
             return {element[0]: {element[1]: element[2]}}
 
         return {element[0]: element[2]}
