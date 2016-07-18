@@ -8,6 +8,29 @@
 {% endblock %}
 {% block navbar %}{% include 'navbar.html' %}{% endblock %} 
 {% block content %}
+
+    {% if help %}
+<h1 style="color: #5e9ca0;">Advanced Search Help</h1>
+<h2 style="color: #2e6c80;">Operators:</h2>
+<ul style="list-style-type: circle;">
+<li>&lt;field&gt; <strong>=</strong> &lt;key&gt; Contains</li>
+<li>&lt;field&gt;<strong> ==</strong> &lt;key&gt; Exact match</li>
+<li>&lt;field&gt; <strong>~</strong> &lt;key&gt; Regex</li>
+<li>&lt;field&gt; <strong>$gte</strong> &lt;key&gt; Greater than or equal</li>
+<li>&lt;field&gt; <strong>$gt</strong> &lt;key&gt; Greater than</li>
+<li>&lt;field&gt; <strong>$lte</strong> &lt;key&gt; Lower than or equal</li>
+<li>&lt;field&gt; <strong>$lt</strong> &lt;key&gt; Lower than</li>
+</ul>
+<h2 style="color: #2e6c80;">Searchable Fields:</h2>
+<ol style="list-style-type: circle;">
+<li><span style="text-decoration: underline;"><strong>url:</strong></span> scanned url</li>
+<li><span style="text-decoration: underline;"><strong>urls:&nbsp;</strong></span> urls in tree</li>
+<li><span style="text-decoration: underline;"><strong>timestamp:</strong></span>&nbsp;Date/Time of scan in format year-month-day_hour:minute:second</li>
+<li><span style="text-decoration: underline;"><strong>id:</strong></span> id of the scan</li>
+</ol>
+
+    {% endif %}
+
     {% if status != None %}
         <p> {{ status }}</p>
     {% endif %}
@@ -42,8 +65,6 @@
     </div>
 {% endblock %}
 {% block bottomscripts %}
-
-    var status = '{{ status|safe }}'
     var tasks = {{ tasks|safe }}
 
     for (var i in tasks) {

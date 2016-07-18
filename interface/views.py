@@ -74,8 +74,13 @@ def reports(request):
     tasks = Task.objects
     context = {
         'active_tab': 'reports',
-        'status': None
+        'status': None,  # Error messages for advanced search
+        'help': False  # Display help setting to user
     }
+
+    if 'help' in request.get_full_path().split('/'):  # Display help aid
+        context['help'] = True
+        return render(request, 'interface/results.html', context)
 
     search_query = request.GET.get('search', '')
 
