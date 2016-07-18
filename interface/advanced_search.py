@@ -1,8 +1,8 @@
 import pyparsing
-from django.db.models import Q
 
 
 class Node(list):
+    # Used to group nodes in query string from advanced search
         def __eq__(self, other):
                 return list.__eq__(self, other) and self.__class__ == other.__class__
 
@@ -24,36 +24,38 @@ class Node(list):
                 raise NotImplementedError()
 
 
-class ComparisonNode(Node): pass
-class AndNode(Node): pass
-class OrNode(Node): pass
-class NotNode(Node): pass
+class ComparisonNode(Node): pass  # Field operator Value group
+class AndNode(Node): pass  # And operator between comparison group
+class OrNode(Node): pass # Or operator between comparison group
+class NotNode(Node): pass #Not operator in comparison group
 
 
 # GRAMMAR
-not_operator        = pyparsing.oneOf(['not', '^'], caseless=True)
-and_operator        = pyparsing.oneOf(['and', '&'], caseless=True)
-or_operator         = pyparsing.oneOf(['or', '|'], caseless=True)
+not_operator = pyparsing.oneOf(['not', '^'], caseless=True)
+and_operator = pyparsing.oneOf(['and', '&'], caseless=True)
+or_operator = pyparsing.oneOf(['or', '|'], caseless=True)
 
 ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(lambda t: t[0].replace('_', ' '))
 
-equal_exact = pyparsing.Keyword('==', caseless=True)
-equal_contains = pyparsing.Keyword('=', caseless=True).setParseAction(lambda t: '$regex')
-regex = pyparsing.Keyword('~', caseless=True).setParseAction(lambda t: '$regex')
-greater_than_equal = pyparsing.Keyword('$gte', caseless=True)
-greater_than = pyparsing.Keyword('$gt', caseless=True)
-lower_than_equal = pyparsing.Keyword('$lte', caseless=True)
-lower_than = pyparsing.Keyword('$lt', caseless=True)
+# OPERATORS
+equal_exact = pyparsing.Keyword('==', caseless=True)  # exact match
+equal_contains = pyparsing.Keyword('=', caseless=True).setParseAction(lambda t: '$regex')  # contains match
+regex = pyparsing.Keyword('~', caseless=True).setParseAction(lambda t: '$regex')  # regex match
+greater_than_equal = pyparsing.Keyword('$gte', caseless=True)  # greater than or equal
+greater_than = pyparsing.Keyword('$gt', caseless=True)  # greater than
+lower_than_equal = pyparsing.Keyword('$lte', caseless=True)  # lower than or equal
+lower_than = pyparsing.Keyword('$lt', caseless=True)  # lower than
 
 comparison_list = ['$gte', '$gt', '$lte', '$lt', '$regex']
 comparison_operator = equal_exact | equal_contains | regex |\
                       greater_than_equal | greater_than | lower_than_equal | lower_than
 
-
+# FIELD CHOICES
 keyword = pyparsing.Keyword('url', caseless=True) | \
           pyparsing.Keyword('id', caseless=True).setParseAction(lambda t: 'frontend_id') | \
           pyparsing.Keyword('timestamp', caseless=True) | \
           pyparsing.Keyword('urls', caseless=True).setParseAction(lambda t: 'url_map.url')
+
 
 integer = pyparsing.Regex(r'[+-]?\d+').setParseAction(lambda t: int(t[0]))
 float_ = pyparsing.Regex(r'[+-]?\d+\.\d*').setParseAction(lambda t: float(t[0]))
@@ -81,9 +83,9 @@ grammar = boolean_expr
 
 def search(string):
     """
-    Parse tree of advanced search
+    Parse tree of advanced search string
     :param string:
-    :return: AST or false
+    :return: AST or false if parse error
     """
     try:
         return grammar.parseString(string, parseAll=True)

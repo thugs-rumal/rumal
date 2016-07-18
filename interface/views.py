@@ -70,6 +70,12 @@ def new_task(request):
 
 @login_required
 def reports(request):
+    """
+    Advanced search feature, parses string into a mongodb query, displays relevant results to user in table.
+    Search help display guide on what operators and fileds can be used
+    :param request: contains string to parse
+    :return: table with scans matching query
+    """
 
     tasks = Task.objects
     context = {
@@ -92,10 +98,10 @@ def reports(request):
             query = advanced_search.get_query(tree)  # Create Q query from AST
             mongo_result = [str(x['_id']) for x in list(db.analysiscombo.find(query))]  # get object IDs of valid scans
 
-        else:
+        else:  # problem with parser (string can be in wrong format )
             context['status'] = 'Could not make AST'
             return render(request, 'interface/results.html', context)
-    else:
+    else:  # no string detected for search
         context['status'] = 'Empty search'
         return render(request, 'interface/results.html', context)
 
@@ -106,7 +112,7 @@ def reports(request):
         (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
         )
 
-    # Now apply the filter of valid mongo Objects IDs
+    # Now apply the filter of valid mongo Objects IDs Advanced search
     tasks = [task for task in tasks if task.object_id in mongo_result]
 
     context['tasks'] = serializers.serialize('json', tasks)
