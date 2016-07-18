@@ -23,10 +23,11 @@ class Node(list):
         def get_query(self):
                 raise NotImplementedError()
 
+
 class ComparisonNode(Node): pass
-class AndNode(Node):pass
-class OrNode(Node):pass
-class NotNode(Node):pass
+class AndNode(Node): pass
+class OrNode(Node): pass
+class NotNode(Node): pass
 
 
 # GRAMMAR
@@ -36,21 +37,23 @@ or_operator         = pyparsing.oneOf(['or', '|'], caseless=True)
 
 ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(lambda t: t[0].replace('_', ' '))
 
-comparison_list = ['$gte', '$gt', '$lte', '$lt']
-comparison_operator = pyparsing.oneOf(comparison_list + ['=='])
+equal_exact = pyparsing.Keyword('==', caseless=True)
+equal_contains = pyparsing.Keyword('=', caseless=True).setParseAction(lambda t: '$regex')
+regex = pyparsing.Keyword('~', caseless=True).setParseAction(lambda t: '$regex')
+greater_than_equal = pyparsing.Keyword('$gte', caseless=True)
+greater_than = pyparsing.Keyword('$gt', caseless=True)
+lower_than_equal = pyparsing.Keyword('$lte', caseless=True)
+lower_than = pyparsing.Keyword('$lt', caseless=True)
+
+comparison_list = ['$gte', '$gt', '$lte', '$lt', '$regex']
+comparison_operator = equal_exact | equal_contains | regex |\
+                      greater_than_equal | greater_than | lower_than_equal | lower_than
 
 
 keyword = pyparsing.Keyword('url', caseless=True) | \
           pyparsing.Keyword('id', caseless=True).setParseAction(lambda t: 'frontend_id') | \
-            pyparsing.Keyword('timestamp', caseless=True)
-
-
-# pending = pyparsing.Keyword('pending', caseless=True).setParseAction(lambda t: int(1))
-# failed = pyparsing.Keyword('failed', caseless=True).setParseAction(lambda t: int(2))
-# finished = pyparsing.Keyword('finished', caseless=True).setParseAction(lambda t: int(3))
-# timeout = pyparsing.Keyword('timeout', caseless=True).setParseAction(lambda t: int(4))
-
-# status_keyword = finished | pending | timeout | failed
+          pyparsing.Keyword('timestamp', caseless=True) | \
+          pyparsing.Keyword('urls', caseless=True).setParseAction(lambda t: 'url_map.url')
 
 integer = pyparsing.Regex(r'[+-]?\d+').setParseAction(lambda t: int(t[0]))
 float_ = pyparsing.Regex(r'[+-]?\d+\.\d*').setParseAction(lambda t: float(t[0]))
@@ -77,6 +80,11 @@ grammar = boolean_expr
 
 
 def search(string):
+    """
+    Parse tree of advanced search
+    :param string:
+    :return: AST or false
+    """
     try:
         return grammar.parseString(string, parseAll=True)
     except pyparsing.ParseException:
@@ -84,34 +92,43 @@ def search(string):
 
 
 def get_query(query):
-    return_Q = {}
+    """
+    Builds the query string for mongodb
+    :param query: AST
+    :return:
+    """
+    return_query = {}
     iterable = iter(xrange(len(query)))
     for i in iterable:
 
         if type(query[i]) is pyparsing.ParseResults:
-            return_Q = get_query(query[i])
+            return_query = get_query(query[i])
 
         if type(query[i]) is AndNode:
-            return_Q = {"$and": [return_Q, get_element(query[i + 1])]}
+            return_query = {"$and": [return_query, get_element(query[i + 1])]}
             next(iterable)
 
         if type(query[i]) is OrNode:
-            return_Q = {"$or": [return_Q, get_element(query[i + 1])]}
+            return_query = {"$or": [return_query, get_element(query[i + 1])]}
             next(iterable)
 
         if type(query[i]) is ComparisonNode:
             # greater than or equal comparison can be used for timestamps
             if query[i][1] in comparison_list:
-                return_Q.update({query[i][0]: {query[i][1]: query[i][2]}})
+                return_query.update({query[i][0]: {query[i][1]: query[i][2]}})
 
             else:
-                return_Q.update({query[i][0]: query[i][2]})
+                return_query.update({query[i][0]: query[i][2]})
 
-    return return_Q
+    return return_query
 
 
 def get_element(element):
-
+    """
+    get_query helper function
+    :param element: element from AST
+    :return:
+    """
     if type(element) is ComparisonNode:
 
         if element[1] in comparison_list:
