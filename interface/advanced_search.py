@@ -41,14 +41,14 @@ ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(l
 equal_exact = pyparsing.Keyword('==', caseless=True)  # exact match
 equal_contains = pyparsing.Keyword('=', caseless=True).setParseAction(lambda t: '$regex')  # contains match
 regex = pyparsing.Keyword('~', caseless=True).setParseAction(lambda t: '$regex')  # regex match
-greater_than_equal = pyparsing.Keyword('$gte', caseless=True)  # greater than or equal
-greater_than = pyparsing.Keyword('$gt', caseless=True)  # greater than
-lower_than_equal = pyparsing.Keyword('$lte', caseless=True)  # lower than or equal
-lower_than = pyparsing.Keyword('$lt', caseless=True)  # lower than
+greater_than_equal = pyparsing.Keyword('>=', caseless=True).setParseAction(lambda t: '$gte')  # greater than or equal
+greater_than = pyparsing.Keyword('>', caseless=True).setParseAction(lambda t: '$gt')  # greater than
+lower_than_equal = pyparsing.Keyword('<=', caseless=True).setParseAction(lambda t: '$lte')  # lower than or equal
+lower_than = pyparsing.Keyword('<', caseless=True).setParseAction(lambda t: '$lt')  # lower than
 
 comparison_list = ['$gte', '$gt', '$lte', '$lt', '$regex']
-comparison_operator = equal_exact | equal_contains | regex |\
-                      greater_than_equal | greater_than | lower_than_equal | lower_than
+comparison_operator = equal_exact | regex |\
+                      greater_than_equal | greater_than | lower_than_equal | lower_than | equal_contains
 
 # FIELD CHOICES
 keyword = pyparsing.Keyword('url', caseless=True) | \
@@ -140,4 +140,3 @@ def get_element(element):
 
     if type(element) is pyparsing.ParseResults:
         return get_query(element)
-

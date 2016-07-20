@@ -20,27 +20,27 @@ search_dict = {
         {'url': {'$regex': './amazon./: -'}}
     ],
 
-    'id $gte 1': [
+    'id >= 1': [
         pyparsing.ParseResults([ComparisonNode(['frontend_id', '$gte', '1'])]),
         {'frontend_id': {'$gte': '1'}}
     ],
 
-    'id $gt 1': [
+    'id > 1': [
         pyparsing.ParseResults([ComparisonNode(['frontend_id', '$gt', '1'])]),
         {'frontend_id': {'$gt': '1'}}
     ],
 
-    'id $lte 1': [
+    'id <= 1': [
         pyparsing.ParseResults([ComparisonNode(['frontend_id', '$lte', '1'])]),
         {'frontend_id': {'$lte': '1'}}
     ],
 
-    'id $lt 1': [
+    'id < 1': [
         pyparsing.ParseResults([ComparisonNode(['frontend_id', '$lt', '1'])]),
         {'frontend_id': {'$lt': '1'}}
     ],
 
-    'timestamp $gte 2016-07-07_12:00:00': [
+    'timestamp >= 2016-07-07_12:00:00': [
         pyparsing.ParseResults(
             [
                 ComparisonNode(['timestamp', '$gte', '2016-07-07 12:00:00'])
@@ -79,7 +79,7 @@ search_dict = {
     ],
 
     # and has precedence over or
-    'url = amazon and id == 1 or id == 2': [
+    'url = amazon and id == 1 or id > 2': [
         [
             [
                 [ComparisonNode(['url', '$regex', 'amazon']),
@@ -87,10 +87,10 @@ search_dict = {
                  ComparisonNode(['frontend_id', '==', '1'])
                  ],
                 OrNode(['or']),
-                ComparisonNode(['frontend_id', '==', '2'])
+                ComparisonNode(['frontend_id', '$gt', '2'])
             ]
         ],
-        {'$or': [{'$and': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}, {'frontend_id': '2'}]}
+        {'$or': [{'$and': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}, {'frontend_id': {'$gt': '2'}}]}
     ],
 
     'url = amazon or id == 1 and id == 2': [
@@ -140,7 +140,7 @@ search_dict = {
     ],
 
     # long combination
-    '(id == 1 or id == 2) and (url == amazon or id $gte 1)': [
+    '(id == 1 or id == 2) and (url == amazon or id >= 1)': [
         [
             [
                 [
@@ -191,6 +191,7 @@ class TestParseTree(unittest.TestCase):
     # Create valid parse tree from string
     def test_string_to_parse_tree(self):
         for string in search_dict:
+
             self.assertEqual(search(string).asList(),
                              list(search_dict[string][0])
                              )
