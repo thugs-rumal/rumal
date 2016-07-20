@@ -76,6 +76,10 @@ def reports(request):
     :param request: contains string to parse
     :return: table with scans matching query
     """
+    # makes sure text indexes are set
+    db.analysiscombo.create_index([("$**", pymongo.TEXT)],
+                                  default_language="en",
+                                  language_override="en")
 
     tasks = Task.objects
     context = {

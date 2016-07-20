@@ -1,6 +1,6 @@
 import unittest
 import pyparsing
-from interface.advanced_search import ComparisonNode, search, AndNode, OrNode, get_query
+from interface.advanced_search import ComparisonNode, search, AndNode, OrNode, get_query, TextNode
 
 # Search string --> [ expected parse tree, expected mongo query ]
 search_dict = {
@@ -169,7 +169,70 @@ search_dict = {
                  }
             ]
          }
+    ],
+
+    # no fields search
+    'google': [
+        [TextNode(['google'])],
+        {'$text': {'$search': 'google'}}
+
+    ],
+
+    'this_text or text and url == http://amazon.com': [
+        [
+            [TextNode(['this text']), OrNode(['or']), [
+                TextNode(['text']), AndNode(['and']), ComparisonNode(['url', '==', 'http://amazon.com'])]
+             ]
+        ],
+        {'$or':
+            [
+                {'$text': {'$search': 'this text'}},
+                {'$and': [
+                    {'$text': {'$search': 'text'}},
+                    {'url': 'http://amazon.com'}
+                ]}
+            ]
+         }
+
+    ],
+
+    '(this_text or text) and url == http://amazon.com': [
+        [
+            [
+                [
+                    TextNode(['this text']), OrNode(['or']), TextNode(['text'])
+                ],
+                AndNode(['and']),
+                ComparisonNode(['url', '==', 'http://amazon.com'])
+            ]
+        ],
+        {'$and':
+            [
+                {'$or':
+                    [
+                        {'$text': {'$search': 'this text'}},
+                        {'$text': {'$search': 'text'}}
+                    ]
+                 },
+                {'url': 'http://amazon.com'}
+            ]
+         }
+    ],
+
+    #regex
+    'url ~ .*son.*': [
+        [ComparisonNode(['url', '$regex', '.*son.*'])],
+        {'url': {'$regex': '.*son.*'}}
+
+    ],
+
+    '.*amazon.*': [
+        [TextNode(['.*amazon.*'])],
+        {'$text': {'$search': '.*amazon.*'}}
+
     ]
+
+
 
 }
 

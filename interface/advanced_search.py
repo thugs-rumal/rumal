@@ -23,7 +23,7 @@ class Node(list):
         def get_query(self):
                 raise NotImplementedError()
 
-
+class TextNode(Node): pass  # No fields, searches all available fields
 class ComparisonNode(Node): pass  # Field operator Value group
 class AndNode(Node): pass  # And operator between comparison group
 class OrNode(Node): pass # Or operator between comparison group
@@ -35,7 +35,7 @@ not_operator = pyparsing.oneOf(['not', '^'], caseless=True)
 and_operator = pyparsing.oneOf(['and', '&'], caseless=True)
 or_operator = pyparsing.oneOf(['or', '|'], caseless=True)
 
-ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-').setParseAction(lambda t: t[0].replace('_', ' '))
+ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*').setParseAction(lambda t: t[0].replace('_', ' '))
 
 # OPERATORS
 equal_exact = pyparsing.Keyword('==', caseless=True)  # exact match
@@ -69,9 +69,10 @@ boolean_literal = literal_true | literal_false
 comparison_operand = quote | ident | float_ | integer
 comparison_expr = ComparisonNode.group(keyword + comparison_operator + comparison_operand)
 
+text = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*').setParseAction(lambda t: t[0].replace('_', ' '))
 
 boolean_expr = pyparsing.operatorPrecedence(
-    comparison_expr | boolean_literal,
+    comparison_expr | TextNode.group(text),
     [
         (NotNode.group(not_operator), 1, pyparsing.opAssoc.RIGHT),
         (AndNode.group(and_operator), 2, pyparsing.opAssoc.LEFT),
@@ -122,6 +123,10 @@ def get_query(query):
             else:
                 return_query.update({query[i][0]: query[i][2]})
 
+        if type(query[i]) is TextNode:
+            return_query.update({'$text': {'$search': query[i][0]}})
+
+
     return return_query
 
 
@@ -131,6 +136,9 @@ def get_element(element):
     :param element: element from AST
     :return:
     """
+    if type(element) is TextNode:
+        return {'$text': {'$search': element[0]}}
+
     if type(element) is ComparisonNode:
 
         if element[1] in comparison_list:
