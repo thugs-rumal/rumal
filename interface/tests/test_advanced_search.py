@@ -1,13 +1,19 @@
 import unittest
 import pyparsing
 from interface.advanced_search import ComparisonNode, search, AndNode, OrNode, get_query, TextNode
+import re
 
 # Search string --> [ expected parse tree, expected mongo query ]
 search_dict = {
 
     'url = amazon': [
         pyparsing.ParseResults([ComparisonNode(['url', '$regex', 'amazon'])]),
-        {'url': {'$regex': 'amazon'}}
+        {'url': {'$regex': re.compile('amazon')}}
+    ],
+
+    'url != amazon': [
+        pyparsing.ParseResults([ComparisonNode(['url', '$not', 'amazon'])]),
+        {'url': {'$not': re.compile('amazon')}}
     ],
 
     'url == amazon': [
@@ -17,7 +23,7 @@ search_dict = {
 
     'url ~ ./amazon./:_-': [
         pyparsing.ParseResults([ComparisonNode(['url', '$regex', './amazon./: -'])]),
-        {'url': {'$regex': './amazon./: -'}}
+        {'url': {'$regex': re.compile('./amazon./: -')}}
     ],
 
     'id >= 1': [
@@ -65,7 +71,7 @@ search_dict = {
              ComparisonNode(['frontend_id', '==', '1'])
              ]
         ],
-        {'$and': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}
+        {'$and': [{'url': {'$regex': re.compile('amazon')}}, {'frontend_id': '1'}]}
     ],
 
     'url = amazon or id == 1': [
@@ -75,7 +81,7 @@ search_dict = {
              ComparisonNode(['frontend_id', '==', '1'])
              ]
         ],
-        {'$or': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}
+        {'$or': [{'url': {'$regex': re.compile('amazon')}}, {'frontend_id': '1'}]}
     ],
 
     # and has precedence over or
@@ -90,7 +96,7 @@ search_dict = {
                 ComparisonNode(['frontend_id', '$gt', '2'])
             ]
         ],
-        {'$or': [{'$and': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}, {'frontend_id': {'$gt': '2'}}]}
+        {'$or': [{'$and': [{'url': {'$regex': re.compile('amazon')}}, {'frontend_id': '1'}]}, {'frontend_id': {'$gt': '2'}}]}
     ],
 
     'url = amazon or id == 1 and id == 2': [
@@ -105,7 +111,7 @@ search_dict = {
 
             ]
         ],
-        {'$or': [{'url': {'$regex': 'amazon'}}, {'$and': [{'frontend_id': '1'}, {'frontend_id': '2'}]}]}
+        {'$or': [{'url': {'$regex': re.compile('amazon')}}, {'$and': [{'frontend_id': '1'}, {'frontend_id': '2'}]}]}
     ],
 
     'url = amazon and id == 1 and id == 2': [
@@ -120,7 +126,7 @@ search_dict = {
 
             ]
         ],
-        {'$and': [{'$and': [{'url': {'$regex': 'amazon'}}, {'frontend_id': '1'}]}, {'frontend_id': '2'}]}
+        {'$and': [{'$and': [{'url': {'$regex': re.compile('amazon')}}, {'frontend_id': '1'}]}, {'frontend_id': '2'}]}
     ],
 
     # add parentheses to give or precedence
@@ -136,7 +142,7 @@ search_dict = {
                 ]
             ]
         ],
-        {'$and': [{'url': {'$regex': 'amazon'}}, {'$or': [{'frontend_id': '1'}, {'frontend_id': '2'}]}]}
+        {'$and': [{'url': {'$regex': re.compile('amazon')}}, {'$or': [{'frontend_id': '1'}, {'frontend_id': '2'}]}]}
     ],
 
     # long combination
@@ -222,7 +228,7 @@ search_dict = {
     #regex
     'url ~ .*son.*': [
         [ComparisonNode(['url', '$regex', '.*son.*'])],
-        {'url': {'$regex': '.*son.*'}}
+        {'url': {'$regex': re.compile('.*son.*')}}
 
     ],
 
@@ -230,6 +236,11 @@ search_dict = {
         [TextNode(['.*amazon.*'])],
         {'$text': {'$search': '.*amazon.*'}}
 
+    ],
+
+    'timestamp != 2015 and urls != /.*amazon.*/':[
+        [[ComparisonNode(['timestamp', '$not', '2015']), AndNode(['and']), ComparisonNode(['url_map.url', '$not', '/.*amazon.*/'])]],
+        {'$and': [{'timestamp': {'$not': re.compile('2015')}}, {'url_map.url': {'$not': re.compile('/.*amazon.*/')}}]}
     ]
 
 
@@ -242,7 +253,7 @@ exception_searches = [
     'url == amazon and',  # invalid and expression
     'or url $gte 1',  # invalid or expression
     'and = 1',  # and as field key
-    'timestamp > 1'  # > character is not used
+    'timestamp $gte 1'  # > character is not used
     '% #@&`|;',  # other invalid characters
     'this_field = google'  # invalid field name
 

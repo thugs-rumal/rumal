@@ -1,4 +1,5 @@
 import pyparsing
+import re
 
 
 class Node(list):
@@ -27,15 +28,14 @@ class TextNode(Node): pass  # No fields, searches all available fields
 class ComparisonNode(Node): pass  # Field operator Value group
 class AndNode(Node): pass  # And operator between comparison group
 class OrNode(Node): pass # Or operator between comparison group
-class NotNode(Node): pass #Not operator in comparison group
+class MultipleNode(Node): pass
 
 
 # GRAMMAR
-not_operator = pyparsing.oneOf(['not', '^'], caseless=True)
 and_operator = pyparsing.oneOf(['and', '&'], caseless=True)
 or_operator = pyparsing.oneOf(['or', '|'], caseless=True)
 
-ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*').setParseAction(lambda t: t[0].replace('_', ' '))
+ident = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*'+'^').setParseAction(lambda t: t[0].replace('_', ' '))
 
 # OPERATORS
 equal_exact = pyparsing.Keyword('==', caseless=True)  # exact match
@@ -45,9 +45,12 @@ greater_than_equal = pyparsing.Keyword('>=', caseless=True).setParseAction(lambd
 greater_than = pyparsing.Keyword('>', caseless=True).setParseAction(lambda t: '$gt')  # greater than
 lower_than_equal = pyparsing.Keyword('<=', caseless=True).setParseAction(lambda t: '$lte')  # lower than or equal
 lower_than = pyparsing.Keyword('<', caseless=True).setParseAction(lambda t: '$lt')  # lower than
+not_equal = pyparsing.Keyword('!=', caseless=True).setParseAction(lambda t: '$not')  # does not contain
 
-comparison_list = ['$gte', '$gt', '$lte', '$lt', '$regex']
-comparison_operator = equal_exact | regex |\
+comparison_list = ['$gte', '$gt', '$lte', '$lt']
+regex_list = ['$not', '$regex']  # This special list requires re.compile to be called on regex string
+
+comparison_operator = not_equal | equal_exact | regex |\
                       greater_than_equal | greater_than | lower_than_equal | lower_than | equal_contains
 
 # FIELD CHOICES
@@ -60,13 +63,11 @@ keyword = pyparsing.Keyword('url', caseless=True) | \
 integer = pyparsing.Regex(r'[+-]?\d+').setParseAction(lambda t: int(t[0]))
 float_ = pyparsing.Regex(r'[+-]?\d+\.\d*').setParseAction(lambda t: float(t[0]))
 
-quote = pyparsing.QuotedString('"')
-
 literal_true = pyparsing.Keyword('true', caseless=True)
 literal_false = pyparsing.Keyword('false', caseless=True)
 boolean_literal = literal_true | literal_false
 
-comparison_operand = quote | ident | float_ | integer
+comparison_operand = ident | float_ | integer
 comparison_expr = ComparisonNode.group(keyword + comparison_operator + comparison_operand)
 
 text = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*').setParseAction(lambda t: t[0].replace('_', ' '))
@@ -74,7 +75,6 @@ text = pyparsing.Word(pyparsing.alphanums+'.'+'/'+':'+'_'+'-'+'*').setParseActio
 boolean_expr = pyparsing.operatorPrecedence(
     comparison_expr | TextNode.group(text),
     [
-        (NotNode.group(not_operator), 1, pyparsing.opAssoc.RIGHT),
         (AndNode.group(and_operator), 2, pyparsing.opAssoc.LEFT),
         (OrNode.group(or_operator),  2, pyparsing.opAssoc.LEFT),
     ])
@@ -120,6 +120,9 @@ def get_query(query):
             if query[i][1] in comparison_list:
                 return_query.update({query[i][0]: {query[i][1]: query[i][2]}})
 
+            elif query[i][1] in regex_list:  # Convert for regex
+                return_query.update({query[i][0]: {query[i][1]: re.compile(query[i][2])}})
+
             else:
                 return_query.update({query[i][0]: query[i][2]})
 
@@ -143,6 +146,9 @@ def get_element(element):
 
         if element[1] in comparison_list:
             return {element[0]: {element[1]: element[2]}}
+
+        elif element[1] in regex_list:  # Convert for regex
+            return {element[0]: {element[1]: re.compile(element[2])}}
 
         return {element[0]: element[2]}
 
