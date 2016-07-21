@@ -1,7 +1,54 @@
 {% extends "base.html" %}
 {% block title %}Reports{% endblock %}
+{% block customheaders %}
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables_themeroller.css">
+    <script type="text/javascript" charset="utf8" src="/static/js/jquery.dataTables.min.js"></script>
+
+{% endblock %}
 {% block navbar %}{% include 'navbar.html' %}{% endblock %} 
 {% block content %}
+
+    {% if help %}
+        <h1 style="color: #5e9ca0;">Advanced Search Help</h1>
+        <div style="display: inline-block">
+            <h2 style="color: #2e6c80;">Operators:</h2>
+            <ul style="list-style-type: circle;">
+            <li>&lt;field&gt; <strong>=</strong> &lt;key&gt; Contains</li>
+                <li>&lt;field&gt; <strong>!=</strong> &lt;key&gt; Does not Contains</li>
+            <li>&lt;field&gt;<strong> ==</strong> &lt;key&gt; Exact match</li>
+            <li>&lt;field&gt; <strong>~</strong> &lt;key&gt; Regex</li>
+            <li>&lt;field&gt; <strong>&gt;=</strong> &lt;key&gt; Greater than or equal</li>
+            <li>&lt;field&gt; <strong>&gt;</strong> &lt;key&gt; Greater than</li>
+            <li>&lt;field&gt; <strong>&lt;=</strong> &lt;key&gt; Lower than or equal</li>
+            <li>&lt;field&gt; <strong>&lt;</strong> &lt;key&gt; Lower than</li>
+            </ul>
+        </div>
+        <div style="width: 400px; display: inline-block; vertical-align: top; margin-left: 20px">
+            <h2 style="color: #2e6c80;">Text Search:</h2>
+            <p>Writing a string without an Operator will do the search in all Mongodb text fields.</p>
+        </div>
+        <div style="width: 400px; display: inline-block; vertical-align: top; margin-left: 20px">
+            <h2 style="color: #2e6c80;">Searchable Fields:</h2>
+            <ol style="list-style-type: circle;">
+            <li><span style="text-decoration: underline;"><strong>url:</strong></span> Name of the scanned url</li>
+            <li><span style="text-decoration: underline;"><strong>urls:&nbsp;</strong></span> urls in Thugs tree</li>
+            <li><span style="text-decoration: underline;"><strong>timestamp:</strong></span>&nbsp;Date/Time of scan in format year-month-day_hour:minute:second</li>
+            <li><span style="text-decoration: underline;"><strong>id:</strong></span> id of the scan</li>
+            </ol>
+        </div>
+        <div style="width: 400px;display: inline-block; vertical-align: top; margin-left: 20px; word-wrap: break-word;">
+            <h2 style="color: #2e6c80;">Writing queries:</h2>
+            <p>Combine search operators and text searches with and/or to build your search query.</p>
+            <p><strong>amazon and timestamp > 2016-07-07_12:45:45</strong></p>
+        </div>
+
+    {% endif %}
+
+    {% if status != None %}
+        <p> {{ status }}</p>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default" id="tasks_list">
@@ -32,6 +79,110 @@
     </div>
 {% endblock %}
 {% block bottomscripts %}
+    var tasks = {{ tasks|safe }}
+
+    for (var i in tasks) {
+            var id = tasks[i].pk;
+            var url = tasks[i].fields.url;
+            var status = tasks[i].fields.status;
+            submitted_on = tasks[i].fields.submitted_on.replace("T", " ").replace("Z", "");
+            var label = {};
+
+            switch (status) {
+
+                case "0":
+
+                case "1":
+                    label.class = 'info';
+                    label.text = 'Pending';
+                    break;
+                case "2":
+                    label.class = 'danger';
+                    label.text = 'Failed';
+                    break;
+
+                case "3":
+                    label.class = 'success';
+                    label.text = 'Finished';
+                    break;
+
+                case "4":
+                    label.class = 'danger';
+                    label.text = 'Timeout';
+                    break;
+
+            }
+
+
+            $("#table_tasks tbody ").append(
+                $("<tr>")
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<a>")
+                        .attr("href", '/report/'+id+'/')
+                        .html(id)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(submitted_on)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(url)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(tasks[i].fields.referer)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(tasks[i].fields.useragent)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(tasks[i].fields.proxy)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(tasks[i].fields.user)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(tasks[i].fields.sharing_model)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<span></span>")
+                        .attr("class", "label label-" + label.class)
+                        .html(label.text)))
+
+
+            );
+
+        }
+
+        jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
+            a = parseInt($(a).text());
+            b = parseInt($(b).text());
+            return ((a < b) ? -1 : ((a > b) ?  1 : 0));
+        };
+
+        jQuery.fn.dataTableExt.oSort['numeric-html-desc']  = function(a, b) {
+            a = parseInt($(a).text());
+            b = parseInt($(b).text());
+            return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
+        };
+
+
+
 var table = $('#table_tasks').DataTable({
     "processing": true,
     "serverSide": true,
@@ -50,97 +201,6 @@ var table = $('#table_tasks').DataTable({
         "infoFiltered": "",
         "emptyTable": "Still no tasks here"
     },
-    "ajax": function(data, callback, settings) {
-        data.limit = data.length;
-        data.offset = data.start;
-        if (data.order.length > 0){
-            var direction = (data.order[0]['dir'] == 'desc' ? '-' : '');
-            var column_name = data.columns[data.order[0]['column']]['data'];
-            if (column_name == 'shared_with'){
-                column_name = 'sharing_groups';
-            }
-            data.order_by = direction + column_name;
-        }
-
-        $.ajax({
-            url: "/api/v1/task/",
-            data: data,
-            success: function(innerdata) {
-                innerdata.draw = data.draw;
-                innerdata.recordsTotal = innerdata.meta.total_count;
-                innerdata.recordsFiltered = innerdata.meta.total_count;
-                innerdata.data = innerdata.objects;
-                $.each(innerdata.data, function(){
-                    // Add links to IDs
-                    this.id = '<a href="{% url 'interface:report' %}' + this.id + '/">' + this.id + '</a>';
-                
-                    // Parse dates
-                    this.submitted_on = new Date(this.submitted_on);
-                    
-                    // Truncate long URLs and referers
-                    if (this.url.length > 50){
-                        this.url = this.url.substring(0, 47) + '...';
-                    }
-                    if (this.referer.length == 0){
-                        this.referer = "about:blank";
-                    }
-                    else if (this.referer.length > 50){
-                        this.referer = this.referer.substring(0, 47) + '...';
-                    }
-                    
-                    // Set "Default" for empty user-agents
-                    this.useragent = (this.useragent != null ? this.useragent : 'Default');
-                    
-                    // Proxy is a yes/no value:
-                    this.proxy = (this.proxy != null ? 'Yes' : 'No');
-                    
-                    // Fix "Shared with"
-                    if (this.sharing_model == 0){
-                        this.shared_with = "Public";
-                    }
-                    else if (this.sharing_model == 1){
-                        this.shared_with = "Private";
-                    }
-                    else if (this.sharing_model == 2){
-                        if (this.sharing_groups.length > 0){
-                            var groups = [];
-                            $.each(this.sharing_groups, function(i){
-                                groups.push(this.name);
-                            });
-                            this.shared_with = groups.join(", ");
-                        }
-                        else{
-                            this.shared_with = "Nobody"
-                        }
-                    }
-                    else{
-                        this.shared_with = "Nobody";
-                    }
-                    
-                    // Status to badge
-                    switch (this.status){
-                        case 0:
-                            this.status = '<span id="span_status" class="label label-info">Queued</span>';
-                            break;
-                        case 1:
-                            this.status = '<span id="span_status" class="label label-primary">Running</span>';
-                            break;
-                        case 2:
-                            this.status = '<span id="span_status" class="label label-danger">Failed</span>';
-                            break;
-                        case 3:
-                            this.status = '<span id="span_status" class="label label-success">Completed</span>';
-                            break;
-                        default:
-                            this.status = '<span id="span_status" class="label label-default">Unknown</span>';
-                    }
-                });
-            },
-            dataType: 'json'
-        }).done(function (d) {
-            callback(d);
-        });
-    },
     "columns": [
         { "data": "id" },
         { "data": "submitted_on" },
@@ -151,7 +211,18 @@ var table = $('#table_tasks').DataTable({
         { "data": "user.username" },
         { "data": "shared_with" },
         { "data": "status" },
-    ]
+    ],
+            "aoColumns" : [
+                    { "sType" : "numeric-html" },
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                ]
 });
 
 // Reload table every 10 seconds

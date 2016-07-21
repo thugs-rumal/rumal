@@ -5,6 +5,7 @@ django-widget-tweaks
 geoip2
 hexdump
 pymongo==3.0.3
+pyparsing
 python-magic
 pythonwhois
 pytz

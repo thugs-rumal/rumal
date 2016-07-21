@@ -26,6 +26,7 @@ from interface import views
 urlpatterns = (
     url(r'^report/(?:(?P<task_id>\d+)/)?$', views.report, name='report'),
     url(r'^reports/$', views.reports, name='reports'),
+    url(r'^reports/help$', views.reports, name='reports'),
     url(r'^myscans/$', views.my_scans, name='myscans'),
     url(r'^togglebookmark/$', views.star_view, name='star'),
 
