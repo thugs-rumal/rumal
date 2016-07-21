@@ -10,24 +10,38 @@
 {% block content %}
 
     {% if help %}
-<h1 style="color: #5e9ca0;">Advanced Search Help</h1>
-<h2 style="color: #2e6c80;">Operators:</h2>
-<ul style="list-style-type: circle;">
-<li>&lt;field&gt; <strong>=</strong> &lt;key&gt; Contains</li>
-<li>&lt;field&gt;<strong> ==</strong> &lt;key&gt; Exact match</li>
-<li>&lt;field&gt; <strong>~</strong> &lt;key&gt; Regex</li>
-<li>&lt;field&gt; <strong>$gte</strong> &lt;key&gt; Greater than or equal</li>
-<li>&lt;field&gt; <strong>$gt</strong> &lt;key&gt; Greater than</li>
-<li>&lt;field&gt; <strong>$lte</strong> &lt;key&gt; Lower than or equal</li>
-<li>&lt;field&gt; <strong>$lt</strong> &lt;key&gt; Lower than</li>
-</ul>
-<h2 style="color: #2e6c80;">Searchable Fields:</h2>
-<ol style="list-style-type: circle;">
-<li><span style="text-decoration: underline;"><strong>url:</strong></span> scanned url</li>
-<li><span style="text-decoration: underline;"><strong>urls:&nbsp;</strong></span> urls in tree</li>
-<li><span style="text-decoration: underline;"><strong>timestamp:</strong></span>&nbsp;Date/Time of scan in format year-month-day_hour:minute:second</li>
-<li><span style="text-decoration: underline;"><strong>id:</strong></span> id of the scan</li>
-</ol>
+        <h1 style="color: #5e9ca0;">Advanced Search Help</h1>
+        <div style="display: inline-block">
+            <h2 style="color: #2e6c80;">Operators:</h2>
+            <ul style="list-style-type: circle;">
+            <li>&lt;field&gt; <strong>=</strong> &lt;key&gt; Contains</li>
+                <li>&lt;field&gt; <strong>!=</strong> &lt;key&gt; Does not Contains</li>
+            <li>&lt;field&gt;<strong> ==</strong> &lt;key&gt; Exact match</li>
+            <li>&lt;field&gt; <strong>~</strong> &lt;key&gt; Regex</li>
+            <li>&lt;field&gt; <strong>&gt;=</strong> &lt;key&gt; Greater than or equal</li>
+            <li>&lt;field&gt; <strong>&gt;</strong> &lt;key&gt; Greater than</li>
+            <li>&lt;field&gt; <strong>&lt;=</strong> &lt;key&gt; Lower than or equal</li>
+            <li>&lt;field&gt; <strong>&lt;</strong> &lt;key&gt; Lower than</li>
+            </ul>
+        </div>
+        <div style="width: 400px; display: inline-block; vertical-align: top; margin-left: 20px">
+            <h2 style="color: #2e6c80;">Text Search:</h2>
+            <p>Writing a string without an Operator will do the search in all Mongodb text fields.</p>
+        </div>
+        <div style="width: 400px; display: inline-block; vertical-align: top; margin-left: 20px">
+            <h2 style="color: #2e6c80;">Searchable Fields:</h2>
+            <ol style="list-style-type: circle;">
+            <li><span style="text-decoration: underline;"><strong>url:</strong></span> Name of the scanned url</li>
+            <li><span style="text-decoration: underline;"><strong>urls:&nbsp;</strong></span> urls in Thugs tree</li>
+            <li><span style="text-decoration: underline;"><strong>timestamp:</strong></span>&nbsp;Date/Time of scan in format year-month-day_hour:minute:second</li>
+            <li><span style="text-decoration: underline;"><strong>id:</strong></span> id of the scan</li>
+            </ol>
+        </div>
+        <div style="width: 400px;display: inline-block; vertical-align: top; margin-left: 20px; word-wrap: break-word;">
+            <h2 style="color: #2e6c80;">Writing queries:</h2>
+            <p>Combine search operators and text searches with and/or to build your search query.</p>
+            <p><strong>amazon and timestamp > 2016-07-07_12:45:45</strong></p>
+        </div>
 
     {% endif %}
 
