@@ -145,17 +145,24 @@ def my_scans(request):
 
 @login_required
 def report(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-    if request.user in task.star.all():
-        bookmarked = True
-    else:
-        bookmarked = False
+
     context = {
-        'task': task,
-        'bookmarked': bookmarked,
+        'task': None,
+        'bookmarked': False,
+        'authorisation': False
     }
 
+    task = get_object_or_404(Task, pk=task_id)
+
+    # If scan is public or used is allowed to view scan
+    if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+        context['task'] = task
+        context['authorisation'] = True
+        if request.user in task.star.all():
+            context['bookmarked'] = True
+
     return render(request, 'interface/report.html', context)
+
 
 
 @login_required

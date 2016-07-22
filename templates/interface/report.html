@@ -152,115 +152,141 @@
 
 {% endblock %}
 {% block content %}
-<div class="container" style="width:100%" id="main">
-    <div class="row" style="height:100%;overflow:auto;">
-        <div class="col-md-4" id="sidebar">
+    <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -19px">
+        <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+        <li><a data-toggle="tab" href="#comments">Comments</a></li>
+    </ul>
 
-            <div class="panel panel-default" id="first">
-                <div class="panel-body test-in">
-                    <b>Basic info</b>
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+
+            {% if not authorisation %}
+                <p style="margin-left: 15px"> You are not authorised to view this scan</p>
+            {% endif %}
+
+            <div class="container" style="width:100%" id="main">
+                <div class="row" style="height:100%;overflow:auto;">
+                    <div class="col-md-4" id="sidebar">
+
+                        <div class="panel panel-default" id="first">
+                            <div class="panel-body test-in">
+                                <b>Basic info</b>
+                            </div>
+                        </div>
+                        <div class="panel panel-default test" id="samples">
+                            <div class="panel-body test-in">
+                                <b>Samples</b>
+                            </div>
+                        </div>
+                        <div class="panel panel-default test" id="codes">
+                            <div class="panel-body test-in">
+                                <b>Codes</b>
+                            </div>
+                        </div>
+                        <div class="panel panel-default test" id="plugins">
+                            <div class="panel-body test-in">
+                                <b>Plugins</b>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+
+                        <div class="panel panel-danger pgroup" style="max-height:110px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Panel danger</h3>
+                            </div>
+                            <div class="panel-body">
+                            </div>
+                        </div>
+
+
+                        <div class="panel panel-warning pgroup" style="max-height:110px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Panel warning</h3>
+                            </div>
+                            <div class="panel-body">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-8" style="height:86%;position: fixed; margin-left: 33%">
+                        <div class="panel panel-default" style="width:92%;height:100%">
+                            <div class="col-md-12" style="height:99%;" id="wrap"></div>
+                        </div>
+                    </div>
+                    <button id="bookmark-toggle" class="btn btn-warning btn-fab {% if bookmarked %} mdi-action-turned-in {% else %} mdi-action-turned-in-not {% endif %}" style="position:absolute;right:1%;bottom:15%;"></button>
+                    <button id="map-tree" class="btn btn-info btn-fab mdi-action-swap-horiz" style="position:absolute;right:1%;bottom:5%;"></button>
                 </div>
             </div>
-            <div class="panel panel-default test" id="samples">
-                <div class="panel-body test-in">
-                    <b>Samples</b>
+            <!-- Your site ends -->
+
+            <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" data-dismiss="modal" style="float:right;background:transparent;border:none">&times;</button>
+                            <h4 class="modal-title">&nbsp;</h4>
+                        </div>
+                        <div class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="panel panel-default test" id="codes">
-                <div class="panel-body test-in">
-                    <b>Codes</b>
-                </div>
-            </div>
-            <div class="panel panel-default test" id="plugins">
-                <div class="panel-body test-in">
-                    <b>Plugins</b>
-                </div>
-            </div>
-            <br>
-            <br>
-
-            <div class="panel panel-danger pgroup" style="max-height:110px;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel danger</h3>
-                </div>
-                <div class="panel-body">
-                </div>
-            </div>
-
-
-            <div class="panel panel-warning pgroup" style="max-height:110px;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel warning</h3>
-                </div>
-                <div class="panel-body">
-                </div>
-            </div>
-
-
         </div>
-        <div class="col-md-8" style="height:86%;position: fixed; margin-left: 33%">
-            <div class="panel panel-default" style="width:92%;height:100%">
-                <div class="col-md-12" style="height:99%;" id="wrap"></div>
-            </div>
-        </div>
-        <button id="bookmark-toggle" class="btn btn-warning btn-fab {% if bookmarked %} mdi-action-turned-in {% else %} mdi-action-turned-in-not {% endif %}" style="position:absolute;right:1%;bottom:15%;"></button>
-        <button id="map-tree" class="btn btn-info btn-fab mdi-action-swap-horiz" style="position:absolute;right:1%;bottom:5%;"></button>
+    <div id="comments" class="tab-pane fade">
+        <div></div>
     </div>
-</div>
-<!-- Your site ends -->
-
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" data-dismiss="modal" style="float:right;background:transparent;border:none">&times;</button>
-                <h4 class="modal-title">&nbsp;</h4>
-            </div>
-            <div class="modal-body"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
 {% block bottomscripts %}
         var object_id = '{{ task.object_id }}';
-        $(function() {
-            $.material.init();
-            var tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
-            $('#map-tree').click(function(){
-                if($('#wrap .tree').css('display')=='none'){
-                    $('#wrap .tree').fadeIn();
-                    $('#wrap .map').fadeOut();
-                }else{
-                    $('#wrap .tree').fadeOut();
-                    $('#wrap .map').fadeIn();
-                }
-            });
-            $.getJSON("/api/v1/analysiscombo/" + object_id + "/?format=json",
-                function(full_analysis) {
-                    window.full_analysis=full_analysis;
-                    setMap(tooltip);
-                    setTree();
-                });
-            $("#bookmark-toggle").click(function(){
-                $.get('/togglebookmark/',{
-                    taskId:{{ task.id }}
-                },function(){
-                    if($("#bookmark-toggle").hasClass('mdi-action-turned-in')){
-                        $("#bookmark-toggle").removeClass('mdi-action-turned-in');
-                        $("#bookmark-toggle").addClass('mdi-action-turned-in-not');
+        var task_id = '{{ task.id }}' || "None";
+        var authorisation = '{{ authorisation }}'
+        console.log(authorisation)
+        if (authorisation == 'True') {
+            $(function() {
+                $.material.init();
+                var tooltip = d3.select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                $('#map-tree').click(function(){
+                    if($('#wrap .tree').css('display')=='none'){
+                        $('#wrap .tree').fadeIn();
+                        $('#wrap .map').fadeOut();
                     }else{
-                        $("#bookmark-toggle").removeClass('mdi-action-turned-in-not');
-                        $("#bookmark-toggle").addClass('mdi-action-turned-in');
+                        $('#wrap .tree').fadeOut();
+                        $('#wrap .map').fadeIn();
                     }
                 });
+
+                $.getJSON("/api/v1/analysiscombo/" + object_id + "/?format=json",
+                    function(full_analysis) {
+                        window.full_analysis=full_analysis;
+                        setMap(tooltip);
+                        setTree();
+                    });
+
+                $("#bookmark-toggle").click(function(){
+                    $.get('/togglebookmark/',
+                        {
+                            taskId: task_id
+                        },function(){
+                            if($("#bookmark-toggle").hasClass('mdi-action-turned-in')){
+                                $("#bookmark-toggle").removeClass('mdi-action-turned-in');
+                                $("#bookmark-toggle").addClass('mdi-action-turned-in-not');
+                            }else{
+                                $("#bookmark-toggle").removeClass('mdi-action-turned-in-not');
+                                $("#bookmark-toggle").addClass('mdi-action-turned-in');
+                            }
+                    });
+                });
+
             });
-        });
+        }
 {% endblock %}
