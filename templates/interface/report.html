@@ -150,18 +150,155 @@
              word-wrap: break-word;
         }
 
+        /**
+ ----------------------------------*/
+ * {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+ }
+
+ul {
+    list-style-type: none;
+}
+
+body {
+    font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana;
+    background: #dee1e3;
+}
+
+/** ====================
+ * List de Comnents
+ =======================*/
+.comments-container {
+    margin: 60px auto 15px;
+    width: 768px;
+}
+
+
+
+.comments-list {
+    margin-top: 30px;
+    position: relative;
+}
+
+/**
+ * Lines / Details
+ -----------------------*/
+.comments-list:before {
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: #c7cacb;
+    position: absolute;
+    left: 32px;
+    top: 0;
+}
+
+
+
+.comments-list li {
+    margin-bottom: 15px;
+    display: block;
+    position: relative;
+}
+
+.comments-list li:after {
+    content: '';
+    display: block;
+    clear: both;
+    height: 0;
+    width: 0;
+}
+
+/**
+ * Caja del Comentario
+ ---------------------------*/
+.comments-list .comment-box {
+    width: 680px;
+    float: right;
+    position: relative;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+}
+
+.comments-list .comment-box:before, .comments-list .comment-box:after {
+    content: '';
+    height: 0;
+    width: 0;
+    position: absolute;
+    display: block;
+    border-width: 10px 12px 10px 0;
+    border-style: solid;
+    border-color: transparent #FCFCFC;
+    top: 8px;
+    left: -11px;
+}
+
+
+
+.comment-box .comment-head {
+    background: #FCFCFC;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E5E5E5;
+    overflow: hidden;
+    -webkit-border-radius: 4px 4px 0 0;
+    -moz-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+}
+
+
+
+
+
+.comment-box .comment-name {
+    color: #283035;
+    font-size: 14px;
+    font-weight: 700;
+    float: left;
+    margin-right: 10px;
+}
+
+
+.comment-box .comment-head span {
+    float: left;
+    color: #999;
+    font-size: 13px;
+    position: relative;
+    top: 1px;
+}
+
+.comment-box .comment-content {
+    background: #FFF;
+    padding: 12px;
+    font-size: 15px;
+    color: #595959;
+    -webkit-border-radius: 0 0 4px 4px;
+    -moz-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+
+.comment-box .comment-name.by-author, .comment-box .comment-name.by-author a {color: #03658c;}
+
+
+
+
 {% endblock %}
 {% block content %}
     <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -19px">
         <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-        <li><a data-toggle="tab" href="#comments">Comments</a></li>
+        <li><a data-toggle="tab" href="#comments">{{ number_of_comments }} Comments</a></li>
+        <li><a data-toggle="tab" href="#scan_settings">Scan settings</a></li>
     </ul>
 
     <div class="tab-content">
         <div id="home" class="tab-pane fade in active">
 
             {% if not authorisation %}
-                <p style="margin-left: 15px"> You are not authorised to view this scan</p>
+                <p style="margin-left: 15px"> You are not authorised to do that</p>
             {% endif %}
 
             <div class="container" style="width:100%" id="main">
@@ -239,15 +376,55 @@
             </div>
         </div>
     <div id="comments" class="tab-pane fade">
-        <div></div>
+        <div class="comments-container">
+            <ul id="comments-list" class="comments-list">
+                {% for i in comments %}
+                    <li>
+                        <div class="comment-box">
+                            <div class="comment-head">
+                                <h6 class="comment-name by-author">{{ i.user.username }}</h6>
+                                <span><h6>{{ i.created_on }}</h6></span>
+                            </div>
+                            <div class="comment-content"  style="word-wrap: break-word">
+                                {{ i.text }}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <h3>Post a Comment</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div>
+                    {{ comment_form.text }}
+                </div>
+
+                <input type="submit" id="rule_save" class="btn btn-danger" value="Comment" style="margin-bottom:20px;margin-left:20px;"></li>
+            </form>
+        </div>
+    </div>
+
+    <div id="scan_settings" class="tab-pane fade">
+        <h3>Sharing Options:</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ settings_form.sharing_model }}
+            <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
+        </form>
     </div>
 {% endblock %}
 {% block bottomscripts %}
         var object_id = '{{ task.object_id }}';
         var task_id = '{{ task.id }}' || "None";
         var authorisation = '{{ authorisation }}'
-        console.log(authorisation)
+        var comments = '{{ comments | safe }}'
+
         if (authorisation == 'True') {
+
+            $('.comment-input').val('');
+
+            $("[value='"+'{{ task.sharing_model }}' + "']").attr('selected', 'selected')
+
             $(function() {
                 $.material.init();
                 var tooltip = d3.select("body")

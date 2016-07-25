@@ -24,7 +24,21 @@ import re
 from django import forms
 from interface.models import *
 
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model       = Task
         exclude     = ['user', 'submitted_on', 'started_on', 'completed_on', 'status', 'plugin_status']
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['user', 'created_on']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'comment-input', 'style': 'width:860px;'}),
+        }
+
+
+class ScanSettingsForm(forms.Form):
+    sharing_model = forms.ChoiceField(choices=SHARING_MODEL_CHOICES)

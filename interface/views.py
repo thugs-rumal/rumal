@@ -145,14 +145,36 @@ def my_scans(request):
 
 @login_required
 def report(request, task_id):
-
+    task = get_object_or_404(Task, pk=task_id)
     context = {
         'task': None,
         'bookmarked': False,
-        'authorisation': False
+        'authorisation': False,
+        'comment_form': CommentForm(request.POST or None),
+        'settings_form': ScanSettingsForm(request.POST or None),
+        'comments': []
     }
 
-    task = get_object_or_404(Task, pk=task_id)
+    if request.method == 'POST':
+        # Post comment
+        if context['comment_form'].is_valid():
+            # comment authorisation
+            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+                saved_form = context['comment_form'].save()
+
+                # Assign the current user to the newly created comment
+                saved_form.user = request.user
+                saved_form.task = task
+                saved_form.save()
+
+        elif context['settings_form'].is_valid():
+            # Modify settings of scan
+            if request.user == task.user:  # only owner can modify
+                if context['settings_form'].is_valid():
+                    task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
+                    task.save()
+            else:
+                return render(request, 'interface/report.html', context)
 
     # If scan is public or used is allowed to view scan
     if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
@@ -160,6 +182,8 @@ def report(request, task_id):
         context['authorisation'] = True
         if request.user in task.star.all():
             context['bookmarked'] = True
+        context['comments'] = Comment.objects.filter(task=task)
+        context['number_of_comments'] = Comment.objects.filter(task=task).count()
 
     return render(request, 'interface/report.html', context)
 
