@@ -35,6 +35,8 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
+import requests
+
 from django.core import serializers
 import advanced_search
 from django.core.exceptions import FieldError
@@ -158,15 +160,26 @@ def report(request, task_id):
         # Post comment
         if context['comment_form'].is_valid():
 
-            # comment authorisation
-            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
-                saved_form = context['comment_form'].save()
+            # Google recaptcha validation
+            g_recaptcha_response = request.POST['g-recaptcha-response']
+            params = {
+                'secret': RECAPTCHA_SECRET_KEY,
+                'response': g_recaptcha_response,
+            }
+            verify_rs = requests.get(URL, params=params, verify=True)
+            verify_rs = verify_rs.json()
+            response = bool(verify_rs.get("success", False))
 
-                # Assign the current user to the newly created comment
-                saved_form.user = request.user
-                saved_form.task = task
-                task.node = request.POST['node']
-                saved_form.save()
+            if response:
+                # comment authorisation
+                if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+                    saved_form = context['comment_form'].save()
+
+                    # Assign the current user to the newly created comment
+                    saved_form.user = request.user
+                    saved_form.task = task
+                    task.node = request.POST['node']
+                    saved_form.save()
 
             return HttpResponseRedirect("/report/" + task_id+'/')
 

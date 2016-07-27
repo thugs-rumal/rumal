@@ -14,6 +14,7 @@
     <script type="text/javascript" src="/static/js/real_setTree.js"></script>
     <script type="text/javascript" src="/static/js/real_setMap.js"></script>
     <script type="text/javascript" src="/static/js/real_setPanels.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
 {% block customcss %}
         table {
@@ -210,21 +211,6 @@ body {
     box-shadow: 0 1px 1px rgba(0,0,0,0.15);
 }
 
-.comments-list .comment-box:before, .comments-list .comment-box:after {
-    content: '';
-    height: 0;
-    width: 0;
-    position: absolute;
-    display: block;
-    border-width: 10px 12px 10px 0;
-    border-style: solid;
-    border-color: transparent #FCFCFC;
-    top: 8px;
-    left: -8px;
-}
-
-
-
 .comment-box .comment-head {
     background: #FCFCFC;
     padding: 10px 12px;
@@ -236,9 +222,6 @@ body {
 }
 
 
-
-
-
 .comment-box .comment-name {
     color: #283035;
     font-size: 14px;
@@ -246,7 +229,6 @@ body {
     float: left;
     margin-right: 10px;
 }
-
 
 .comment-box .comment-head span {
     float: left;
@@ -267,10 +249,7 @@ body {
 }
 
 .comment-box .comment-name.by-author, .comment-box .comment-name.by-author a {color: #03658c;}
-
-
-
-
+    
 {% endblock %}
 {% block content %}
     <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -19px">
@@ -396,7 +375,7 @@ body {
                             {{ comment_form.text }}
 
                         </div>
-
+                        <div class="g-recaptcha" data-sitekey="6LeFIyYTAAAAAHNC_1fyVKgJGJQP19M2Kcgp_Mrc"></div>
                         <input type="submit" id="rule_save" class="btn btn-danger" value="Comment" style="margin-bottom:20px;margin-left:20px;"></li>
                     </form>
                 </div>
