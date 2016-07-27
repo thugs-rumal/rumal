@@ -10,6 +10,7 @@
 
     <script type="text/javascript" src="/static/js/json.human.js"></script>
     <script type="text/javascript" src="/static/js/prettify.js"></script>
+    <script type="text/javascript" src="/static/js/real_setComments.js"></script>
     <script type="text/javascript" src="/static/js/real_setTree.js"></script>
     <script type="text/javascript" src="/static/js/real_setMap.js"></script>
     <script type="text/javascript" src="/static/js/real_setPanels.js"></script>
@@ -102,7 +103,6 @@
         }
 
         .test:hover {
-{#            height: auto;#}
             max-height: 100%;
         }
         div.panel div a{
@@ -170,7 +170,7 @@ body {
 }
 
 /** ====================
- * List de Comnents
+ * List de Comments
  =======================*/
 .comments-container {
     margin: 60px auto 15px;
@@ -184,18 +184,6 @@ body {
     position: relative;
 }
 
-/**
- * Lines / Details
- -----------------------*/
-.comments-list:before {
-    content: '';
-    width: 2px;
-    height: 100%;
-    background: #c7cacb;
-    position: absolute;
-    left: 32px;
-    top: 0;
-}
 
 
 
@@ -213,12 +201,9 @@ body {
     width: 0;
 }
 
-/**
- * Caja del Comentario
+
  ---------------------------*/
 .comments-list .comment-box {
-    width: 680px;
-    float: right;
     position: relative;
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
     -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
@@ -235,7 +220,7 @@ body {
     border-style: solid;
     border-color: transparent #FCFCFC;
     top: 8px;
-    left: -11px;
+    left: -8px;
 }
 
 
@@ -290,7 +275,7 @@ body {
 {% block content %}
     <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -19px">
         <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-        <li><a data-toggle="tab" href="#comments">{{ number_of_comments }} Comments</a></li>
+        <li id="comments-tab-name" style="visibility: hidden"><a id="comments-tab" data-toggle="tab" href="#comments"></a></li>
         <li><a data-toggle="tab" href="#scan_settings">Scan settings</a></li>
     </ul>
 
@@ -376,41 +361,59 @@ body {
             </div>
         </div>
     <div id="comments" class="tab-pane fade">
-        <div class="comments-container">
-            <ul id="comments-list" class="comments-list">
-                {% for i in comments %}
-                    <li>
-                        <div class="comment-box">
-                            <div class="comment-head">
-                                <h6 class="comment-name by-author">{{ i.user.username }}</h6>
-                                <span><h6>{{ i.created_on }}</h6></span>
-                            </div>
-                            <div class="comment-content"  style="word-wrap: break-word">
-                                {{ i.text }}
-                            </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-            <h3>Post a Comment</h3>
-            <form method="post">
-                {% csrf_token %}
-                <div>
-                    {{ comment_form.text }}
-                </div>
 
-                <input type="submit" id="rule_save" class="btn btn-danger" value="Comment" style="margin-bottom:20px;margin-left:20px;"></li>
-            </form>
+        <div class="comments-container" >
+
+            <div class="panel panel-primary" style="word-wrap: break-word; margin-bottom: 50px">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Selected Node</h3>
+                </div>
+                <div class="panel-body">
+                    <h4 id="comment-title"></h4>
+                    <h4 id="comment-ip-title"></h4>
+                </div>
+            </div>
+
+            <div class="panel panel-primary" style="word-wrap: break-word; margin-bottom: 50px">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Comments</h3>
+                </div>
+                <div class="panel-body" style="background-color: #dee1e3">
+                   <ul id="comments-list" class="comments-list">
+                   </ul>
+                </div>
+            </div>
+
+            <div class="panel panel-primary" style="word-wrap: break-word">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Post a comment on this node</h3>
+                </div>
+                <div class="panel-body" style="background-color: #dee1e3">
+                   <form method="post">
+                        {% csrf_token %}
+                        <div>
+                            <input type="hidden" id="comment-node" name="node">
+                            {{ comment_form.text }}
+
+                        </div>
+
+                        <input type="submit" id="rule_save" class="btn btn-danger" value="Comment" style="margin-bottom:20px;margin-left:20px;"></li>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <div id="scan_settings" class="tab-pane fade">
-        <h3>Sharing Options:</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ settings_form.sharing_model }}
-            <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
-        </form>
+        <div style="margin-left: 10px">
+            <h3>Sharing Options:</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ settings_form.sharing_model }}
+                <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
+            </form>
+        </div>
     </div>
 {% endblock %}
 {% block bottomscripts %}

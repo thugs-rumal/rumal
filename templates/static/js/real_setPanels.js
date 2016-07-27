@@ -8,6 +8,7 @@ function setPanels(nid) {
         .append($("<td>")
             .html("url"))
         .append($("<td>")
+             .attr('class', 'url')
             .html(full_analysis.flat_tree[nid].url));
     $basic_table.append($row);
     var $row = $("<tr>")

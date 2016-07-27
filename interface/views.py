@@ -152,12 +152,12 @@ def report(request, task_id):
         'authorisation': False,
         'comment_form': CommentForm(request.POST or None),
         'settings_form': ScanSettingsForm(request.POST or None),
-        'comments': []
     }
 
     if request.method == 'POST':
         # Post comment
         if context['comment_form'].is_valid():
+
             # comment authorisation
             if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
                 saved_form = context['comment_form'].save()
@@ -165,14 +165,21 @@ def report(request, task_id):
                 # Assign the current user to the newly created comment
                 saved_form.user = request.user
                 saved_form.task = task
+                task.node = request.POST['node']
                 saved_form.save()
+
+            return HttpResponseRedirect("/report/" + task_id+'/')
 
         elif context['settings_form'].is_valid():
             # Modify settings of scan
             if request.user == task.user:  # only owner can modify
+
                 if context['settings_form'].is_valid():
                     task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
                     task.save()
+
+                return HttpResponseRedirect("/report/" + task_id + '/')
+
             else:
                 return render(request, 'interface/report.html', context)
 
@@ -182,11 +189,8 @@ def report(request, task_id):
         context['authorisation'] = True
         if request.user in task.star.all():
             context['bookmarked'] = True
-        context['comments'] = Comment.objects.filter(task=task)
-        context['number_of_comments'] = Comment.objects.filter(task=task).count()
 
     return render(request, 'interface/report.html', context)
-
 
 
 @login_required

@@ -36,7 +36,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         exclude = ['user', 'created_on']
         widgets = {
-            'text': forms.Textarea(attrs={'class': 'comment-input', 'style': 'width:860px;'}),
+            'text': forms.Textarea(attrs={'class': 'comment-input', 'style': 'width:100%;'}),
         }
 
 

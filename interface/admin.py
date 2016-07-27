@@ -49,7 +49,7 @@ class TaskAdmin(admin.ModelAdmin):
         enable_javaplugin, disable_javaplugin]
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['created_on', 'task', 'user', 'text']
+    list_display = ['created_on', 'task', 'node', 'user', 'text']
 
 admin.site.register(Proxy)
 admin.site.register(PluginTask)

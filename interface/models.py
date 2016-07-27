@@ -153,8 +153,9 @@ class Task(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True, default=None)
     task = models.ForeignKey(Task, null=True, blank=True, default=None)
+    user = models.ForeignKey(User, null=True, blank=True, default=None)
+    node = models.CharField("node url", null=True, blank=True, max_length=4096)
     created_on = models.DateTimeField("Created on", null=False, blank=True, default=add_now)
     text = models.TextField("Text", null=False, blank=False)
 

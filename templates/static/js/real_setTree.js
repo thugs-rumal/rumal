@@ -11,7 +11,7 @@ function setTree() {
         },
         width = wrap_width,
         height = wrap_height;
-        console.log(height)
+        
     var i = 0,
         duration = 750,
         root;
@@ -214,6 +214,7 @@ function setTree() {
     /* Toggle children on click.*/
     function click(d) {
         setPanels(d.nid);
+        setComments(d);
     }
 
     function dblclick(d) {
