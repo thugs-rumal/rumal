@@ -162,39 +162,23 @@ def report(request, task_id):
 
             # Google recaptcha validation
             g_recaptcha_response = request.POST['g-recaptcha-response']
-            params = {
-                'secret': RECAPTCHA_SECRET_KEY,
-                'response': g_recaptcha_response,
-            }
-            verify_rs = requests.get(URL, params=params, verify=True)
-            verify_rs = verify_rs.json()
-            response = bool(verify_rs.get("success", False))
+            response = recaptcha_validation(g_recaptcha_response)
 
             if response:
                 # comment authorisation
                 if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
-                    saved_form = context['comment_form'].save()
-
-                    # Assign the current user to the newly created comment
-                    saved_form.user = request.user
-                    saved_form.task = task
-                    task.node = request.POST['node']
-                    saved_form.save()
-
+                    save_comment(context, request, task)
             return HttpResponseRedirect("/report/" + task_id+'/')
 
         elif context['settings_form'].is_valid():
             # Modify settings of scan
             if request.user == task.user:  # only owner can modify
+                task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
+                task.save()
+            return HttpResponseRedirect("/report/" + task_id + '/')
 
-                if context['settings_form'].is_valid():
-                    task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
-                    task.save()
-
-                return HttpResponseRedirect("/report/" + task_id + '/')
-
-            else:
-                return render(request, 'interface/report.html', context)
+        else:
+            return render(request, 'interface/report.html', context)
 
     # If scan is public or used is allowed to view scan
     if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
@@ -204,6 +188,26 @@ def report(request, task_id):
             context['bookmarked'] = True
 
     return render(request, 'interface/report.html', context)
+
+
+def save_comment(context, request, task):
+    saved_form = context['comment_form'].save()
+
+    # Assign the current user to the newly created comment
+    saved_form.user = request.user
+    saved_form.task = task
+    saved_form.node = request.POST['node']
+    saved_form.save()
+
+
+def recaptcha_validation(g_recaptcha_response):
+    params = {
+        'secret': RECAPTCHA_SECRET_KEY,
+        'response': g_recaptcha_response,
+    }
+    verify_rs = requests.get(URL, params=params, verify=True)
+    verify_rs = verify_rs.json()
+    return bool(verify_rs.get("success", False))
 
 
 @login_required
