@@ -44,6 +44,7 @@ import pymongo
 
 client = pymongo.MongoClient()
 db = client.thug
+tags_db = client.tags
 
 SHARING_MODEL_PUBLIC = 0
 SHARING_MODEL_PRIVATE = 1
@@ -154,9 +155,11 @@ def report(request, task_id):
         'authorisation': False,
         'comment_form': CommentForm(request.POST or None),
         'settings_form': ScanSettingsForm(request.POST or None),
+        'tags': None
     }
 
     if request.method == 'POST':
+
         # Post comment
         if context['comment_form'].is_valid():
 
@@ -177,6 +180,11 @@ def report(request, task_id):
                 task.save()
             return HttpResponseRedirect("/report/" + task_id + '/')
 
+        elif TagForm(request.POST).is_valid():  # Add scan tags
+            if request.user == task.user:
+                create_or_modify_tag(task_id, request.POST['tags'])
+            return HttpResponseRedirect("/report/" + task_id + '/')
+
         else:
             return render(request, 'interface/report.html', context)
 
@@ -186,9 +194,14 @@ def report(request, task_id):
         context['authorisation'] = True
         if request.user in task.star.all():
             context['bookmarked'] = True
+        tags = tags_db.scantags.find_one({'_id': task_id})
+        if tags:
+            context['tags'] = tags['tags']
 
     return render(request, 'interface/report.html', context)
 
+def create_or_modify_tag(task_id, tags):
+    tags_db.scantags.update_one({"_id": task_id},  {"$set": {"tags": tags}}, upsert=True)
 
 def save_comment(context, request, task):
     saved_form = context['comment_form'].save()

@@ -14,7 +14,11 @@
     <script type="text/javascript" src="/static/js/real_setTree.js"></script>
     <script type="text/javascript" src="/static/js/real_setMap.js"></script>
     <script type="text/javascript" src="/static/js/real_setPanels.js"></script>
+    {# Google recaptcha for comment security    #}
     <script src='https://www.google.com/recaptcha/api.js'></script>
+    {# Bootstrap Tag input   #}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+    <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
 {% endblock %}
 {% block customcss %}
         table {
@@ -151,105 +155,111 @@
              word-wrap: break-word;
         }
 
-        /**
- ----------------------------------*/
- * {
-    margin: 0;
-    padding: 0;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
- }
+            /**
+     ----------------------------------*/
+     * {
+        margin: 0;
+        padding: 0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+     }
 
-ul {
-    list-style-type: none;
-}
+    ul {
+        list-style-type: none;
+    }
 
-body {
-    font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana;
-    background: #dee1e3;
-}
+    body {
+        font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana;
+        background: #dee1e3;
+    }
 
-/** ====================
- * List de Comments
- =======================*/
-.comments-container {
-    margin: 60px auto 15px;
-    width: 768px;
-}
+    /** ====================
+     * List de Comments
+     =======================*/
+    .comments-container {
+        margin: 60px auto 15px;
+        width: 768px;
+    }
 
+    .comments-list {
+        margin-top: 30px;
+        position: relative;
+    }
 
+    .comments-list li {
+        margin-bottom: 15px;
+        display: block;
+        position: relative;
+    }
 
-.comments-list {
-    margin-top: 30px;
-    position: relative;
-}
+    .comments-list li:after {
+        content: '';
+        display: block;
+        clear: both;
+        height: 0;
+        width: 0;
+    }
 
+     ---------------------------*/
+    .comments-list .comment-box {
+        position: relative;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+        -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+        box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    }
 
+    .comment-box .comment-head {
+        background: #FCFCFC;
+        padding: 10px 12px;
+        border-bottom: 1px solid #E5E5E5;
+        overflow: hidden;
+        -webkit-border-radius: 4px 4px 0 0;
+        -moz-border-radius: 4px 4px 0 0;
+        border-radius: 4px 4px 0 0;
+    }
 
+    .comment-box .comment-name {
+        color: #283035;
+        font-size: 14px;
+        font-weight: 700;
+        float: left;
+        margin-right: 10px;
+    }
 
-.comments-list li {
-    margin-bottom: 15px;
-    display: block;
-    position: relative;
-}
+    .comment-box .comment-head span {
+        float: left;
+        color: #999;
+        font-size: 13px;
+        position: relative;
+        top: 1px;
+    }
 
-.comments-list li:after {
-    content: '';
-    display: block;
-    clear: both;
-    height: 0;
-    width: 0;
-}
+    .comment-box .comment-content {
+        background: #FFF;
+        padding: 12px;
+        font-size: 15px;
+        color: #595959;
+        -webkit-border-radius: 0 0 4px 4px;
+        -moz-border-radius: 0 0 4px 4px;
+        border-radius: 0 0 4px 4px;
+    }
 
+    .comment-box .comment-name.by-author, .comment-box .comment-name.by-author a {color: #03658c;}
 
- ---------------------------*/
-.comments-list .comment-box {
-    position: relative;
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-}
-
-.comment-box .comment-head {
-    background: #FCFCFC;
-    padding: 10px 12px;
-    border-bottom: 1px solid #E5E5E5;
-    overflow: hidden;
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-    border-radius: 4px 4px 0 0;
-}
-
-
-.comment-box .comment-name {
-    color: #283035;
-    font-size: 14px;
-    font-weight: 700;
-    float: left;
-    margin-right: 10px;
-}
-
-.comment-box .comment-head span {
-    float: left;
-    color: #999;
-    font-size: 13px;
-    position: relative;
-    top: 1px;
-}
-
-.comment-box .comment-content {
-    background: #FFF;
-    padding: 12px;
-    font-size: 15px;
-    color: #595959;
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px;
-}
-
-.comment-box .comment-name.by-author, .comment-box .comment-name.by-author a {color: #03658c;}
+        .bootstrap-tagsinput {
+            width: 100%;
+            margin-top: 10px
+    }
     
+    .label {
+        line-height: 2 !important;
+    }
+
+    .tag {
+        font-size: 130%;
+    }
+
 {% endblock %}
 {% block content %}
     <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -19px">
@@ -289,8 +299,22 @@ body {
                                 <b>Plugins</b>
                             </div>
                         </div>
-                        <br>
-                        <br>
+
+                        <div class="panel panel-default" id="task">
+                            <div class="panel-body test-in">
+                                <b>Tags</b>
+                                <form id="bootstrapTagsInputForm" method="post" class="form-horizontal">
+                                    {% csrf_token %}
+                                    <input id="tags-input" type="text" name="tags" class="form-control"
+                                                   value="" data-role="tagsinput" />
+
+                                    {% if user == task.user %}
+                                        <input type="submit" id="tag_save" class="btn btn-primary" value="Save Tags" style="font-size: 10px;"></li>
+                                    {% endif %}
+
+                                </form>
+                            </div>
+                        </div>
 
                         <div class="panel panel-danger pgroup" style="max-height:110px;">
                             <div class="panel-heading">
@@ -308,7 +332,6 @@ body {
                             <div class="panel-body">
                             </div>
                         </div>
-
 
                     </div>
                     <div class="col-md-8" style="height:86%;position: fixed; margin-left: 33%">
@@ -399,9 +422,13 @@ body {
         var object_id = '{{ task.object_id }}';
         var task_id = '{{ task.id }}' || "None";
         var authorisation = '{{ authorisation }}'
-        var comments = '{{ comments | safe }}'
+        var tags = '{{ tags | safe }}'
 
         if (authorisation == 'True') {
+
+            if (tags != 'None'){
+                $('#tags-input').attr('value', tags);
+            }
 
             $('.comment-input').val('');
 
