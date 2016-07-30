@@ -44,4 +44,4 @@ class ScanSettingsForm(forms.Form):
     sharing_model = forms.ChoiceField(choices=SHARING_MODEL_CHOICES)
 
 class TagForm(forms.Form):
-    tags = forms.CharField()
+    tags = forms.TextInput()
