@@ -19,6 +19,8 @@
     {# Bootstrap Tag input   #}
     <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
     <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+
+    <script type="text/javascript" src="/static/js/bootstrap3-typeahead.js"></script>
 {% endblock %}
 {% block customcss %}
         table {
@@ -251,7 +253,7 @@
             width: 100%;
             margin-top: 10px
     }
-    
+
     .label {
         line-height: 2 !important;
     }
@@ -306,7 +308,7 @@
                                 <form id="bootstrapTagsInputForm" method="post" class="form-horizontal">
                                     {% csrf_token %}
                                     <input id="tags-input" type="text" name="tags" class="form-control"
-                                                   value="" data-role="tagsinput" />
+                                                   value="" data-role="tagsinput" data-provide="typeahead"/>
 
                                     {% if user == task.user %}
                                         <input type="submit" id="tag_save" class="btn btn-primary" value="Save Tags" style="font-size: 10px;"></li>
@@ -419,16 +421,27 @@
     </div>
 {% endblock %}
 {% block bottomscripts %}
+
         var object_id = '{{ task.object_id }}';
         var task_id = '{{ task.id }}' || "None";
-        var authorisation = '{{ authorisation }}'
-        var tags = '{{ tags | safe }}'
+        var authorisation = '{{ authorisation }}';
+        var tags = '{{ tags | safe }}';
+        var typeahead_data = {{ typeahead | safe }}
 
         if (authorisation == 'True') {
 
             if (tags != 'None'){
                 $('#tags-input').attr('value', tags);
             }
+
+            var elt = $('#tags-input')
+            elt.typeahead();
+
+            $('#tags-input').tagsinput({
+                typeahead:{
+                     source: typeahead_data
+                }
+            });
 
             $('.comment-input').val('');
 

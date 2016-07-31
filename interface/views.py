@@ -27,6 +27,7 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+import json
 
 from gridfs import GridFS
 from pymongo import MongoClient
@@ -44,6 +45,7 @@ import pymongo
 
 client = pymongo.MongoClient()
 db = client.thug
+tags_db = client.tags
 
 SHARING_MODEL_PUBLIC = 0
 SHARING_MODEL_PRIVATE = 1
@@ -154,7 +156,8 @@ def report(request, task_id):
         'authorisation': False,
         'comment_form': CommentForm(request.POST or None),
         'settings_form': ScanSettingsForm(request.POST or None),
-        'tags': None
+        'tags': None,
+        'typeahead': None
     }
 
     if request.method == 'POST':
@@ -193,15 +196,29 @@ def report(request, task_id):
         context['authorisation'] = True
         if request.user in task.star.all():
             context['bookmarked'] = True
+
+        # Tag data for scan
         try:
-            context['tags'] = db.analysiscombo.find_one({'frontend_id': task_id})['tags']
+            tags = db.analysiscombo.find_one({'frontend_id': task_id})['tags']
+            context['tags'] = ','.join(tags)
         except KeyError:  # No tags exists currently, pass in empty value
             context['tags'] = ''
+
+        # typeahead data
+        try:
+            context['typeahead'] = json.dumps(tags_db.tags.find_one()['tags'])
+        except KeyError:  # Mongo error
+            pass
+        except TypeError:  # Mongo error tags is not found
+            pass
 
     return render(request, 'interface/report.html', context)
 
 def create_or_modify_tag(task_id, tags):
+    tags = tags.split(',')
     db.analysiscombo.update_one({"frontend_id": task_id},  {"$set": {"tags": tags}})
+    # add tag for typeahead
+    [tags_db.tags.update_one({}, {'$addToSet': {'tags': tag}}, upsert=True) for tag in tags]
 
 def save_comment(context, request, task):
     saved_form = context['comment_form'].save()
