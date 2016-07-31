@@ -102,7 +102,6 @@ def reports(request):
 
         tree = advanced_search.search(search_query)  # Make Abstract syntax tree
         if tree:
-
             query = advanced_search.get_query(tree)  # Create Q query from AST
             mongo_result = [str(x['_id']) for x in list(db.analysiscombo.find(query))]  # get object IDs of valid scans
 
@@ -116,9 +115,7 @@ def reports(request):
     #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
     tasks = tasks.filter(
         Q(user__exact=request.user) |
-        Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
-        (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
-        )
+        Q(sharing_model__exact=SHARING_MODEL_PUBLIC))
 
     # Now apply the filter of valid mongo Objects IDs Advanced search
     tasks = [task for task in tasks if task.object_id in mongo_result]

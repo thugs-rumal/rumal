@@ -57,7 +57,8 @@ comparison_operator = not_equal | equal_exact | regex |\
 keyword = pyparsing.Keyword('url', caseless=True) | \
           pyparsing.Keyword('id', caseless=True).setParseAction(lambda t: 'frontend_id') | \
           pyparsing.Keyword('timestamp', caseless=True) | \
-          pyparsing.Keyword('urls', caseless=True).setParseAction(lambda t: 'url_map.url')
+          pyparsing.Keyword('urls', caseless=True).setParseAction(lambda t: 'url_map.url') |\
+          pyparsing.Keyword('tag', caseless=True).setParseAction(lambda t: 'tags')
 
 
 integer = pyparsing.Regex(r'[+-]?\d+').setParseAction(lambda t: int(t[0]))
