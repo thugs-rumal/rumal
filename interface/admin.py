@@ -21,7 +21,7 @@
 #
 
 from django.contrib import admin
-from .models import Proxy, Task, PluginTask
+from .models import Proxy, Task, PluginTask, Comment
 
 # Register your models here.
 
@@ -48,6 +48,10 @@ class TaskAdmin(admin.ModelAdmin):
     actions = [add_broken_url, remove_broken_url,
         enable_javaplugin, disable_javaplugin]
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['created_on', 'task', 'node', 'user', 'text']
+
 admin.site.register(Proxy)
 admin.site.register(PluginTask)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(Comment, CommentAdmin)

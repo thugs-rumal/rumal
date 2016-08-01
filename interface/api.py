@@ -28,6 +28,7 @@ from tastypie.authorization import DjangoAuthorization, ReadOnlyAuthorization
 from django.contrib.auth.models import User, Group
 from django.core import serializers
 from rumal.authorization import *
+from django.shortcuts import get_object_or_404
 
 from interface.models import *
 from interface.resources import MongoDBResource
@@ -72,6 +73,7 @@ class ProxyResource(ModelResource):
         allowed_methods = ['get']
         include_resource_uri = False
         excludes = ["id",]
+
 
 class TaskResource(ModelResource):
     proxy           = fields.ForeignKey(ProxyResource, 'proxy', full=True, null=True)
@@ -135,7 +137,41 @@ class TaskResource(ModelResource):
         filtering = {
           'user': ALL_WITH_RELATIONS,
           'star': ALL_WITH_RELATIONS,
+          'id': ALL_WITH_RELATIONS
         }
+
+class CommentResource(ModelResource):
+    task = fields.ForeignKey(TaskResource, 'task', full=True)
+    user = fields.ForeignKey(UserResource, 'user', full=True)
+
+    def apply_filters(self, request, applicable_filters):
+        task_id = request.GET.get('task_id', None)
+        node = request.GET.get('node', None)
+
+        task = get_object_or_404(Task, pk=task_id)
+
+        semi_filtered = super(CommentResource, self).apply_filters(request, applicable_filters)
+        if task_id and node:
+            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+                filtered_objects = semi_filtered.filter(task__id=task_id).filter(node=node)
+                return filtered_objects
+        return None
+
+
+    class Meta:
+        queryset = Comment.objects.all()
+        resource_name = 'comments'
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        limit = 0
+        filtering = {
+            'task': ALL_WITH_RELATIONS,
+            'node': ALL_WITH_RELATIONS
+
+        }
+
+
 
 """
 Resources for MongoDB models

@@ -36,6 +36,9 @@ import json
 
 db = MongoClient().thug
 
+RECAPTCHA_SECRET_KEY = '6LeFIyYTAAAAAEcFujpEAuIzljSX2dLv91lLbmq5'  # GOOGLE RECAPTCHA key
+URL = 'https://www.google.com/recaptcha/api/siteverify'  # recaptcha verify url
+
 def get_personalities():
     return [('', 'Default')] + \
         sorted([(x, y['description'].replace('\t', ' ')) for x, y in Personality().iteritems()], key=lambda x: x[1])

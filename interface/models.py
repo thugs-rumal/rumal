@@ -64,8 +64,10 @@ BACKEND_CHOICES = [
 for x in be_list:
     BACKEND_CHOICES.append((x, x))
 
+
 def add_now():
     return datetime.now(getattr(pytz, settings.TIME_ZONE))
+
 
 class Proxy(models.Model):
     SCHEME_CHOICES = (
@@ -88,6 +90,7 @@ class Proxy(models.Model):
     port            = models.IntegerField('Port', null=False, blank=False)
     def __unicode__(self):
         return u'%s://%s:%s' % (self.scheme, self.host, self.port)
+
 
 class Task(models.Model):
     # User and sharing info
@@ -148,6 +151,15 @@ class Task(models.Model):
     def __unicode__(self):
         return self.object_id
 
+
+class Comment(models.Model):
+    task = models.ForeignKey(Task, null=True, blank=True, default=None)
+    user = models.ForeignKey(User, null=True, blank=True, default=None)
+    node = models.CharField("node url", null=True, blank=True, max_length=4096)
+    created_on = models.DateTimeField("Created on", null=False, blank=True, default=add_now)
+    text = models.TextField("Text", null=False, blank=False)
+
+
 class PluginTask(models.Model):
     # Metadata
     submitted_on    = models.DateTimeField("Submitted on", null=False, blank=True, default=add_now)
@@ -160,6 +172,7 @@ class PluginTask(models.Model):
 
     def __unicode__(self):
         return str(self.plugin_name) + " " + str(self.status)
+
 
 # Models for MongoDB objects
 class Document(dict):

@@ -27,6 +27,7 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+import json
 
 from gridfs import GridFS
 from pymongo import MongoClient
@@ -35,6 +36,8 @@ from bson import ObjectId
 from interface.forms import *
 from interface.models import *
 
+import requests
+
 from django.core import serializers
 import advanced_search
 from django.core.exceptions import FieldError
@@ -42,6 +45,7 @@ import pymongo
 
 client = pymongo.MongoClient()
 db = client.thug
+tags_db = client.tags
 
 SHARING_MODEL_PUBLIC = 0
 SHARING_MODEL_PRIVATE = 1
@@ -98,7 +102,6 @@ def reports(request):
 
         tree = advanced_search.search(search_query)  # Make Abstract syntax tree
         if tree:
-
             query = advanced_search.get_query(tree)  # Create Q query from AST
             mongo_result = [str(x['_id']) for x in list(db.analysiscombo.find(query))]  # get object IDs of valid scans
 
@@ -112,9 +115,7 @@ def reports(request):
     #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
     tasks = tasks.filter(
         Q(user__exact=request.user) |
-        Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
-        (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
-        )
+        Q(sharing_model__exact=SHARING_MODEL_PUBLIC))
 
     # Now apply the filter of valid mongo Objects IDs Advanced search
     tasks = [task for task in tasks if task.object_id in mongo_result]
@@ -146,16 +147,94 @@ def my_scans(request):
 @login_required
 def report(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    if request.user in task.star.all():
-        bookmarked = True
-    else:
-        bookmarked = False
     context = {
-        'task': task,
-        'bookmarked': bookmarked,
+        'task': None,
+        'bookmarked': False,
+        'authorisation': False,
+        'comment_form': CommentForm(request.POST or None),
+        'settings_form': ScanSettingsForm(request.POST or None),
+        'tags': None,
+        'typeahead': None
     }
 
+    if request.method == 'POST':
+        # Post comment
+        if context['comment_form'].is_valid():
+
+            # Google recaptcha validation
+            g_recaptcha_response = request.POST['g-recaptcha-response']
+            response = recaptcha_validation(g_recaptcha_response)
+
+            if response:
+                # comment authorisation
+                if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+                    save_comment(context, request, task)
+            return HttpResponseRedirect("/report/" + task_id+'/')
+
+        elif context['settings_form'].is_valid():
+            # Modify settings of scan
+            if request.user == task.user:  # only owner can modify
+                task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
+                task.save()
+            return HttpResponseRedirect("/report/" + task_id + '/')
+
+        elif TagForm(request.POST).is_valid():  # Add scan tags
+
+            if request.user == task.user:
+                create_or_modify_tag(task_id, request.POST['tags'])
+            return HttpResponseRedirect("/report/" + task_id + '/')
+
+        else:
+            return render(request, 'interface/report.html', context)
+
+    # If scan is public or used is allowed to view scan
+    if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+        context['task'] = task
+        context['authorisation'] = True
+        if request.user in task.star.all():
+            context['bookmarked'] = True
+
+        # Tag data for scan
+        try:
+            tags = db.analysiscombo.find_one({'frontend_id': task_id})['tags']
+            context['tags'] = ','.join(tags)
+        except KeyError:  # No tags exists currently, pass in empty value
+            context['tags'] = ''
+
+        # typeahead data
+        try:
+            context['typeahead'] = json.dumps(tags_db.tags.find_one()['tags'])
+        except KeyError:  # Mongo error
+            pass
+        except TypeError:  # Mongo error tags is not found
+            pass
+
     return render(request, 'interface/report.html', context)
+
+def create_or_modify_tag(task_id, tags):
+    tags = tags.split(',')
+    db.analysiscombo.update_one({"frontend_id": task_id},  {"$set": {"tags": tags}})
+    # add tag for typeahead
+    [tags_db.tags.update_one({}, {'$addToSet': {'tags': tag}}, upsert=True) for tag in tags]
+
+def save_comment(context, request, task):
+    saved_form = context['comment_form'].save()
+
+    # Assign the current user to the newly created comment
+    saved_form.user = request.user
+    saved_form.task = task
+    saved_form.node = request.POST['node']
+    saved_form.save()
+
+
+def recaptcha_validation(g_recaptcha_response):
+    params = {
+        'secret': RECAPTCHA_SECRET_KEY,
+        'response': g_recaptcha_response,
+    }
+    verify_rs = requests.get(URL, params=params, verify=True)
+    verify_rs = verify_rs.json()
+    return bool(verify_rs.get("success", False))
 
 
 @login_required
