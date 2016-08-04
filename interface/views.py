@@ -130,6 +130,8 @@ def reports(request):
     # Now apply the filter of valid mongo Objects IDs Advanced search
     tasks = [task for task in tasks if task.object_id in mongo_result]
 
+    tasks = set(tasks)  # Make the task list unique for scans within Multiple groups
+
     context['tasks'] = serializers.serialize('json', tasks)
     context['total'] = len(tasks)
 

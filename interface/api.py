@@ -102,14 +102,14 @@ class TaskResource(ModelResource):
 
         if my_scan:
             filtered_objects = semi_filtered.filter(user__username__exact=request.user.username)
-            return filtered_objects
+            return filtered_objects.distinct()
 
         elif starred:
             filtered_objects = semi_filtered.filter(star=request.user)
-            return filtered_objects
+            return filtered_objects.distinct()
 
         else:
-            return semi_filtered
+            return semi_filtered.distinct()
 
 
     class Meta:
