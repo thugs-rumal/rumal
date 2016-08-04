@@ -25,9 +25,12 @@ from interface import views
 
 urlpatterns = (
     url(r'^report/(?:(?P<task_id>\d+)/)?$', views.report, name='report'),
+    url(r'^group/(?:(?P<group_id>\d+)/)?$', views.group, name='group'),
     url(r'^reports/$', views.reports, name='reports'),
     url(r'^reports/help$', views.reports, name='reports'),
     url(r'^myscans/$', views.my_scans, name='myscans'),
+    url(r'^myprofile/$', views.my_profile, name='myprofile'),
+    url(r'^creategroup/$', views.new_group, name='creategroup'),
     url(r'^togglebookmark/$', views.star_view, name='star'),
 
     url(r'^json_tree_graph/(?:(?P<analysis_id>[\w]+)/)?$', views.json_tree_graph, name='json_tree_graph'),

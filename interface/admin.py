@@ -21,7 +21,9 @@
 #
 
 from django.contrib import admin
-from .models import Proxy, Task, PluginTask, Comment
+from .models import Proxy, Task, PluginTask, Comment, Group, GroupCreator
+from django.contrib.auth.admin import GroupAdmin
+from django.core.urlresolvers import reverse
 
 # Register your models here.
 
@@ -41,6 +43,10 @@ def disable_javaplugin(modelAdmin, request, queryset):
     queryset.update(no_javaplugin = False)
 disable_javaplugin.short_description = 'Disable Java Plugins'
 
+def persons(self):
+    return ', '.join(['<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(x.id,)), x.username) for x in self.user_set.all().order_by('username')])
+persons.allow_tags = True
+
 class TaskAdmin(admin.ModelAdmin):
     #list_display = ['__unicode__', 'proxy', 'broken_url']
     list_display = ['proxy', 'broken_url', 'no_javaplugin']
@@ -51,7 +57,17 @@ class TaskAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['created_on', 'task', 'node', 'user', 'text']
 
+class GroupAdmin(GroupAdmin):
+    list_display = ['name', persons]
+    list_display_links = ['name']
+
+class GroupCreatorAdmin(admin.ModelAdmin):
+    list_display = ['group', 'group_creator']
+
 admin.site.register(Proxy)
 admin.site.register(PluginTask)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
+admin.site.register(GroupCreator, GroupCreatorAdmin)

@@ -309,10 +309,8 @@
                                     {% csrf_token %}
                                     <input id="tags-input" type="text" name="tags" class="form-control"
                                                    value="" data-role="tagsinput" data-provide="typeahead"/>
-
-                                    {% if user == task.user %}
                                         <input type="submit" id="tag_save" class="btn btn-primary" value="Save Tags" style="font-size: 10px;"></li>
-                                    {% endif %}
+
 
                                 </form>
                             </div>
@@ -415,6 +413,7 @@
             <form method="post">
                 {% csrf_token %}
                 {{ settings_form.sharing_model }}
+                {{ settings_form.sharing_groups }}
                 <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
             </form>
         </div>

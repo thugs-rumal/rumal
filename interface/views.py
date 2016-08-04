@@ -27,7 +27,8 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
-import json
+from django.core.serializers.json import DjangoJSONEncoder
+from bson import json_util
 
 from gridfs import GridFS
 from pymongo import MongoClient
@@ -40,7 +41,7 @@ import requests
 
 from django.core import serializers
 import advanced_search
-from django.core.exceptions import FieldError
+from django.core.exceptions import FieldError, ObjectDoesNotExist
 import pymongo
 
 client = pymongo.MongoClient()
@@ -54,9 +55,14 @@ SHARING_MODEL_GROUPS = 2
 
 @login_required
 def new_task(request):
+    """
+    Create new task for backend to do Thug analysis
+    :param request: Contains Scan Information and current logged in user
+    :return: Adds task to DB
+    """
     context = {
         'active_tab': 'new_task',
-        'form': TaskForm(request.POST or None),
+        'form': TaskForm(request.POST or None, user=request.user),
     }
 
     if request.method == 'POST':
@@ -65,6 +71,8 @@ def new_task(request):
 
             # Assign the current user to the newly created task
             saved_form.user = request.user
+            if saved_form.sharing_model == SHARING_MODEL_PRIVATE:
+                saved_form.sharing_groups = []
             saved_form.save()
 
             return HttpResponseRedirect(reverse('interface:myscans'))
@@ -115,7 +123,9 @@ def reports(request):
     #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
     tasks = tasks.filter(
         Q(user__exact=request.user) |
-        Q(sharing_model__exact=SHARING_MODEL_PUBLIC))
+        Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
+        (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
+    )
 
     # Now apply the filter of valid mongo Objects IDs Advanced search
     tasks = [task for task in tasks if task.object_id in mongo_result]
@@ -143,21 +153,137 @@ def my_scans(request):
     }
     return render(request, 'interface/myscans2.html', context)
 
+@login_required
+def my_profile(request):
+    """
+    Displays Groups of the currently logged in user
+    :param request: User
+    :return: All groups user is in
+    """
+    context = {
+        'groups': json_util.dumps(request.user.groups.all().values())
+    }
+
+    return render(request, 'interface/myprofile.html', context)
+
+@login_required
+def new_group(request):
+    """
+    Creation of a new group. Group creator is the current logged in User
+    :param request: User, group name, group members
+    :return:  Creation of group
+    """
+    context = {
+        'form': NewGroupForm(request.POST or None)
+    }
+
+    # Create new Group, add group Creator
+    if request.method == 'POST':
+        if context['form'].is_valid():
+
+            # Google recaptcha validation
+            g_recaptcha_response = request.POST['g-recaptcha-response']
+            response = recaptcha_validation(g_recaptcha_response)
+
+            if response:
+
+                group_name = request.POST['group_name']
+                group = Group.objects.create(name=group_name)
+
+                # add group creator
+                GroupCreator.objects.create(group=group, group_creator=request.user)
+                group.user_set.add(request.user)
+                group.save()
+                for i in request.POST.getlist('group_members'):
+                     group.user_set.add(User.objects.get(pk=i))
+
+                return HttpResponseRedirect("/myprofile/")
+
+    return render(request, 'interface/newgroup.html', context)
+
+@login_required
+def group(request, group_id):
+    """
+    Group page that contains group name, List of Users, creator, and scans for the current  logged in User.
+    User has to be a valid group member to be able to view this page
+    Group creator can add/remove users in this group
+    :param request: Current logged in user, Group Info
+    :param group_id: unique Id for group
+    :return: Group Info, scans and group settings
+    """
+
+    group = get_object_or_404(Group, pk=group_id)
+    group_creator = GroupCreator.objects.get(group=group).group_creator
+    context = {
+        'scans': None,
+        'number_of_scans': None,
+        'name': None,
+        'members': None,
+        'admin': False,
+        'creator': None,
+        'user_typeahead': None
+    }
+
+    # check for valid group user
+    if request.user in group.user_set.all():
+        context['scans'] = json_util.dumps(Task.objects.filter(sharing_groups=group).values())
+        context['number_of_scans'] = len(Task.objects.filter(sharing_groups=group).values())
+        context['name'] = group.name
+        context['members'] = json_util.dumps([g.username for g in group.user_set.all()])
+        context['creator'] = json_util.dumps(group_creator.username)
+        context['user_typeahead'] = json_util.dumps([user.username for user in User.objects.all()])
+
+    # User admin has privileges to add/remove users
+    if request.user == group_creator:
+        context['admin'] = True
+
+    # Modification of Users (add/remove)
+    if request.method == 'POST':
+        if TagForm(request.POST).is_valid():
+            users = request.POST['users'].split(',')
+            # Add
+            for i in users:
+                try:
+                    user = User.objects.get(username=i)
+                    group.user_set.add(user)
+                except ObjectDoesNotExist:  # Catch Invalid user names
+                    pass
+            # Remove
+            for i in group.user_set.all():
+                if i == group_creator:
+                    continue
+                if i.username not in users:
+                    group.user_set.remove(i)
+
+            return HttpResponseRedirect("/group/" + group_id + '/')
+
+    return render(request, 'interface/group.html', context)
+
 
 @login_required
 def report(request, task_id):
+    """
+    Displays Scan results to User. Current Logged in User as the be valid (with in group, public, creator or private)
+    Contains comments for selected node.
+    Tags for a scan
+    Scan owner can change scans sharing model
+    :param request: Current logged in user, tags, comments and scan settings
+    :param task_id: Unique ID for scan
+    :return:
+    """
     task = get_object_or_404(Task, pk=task_id)
     context = {
         'task': None,
         'bookmarked': False,
         'authorisation': False,
         'comment_form': CommentForm(request.POST or None),
-        'settings_form': ScanSettingsForm(request.POST or None),
+        'settings_form': ScanSettingsForm(request.POST or None, user=request.user),
         'tags': None,
         'typeahead': None
     }
 
     if request.method == 'POST':
+
         # Post comment
         if context['comment_form'].is_valid():
 
@@ -167,7 +293,7 @@ def report(request, task_id):
 
             if response:
                 # comment authorisation
-                if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+                if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user or check_group(request, task):
                     save_comment(context, request, task)
             return HttpResponseRedirect("/report/" + task_id+'/')
 
@@ -175,12 +301,15 @@ def report(request, task_id):
             # Modify settings of scan
             if request.user == task.user:  # only owner can modify
                 task.sharing_model = int(context['settings_form'].cleaned_data['sharing_model'])
+                task.sharing_groups = context['settings_form'].cleaned_data['sharing_groups']
+                if task.sharing_model == SHARING_MODEL_PRIVATE:
+                    task.sharing_groups = []
                 task.save()
             return HttpResponseRedirect("/report/" + task_id + '/')
 
         elif TagForm(request.POST).is_valid():  # Add scan tags
 
-            if request.user == task.user:
+            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user or check_group(request, task):
                 create_or_modify_tag(task_id, request.POST['tags'])
             return HttpResponseRedirect("/report/" + task_id + '/')
 
@@ -188,7 +317,7 @@ def report(request, task_id):
             return render(request, 'interface/report.html', context)
 
     # If scan is public or used is allowed to view scan
-    if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+    if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user or check_group(request, task) :
         context['task'] = task
         context['authorisation'] = True
         if request.user in task.star.all():
@@ -211,13 +340,29 @@ def report(request, task_id):
 
     return render(request, 'interface/report.html', context)
 
+
 def create_or_modify_tag(task_id, tags):
+    """
+    Add/remove scan tags
+    :param task_id: Unique ID for scan
+    :param tags: list of current tags
+    :return:
+    """
+    # Set tags for selected scan
     tags = tags.split(',')
     db.analysiscombo.update_one({"frontend_id": task_id},  {"$set": {"tags": tags}})
     # add tag for typeahead
     [tags_db.tags.update_one({}, {'$addToSet': {'tags': tag}}, upsert=True) for tag in tags]
 
+
 def save_comment(context, request, task):
+    """
+    New comment for node
+    :param context: Post request containing comment info
+    :param request: Current logged in user
+    :param task: task comment was posted on
+    :return:
+    """
     saved_form = context['comment_form'].save()
 
     # Assign the current user to the newly created comment
@@ -228,6 +373,11 @@ def save_comment(context, request, task):
 
 
 def recaptcha_validation(g_recaptcha_response):
+    """
+    Google recaptcha valdation
+    :param g_recaptcha_response: recaptcha string that needs validation
+    :return: True/False validation
+    """
     params = {
         'secret': RECAPTCHA_SECRET_KEY,
         'response': g_recaptcha_response,
