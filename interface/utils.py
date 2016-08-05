@@ -33,11 +33,26 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 import json
+import requests
 
 db = MongoClient().thug
 
 RECAPTCHA_SECRET_KEY = '6LeFIyYTAAAAAEcFujpEAuIzljSX2dLv91lLbmq5'  # GOOGLE RECAPTCHA key
 URL = 'https://www.google.com/recaptcha/api/siteverify'  # recaptcha verify url
+
+def recaptcha_validation(g_recaptcha_response):
+    """
+    Google recaptcha valdation
+    :param g_recaptcha_response: recaptcha string that needs validation
+    :return: True/False validation
+    """
+    params = {
+        'secret': RECAPTCHA_SECRET_KEY,
+        'response': g_recaptcha_response,
+    }
+    verify_rs = requests.get(URL, params=params, verify=True)
+    verify_rs = verify_rs.json()
+    return bool(verify_rs.get("success", False))
 
 
 def check_group(request, task):

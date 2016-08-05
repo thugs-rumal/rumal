@@ -331,6 +331,8 @@ def report(request, task_id):
             context['tags'] = ','.join(tags)
         except KeyError:  # No tags exists currently, pass in empty value
             context['tags'] = ''
+        except TypeError:  # Mongo error tags is not found
+            pass
 
         # typeahead data
         try:
@@ -372,22 +374,6 @@ def save_comment(context, request, task):
     saved_form.task = task
     saved_form.node = request.POST['node']
     saved_form.save()
-
-
-def recaptcha_validation(g_recaptcha_response):
-    """
-    Google recaptcha valdation
-    :param g_recaptcha_response: recaptcha string that needs validation
-    :return: True/False validation
-    """
-    params = {
-        'secret': RECAPTCHA_SECRET_KEY,
-        'response': g_recaptcha_response,
-    }
-    verify_rs = requests.get(URL, params=params, verify=True)
-    verify_rs = verify_rs.json()
-    return bool(verify_rs.get("success", False))
-
 
 @login_required
 def json_tree_graph(request, analysis_id=None):
