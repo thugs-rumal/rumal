@@ -309,10 +309,8 @@
                                     {% csrf_token %}
                                     <input id="tags-input" type="text" name="tags" class="form-control"
                                                    value="" data-role="tagsinput" data-provide="typeahead"/>
-
-                                    {% if user == task.user %}
                                         <input type="submit" id="tag_save" class="btn btn-primary" value="Save Tags" style="font-size: 10px;"></li>
-                                    {% endif %}
+
 
                                 </form>
                             </div>
@@ -410,13 +408,44 @@
     </div>
 
     <div id="scan_settings" class="tab-pane fade">
-        <div style="margin-left: 10px">
-            <h3>Sharing Options:</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ settings_form.sharing_model }}
-                <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
-            </form>
+        <div class="container" style="width:1170px">
+            <div class="row">
+                <div class="col-md-6" style="margin-bottom:25px;">
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="padding-bottom:0px">
+                            <div class="text-center">
+                                <h4> Sharing Settings </h4>
+                            </div>
+
+                            <form method="post">
+
+                                {% csrf_token %}
+
+                                <div class="form-group{% if form.group_name.errors %} has-error{% endif %}">
+                                    <label for="id_sharing_model" class="control-label">Sharing Model:</label>
+                                    {{ settings_form.sharing_model }}
+                                </div>
+
+                                 <div class="form-group{% if form.group_name.errors %} has-error{% endif %}">
+                                    <label for="id_sharing_model" class="control-label">Shared with:</label>
+                                    {% for  i in task.sharing_groups.all %}
+                                        <a href="/group/{{ i.pk }}/" class="list-group-item">{{ i.name }}</a>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="form-group{% if form.group_name.errors %} has-error{% endif %}">
+                                    <label for="id_sharing_model" class="control-label">Sharing Groups:</label>
+                                    {{ settings_form.sharing_groups }}
+                                </div>
+
+
+
+                                <input type="submit" id="rule_save" class="btn btn-danger" value="Save" style="margin-bottom:20px;margin-left:20px;"></li>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

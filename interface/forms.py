@@ -26,6 +26,12 @@ from interface.models import *
 
 
 class TaskForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        current_user = kwargs.pop('user')
+        super(TaskForm, self).__init__(*args, **kwargs)
+        self.fields['sharing_groups'].queryset = current_user.groups.all()
+
     class Meta:
         model       = Task
         exclude     = ['user', 'submitted_on', 'started_on', 'completed_on', 'status', 'plugin_status']
@@ -41,7 +47,28 @@ class CommentForm(forms.ModelForm):
 
 
 class ScanSettingsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        current_user = kwargs.pop('user')
+        super(ScanSettingsForm, self).__init__(*args, **kwargs)
+        self.fields['sharing_groups'].queryset = current_user.groups.all()
+
     sharing_model = forms.ChoiceField(choices=SHARING_MODEL_CHOICES)
+    sharing_groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
 
 class TagForm(forms.Form):
     tags = forms.TextInput()
+
+
+class NewGroupForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(NewGroupForm, self).__init__(*args, **kwargs)
+        self.fields['group_members'].widget.attrs['id'] = 'select_user'
+        self.fields['group_name'].widget.attrs['class'] = 'form-control'
+
+
+
+    group_name = forms.CharField(required=True)
+    group_members = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+
+

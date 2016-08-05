@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}Your Scans{% endblock %}
+{% block customheaders %}
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables_themeroller.css">
+    <script type="text/javascript" charset="utf8" src="/static/js/jquery.dataTables.min.js"></script>
+{#Tags    #}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+    <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+
+    <script type="text/javascript" src="/static/js/bootstrap3-typeahead.js"></script>
+
+{% endblock %}
+{% block content %}
+    <div class="container" style="width:1170px">
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom:25px;">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-bottom:0px">
+                        <div class="text-center">
+                            <h4> Group Info </h4>
+                        </div>
+                        <table class="table table-striped table-hover" style="font-size:12px;">
+                            <tbody>
+                                <tr>
+                                    <td>Group Name</td>
+                                    <td>{{ name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Admin</td>
+                                    <td>{{ creator }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Number of Scans</td>
+                                    <td>{{ number_of_scans }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Members</td>
+                                    <td>{{ members }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        {% if admin %}
+
+            <div class="col-md-6" style="height:175px;margin-bottom:25px;">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-bottom:0px">
+                        <div class="text-center">
+                            <h4> Group User Management </h4>
+                        </div>
+
+                        <form id="bootstrapTagsInputForm" method="post" class="form-horizontal">
+                                    {% csrf_token %}
+                                    <input id="user-input" type="text" name="users" class="form-control"
+                                                   value="" data-role="tagsinput" data-provide="typeahead"/>
+                                        <input type="submit" id="user_save" class="btn btn-primary" value="Save Users" style="font-size: 10px;"></li>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+        </div>
+        <div class="row">
+                <div id="groupscans" class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Group Scans</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <table id="groupscans-table" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block bottomscripts %}
+    var scans = {{ scans | safe }};
+    var members = {{ members | safe }};
+    var admin = '{{ admin | safe }}';
+    var creator = {{ creator | safe }};
+    var user_typeahead = {{ user_typeahead | safe }};
+
+    if (admin == 'True'){
+        if (members != 'None'){
+                    $('#user-input').attr('value', members.join());
+                }
+
+        var elt = $('#user-input')
+        elt.typeahead();
+
+        $('#user-input').tagsinput({
+            typeahead:{
+                 source: user_typeahead
+            }
+        });
+
+    }
+
+    for (var i in scans) {
+            var id = scans[i].id;
+            var url = scans[i].url;
+            var status = scans[i].status;
+            var label = {};
+
+            switch (status) {
+
+                case "0":
+
+                case "1":
+                    label.class = 'info';
+                    label.text = 'Pending';
+
+                    break;
+                case "2":
+                    label.class = 'danger';
+                    label.text = 'Failed';
+                    break;
+
+                case "3":
+                    label.class = 'success';
+                    label.text = 'Finished';
+                    break;
+
+                case "4":
+                    label.class = 'danger';
+                    label.text = 'Timeout';
+                    break;
+
+            }
+
+            $("#groupscans tbody ").append(
+                $("<tr>")
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<a>")
+                        .attr("href", '/report/'+id+'/')
+                        .html(id)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<p>")
+                        .html(url)))
+                .append(
+                    $("<td>")
+                    .html(
+                        $("<span>")
+                        .attr("class", "label label-" + label.class)
+                        .html(label.text)))
+            );
+
+        }
+
+        jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
+            a = parseInt($(a).text());
+            b = parseInt($(b).text());
+            return ((a < b) ? -1 : ((a > b) ?  1 : 0));
+        };
+
+        jQuery.fn.dataTableExt.oSort['numeric-html-desc']  = function(a, b) {
+            a = parseInt($(a).text());
+            b = parseInt($(b).text());
+            return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
+        };
+
+        $(document).ready(function() {
+            $('#groupscans-table').DataTable( {
+                "aoColumns" : [
+                    { "sType" : "numeric-html" },
+                    null,
+                    null
+                ]
+
+            });
+        });
+
+
+{% endblock %}

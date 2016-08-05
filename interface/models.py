@@ -173,6 +173,10 @@ class PluginTask(models.Model):
     def __unicode__(self):
         return str(self.plugin_name) + " " + str(self.status)
 
+class GroupCreator(models.Model):
+    group = models.ForeignKey(Group, null=False, blank=False, default=None)
+    group_creator = models.ForeignKey(User, null=False, blank=False, default=None)
+
 
 # Models for MongoDB objects
 class Document(dict):

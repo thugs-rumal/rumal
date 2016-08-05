@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Your Scans{% endblock %}
+{% block customheaders %}
+    {# Google recaptcha for comment security    #}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+{% block customcss %}
+    .panel-heading a:after {
+        font-family:'Glyphicons Halflings';
+        content:"\e114";
+        float: right;
+        color: grey;
+    }
+    .panel-heading a.collapsed:after {
+        content:"\e080";
+    }
+
+    .fixed {
+        position: fixed;
+    }
+
+    /* sidebar */
+    .bs-docs-sidebar {
+        padding-left: 20px;
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+
+    /* all links */
+    .bs-docs-sidebar .nav>li>a {
+        color: #999;
+        border-left: 2px solid transparent;
+        padding: 4px 20px;
+        font-size: 13px;
+        font-weight: 400;
+    }
+
+    /* nested links */
+    .bs-docs-sidebar .nav .nav>li>a {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 30px;
+        font-size: 12px;
+    }
+
+    /* active & hover links */
+    .bs-docs-sidebar .nav>.active>a,
+    .bs-docs-sidebar .nav>li>a:hover,
+    .bs-docs-sidebar .nav>li>a:focus {
+        color: #563d7c;
+        text-decoration: none;
+        background-color: transparent;
+        border-left-color: #563d7c;
+    }
+    /* all active links */
+    .bs-docs-sidebar .nav>.active>a,
+    .bs-docs-sidebar .nav>.active:hover>a,
+    .bs-docs-sidebar .nav>.active:focus>a {
+        font-weight: 700;
+    }
+    /* nested active links */
+    .bs-docs-sidebar .nav .nav>.active>a,
+    .bs-docs-sidebar .nav .nav>.active:hover>a,
+    .bs-docs-sidebar .nav .nav>.active:focus>a {
+        font-weight: 500;
+    }
+
+    /* hide inactive nested list */
+    .bs-docs-sidebar .nav ul.nav {
+        display: none;
+    }
+    /* show active nested list */
+    .bs-docs-sidebar .nav>.active>ul.nav {
+        display: block;
+    }
+    .panel {
+        margin: 15px;
+    }
+{% endblock %}
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10">
+            <!-- Display any form errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">Please fill in the form correctly </div>
+            {% endif %}
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+            {% endfor %}
+
+            <!-- Basic options -->
+            <div class="panel panel-primary" id="thug_base_options">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Group</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group{% if form.group_name.errors %} has-error{% endif %}">
+                        <label for="id_group_name" class="control-label">Group Name:</label>
+                        {{ form.group_name }}
+                    </div>
+
+                    <div class="form-group{% if form.group_members.errors %} has-error{% endif %}">
+                        <label for="id_group_members" class="control-label">Group Members:</label>
+                        {{ form.group_members }}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LeFIyYTAAAAAHNC_1fyVKgJGJQP19M2Kcgp_Mrc"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <nav class="bs-docs-sidebar">
+                <ul id="sidebar" class="nav nav-stacked fixed">
+                    <li><input type="submit" id="rule_save" class="btn btn-danger" value="Save Group" style="margin-bottom:20px;margin-left:20px;"></li>
+                    <li><a href="#thug_base_options">Group</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    </div>
+</form>
+
+
+{% endblock %}
+
+{% block bottomscripts %}
+    var group_creator = '{{ user }}';
+
+
+    var select = document.getElementById("select_user");
+    for (var i = 0; i < select.length; i++){
+        if (group_creator == select.options[i].text) {
+            select.options[i].selected = "selected";
+        }
+    }
+
+
+
+{% endblock %}

@@ -102,14 +102,14 @@ class TaskResource(ModelResource):
 
         if my_scan:
             filtered_objects = semi_filtered.filter(user__username__exact=request.user.username)
-            return filtered_objects
+            return filtered_objects.distinct()
 
         elif starred:
             filtered_objects = semi_filtered.filter(star=request.user)
-            return filtered_objects
+            return filtered_objects.distinct()
 
         else:
-            return semi_filtered
+            return semi_filtered.distinct()
 
 
     class Meta:
@@ -152,7 +152,7 @@ class CommentResource(ModelResource):
 
         semi_filtered = super(CommentResource, self).apply_filters(request, applicable_filters)
         if task_id and node:
-            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user:
+            if task.sharing_model is SHARING_MODEL_PUBLIC or request.user == task.user or check_group(request, task):
                 filtered_objects = semi_filtered.filter(task__id=task_id).filter(node=node)
                 return filtered_objects
         return None
