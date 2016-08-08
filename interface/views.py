@@ -281,7 +281,7 @@ def report(request, task_id):
         'comment_form': CommentForm(request.POST or None),
         'settings_form': ScanSettingsForm(request.POST or None, user=request.user),
         'tags': None,
-        'typeahead': None
+        'typeahead': ''
     }
 
     if request.method == 'POST':
