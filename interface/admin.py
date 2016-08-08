@@ -49,7 +49,7 @@ persons.allow_tags = True
 
 class TaskAdmin(admin.ModelAdmin):
     #list_display = ['__unicode__', 'proxy', 'broken_url']
-    list_display = ['proxy', 'broken_url', 'no_javaplugin']
+    list_display = ['pk', 'proxy', 'broken_url', 'no_javaplugin']
     date_hierarchy = 'submitted_on'
     actions = [add_broken_url, remove_broken_url,
         enable_javaplugin, disable_javaplugin]

@@ -33,6 +33,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 
 from interface.plug import *
 import geoip2.database
+from geoip2.errors import AddressNotFoundError
 
 
 
@@ -48,8 +49,7 @@ class GeoPlugin(PluginBase):
         """List of non-standard lib module dependencies
            - put module names as keys and versions as
            values.Return blank list if none."""
-        return
-        {
+        return {
             "geoip2": "2.2.0",
             "ipaddr": "2.1.11",
             "maxminddb": "1.2.0",
@@ -136,11 +136,11 @@ class GeoPlugin(PluginBase):
             # Reset ip_geo_map for each DB run.
             for node in self.data["flat_tree"]:
                 node_ip = node["ip"]
+                if "GeoPlugin" not in node.keys():
+                    node["GeoPlugin"] = {}  # To avoid key error as further data is according to db.
                 if node_ip == None:
                     node["GeoPlugin"][db_type] = {}
                     continue
-                if "GeoPlugin" not in node.keys():
-                    node["GeoPlugin"] = {}  # To avoid key error as further data is according to db.
                 if node_ip in ip_geo_map.keys():
                     node["GeoPlugin"][db_type] = ip_geo_map[node_ip]
                 else:

@@ -37,11 +37,6 @@ import gridfs
 from bson import ObjectId
 from bson.json_util import loads, dumps
 
-STATUS_NEW = 0
-STATUS_PROCESSING = 1
-STATUS_FAILED = 2
-STATUS_COMPLETED = 3
-
 # mongodb connection settings
 client = pymongo.MongoClient()
 db = client.thug
@@ -60,7 +55,8 @@ class InvalidMongoIdException(Exception):
 class Command(BaseCommand):
 
     def fetch_new_tasks(self):
-        return Task.objects.filter(plugin_status__exact=STATUS_NEW)
+        # get tasks that have data from backend
+        return Task.objects.filter(status__exact=STATUS_COMPLETED).filter(plugin_status__exact=STATUS_NEW)
 
     def get_data(self, task):
         "Retrieves from DB and returns Python Object"
@@ -114,14 +110,14 @@ class Command(BaseCommand):
     def run_ptask_queue(self, data, task_queue, ptasks):
         for task_name in task_queue:
 
-            try:
+            # try:
 
-                data = self.run_ptask(data, task_name)
-                this_ptask = filter(lambda x: x.plugin_name == task_name, ptasks)[0]
+            data = self.run_ptask(data, task_name)
+            this_ptask = filter(lambda x: x.plugin_name == task_name, ptasks)[0]
 
-                self.mark_ptask_as_completed(this_ptask)
-            except:  # Todo Catch more precise exception
-                logger.debug("ERROR: {} failed to run.".format(task_name))
+            self.mark_ptask_as_completed(this_ptask)
+            # except:  # Todo Catch more precise exception
+            #     logger.debug("ERROR: {} failed to run.".format(task_name))
 
             # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
         return data
@@ -151,15 +147,17 @@ class Command(BaseCommand):
             logger.info("Got {} new tasks for enrichment.".format(len(tasks)))
 
             for task in tasks:
-                data = self.get_data(task)
-                self.mark_task_as_running(task)
-                ptasks = task.plugintask_set.filter(status=STATUS_NEW)
-                task_queue = self.make_ptask_queue(ptasks)
-                logger.info("Will run queue of {} plugins for enrichment.".format(len(ptasks)))
-                final_data = self.run_ptask_queue(data, task_queue, ptasks)
-                logger.info("Writing results to database.")
-
                 try:
+                    data = self.get_data(task)
+                    self.mark_task_as_running(task)
+                    PluginTask(task=task, plugin_name='GeoPlugin').save()
+                    ptasks = PluginTask.objects.filter(task=task)
+                    task_queue = self.make_ptask_queue(ptasks)
+                    logger.info("Will run queue of {} plugins for enrichment.".format(len(ptasks)))
+                    final_data = self.run_ptask_queue(data, task_queue, ptasks)
+                    logger.info("Writing results to database.")
+
+
 
                     self.write_results(task, final_data)
                     self.mark_task_as_completed(task)
@@ -169,5 +167,5 @@ class Command(BaseCommand):
                     logger.debug("FAILED: Unable to write to DB.")
                     self.mark_task_as_failed(task)
 
-            logger.info("Sleeping for {} seconds".format(60))
-            time.sleep(60)
+            logger.info("Sleeping for {} seconds".format(10))
+            time.sleep(10)
