@@ -281,7 +281,7 @@ def report(request, task_id):
         'comment_form': CommentForm(request.POST or None),
         'settings_form': ScanSettingsForm(request.POST or None, user=request.user),
         'tags': None,
-        'typeahead': None
+        'typeahead': 'null'
     }
 
     if request.method == 'POST':
@@ -336,7 +336,9 @@ def report(request, task_id):
 
         # typeahead data
         try:
-            context['typeahead'] = json.dumps(tags_db.tags.find_one()['tags'])
+            tyepahead_data = tags_db.tags.find_one()['tags']
+            if tyepahead_data:
+                context['typeahead'] = json.dumps(tyepahead_data)
         except KeyError:  # Mongo error
             pass
         except TypeError:  # Mongo error tags is not found

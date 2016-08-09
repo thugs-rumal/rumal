@@ -455,7 +455,7 @@
         var task_id = '{{ task.id }}' || "None";
         var authorisation = '{{ authorisation }}';
         var tags = '{{ tags | safe }}';
-        var typeahead_data = {{ typeahead | safe }}
+        var typeahead_data = {{ typeahead | safe }};
 
         if (authorisation == 'True') {
 
@@ -463,14 +463,17 @@
                 $('#tags-input').attr('value', tags);
             }
 
-            var elt = $('#tags-input')
-            elt.typeahead();
 
-            $('#tags-input').tagsinput({
-                typeahead:{
-                     source: typeahead_data
-                }
-            });
+            if (typeahead_data) {
+                var elt = $('#tags-input')
+                elt.typeahead();
+
+                $('#tags-input').tagsinput({
+                    typeahead:{
+                         source: typeahead_data
+                    }
+                });
+            }
 
             $('.comment-input').val('');
 
