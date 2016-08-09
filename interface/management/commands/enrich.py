@@ -98,6 +98,11 @@ class Command(BaseCommand):
         ptask.status = STATUS_COMPLETED
         ptask.save()
 
+    def save_ptasks(self, task):
+        # Save Plugin task with a task and plugin name
+        for x in available_plugins:
+            PluginTask(task=task, plugin_name=x).save()
+
     def make_ptask_queue(self, ptasks):
         # starting with making a dependency dict
         dependency_dict = {}
@@ -108,19 +113,23 @@ class Command(BaseCommand):
         return resolved_list
 
     def run_ptask_queue(self, data, task_queue, ptasks):
+        return_data = []
         for task_name in task_queue:
 
             # try:
+            run_task_data = self.run_ptask(data, task_name)
+            return_data.append(run_task_data)
 
-            data = self.run_ptask(data, task_name)
             this_ptask = filter(lambda x: x.plugin_name == task_name, ptasks)[0]
-
-            self.mark_ptask_as_completed(this_ptask)
+            if run_task_data:
+                self.mark_ptask_as_completed(this_ptask)
+            else:
+                self.mark_ptask_as_failed(this_ptask)
             # except:  # Todo Catch more precise exception
             #     logger.debug("ERROR: {} failed to run.".format(task_name))
 
             # Todo change ptask status everywhere required. VERY IMP WARNING!!!!! OR TASKS WILL RE-RUN
-        return data
+        return return_data
 
     def run_ptask(self, data, plugin_name):
         """ Initializes plugin and returns processed data"""
@@ -131,11 +140,13 @@ class Command(BaseCommand):
         return processed_data
 
     def write_results(self, task,data):
-        """Converts Python Objects to result and writes to DB"""
+        """Converts Python Objects to result and writes to DB only if data is not false"""
+        for x in data:
+            if x:
+                db.analysiscombo.update({'_id': ObjectId(task.object_id)},
+                                        {"$set": x},
+                                        upsert=False)
 
-        db.analysiscombo.update({'_id': ObjectId(task.object_id)},
-                                {"$set": data},
-                                upsert=False)
 
     def handle(self, *args, **options):
         logger.info("Starting up enrichment daemon")
@@ -148,22 +159,27 @@ class Command(BaseCommand):
 
             for task in tasks:
                 try:
+                    # Get data
                     data = self.get_data(task)
                     self.mark_task_as_running(task)
-                    PluginTask(task=task, plugin_name='GeoPlugin').save()
+
+                    # Save Plugin Tasks
+                    self.save_ptasks(task)
+
+                    # Plugin tasks to run
                     ptasks = PluginTask.objects.filter(task=task)
+
+                    # Build queue
                     task_queue = self.make_ptask_queue(ptasks)
+
                     logger.info("Will run queue of {} plugins for enrichment.".format(len(ptasks)))
                     final_data = self.run_ptask_queue(data, task_queue, ptasks)
+
                     logger.info("Writing results to database.")
-
-
-
                     self.write_results(task, final_data)
                     self.mark_task_as_completed(task)
 
                 except:  # Todo Catch more precise exception
-
                     logger.debug("FAILED: Unable to write to DB.")
                     self.mark_task_as_failed(task)
 

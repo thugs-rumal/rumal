@@ -112,9 +112,16 @@ def register_plugins():
      Uses the fact that a class knows about all of its subclasses
      to automatically initialize the relevant plugins
     '''
+    # Config directory location
+    plugins_conf_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'conf', 'plugins'))
+
     all_plugins = {}
     for plugin in PluginBase.__subclasses__():
-      all_plugins[plugin.__name__] = plugin
+        # Only return plugins that have a config file
+        conf_path = os.path.join(plugins_conf_dir, '{}.conf'.format(plugin.__name__))
+        if os.path.isfile(conf_path):
+            all_plugins[plugin.__name__] = plugin
+
     return all_plugins
 
 def init_plugins():
