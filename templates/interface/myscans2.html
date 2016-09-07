@@ -161,6 +161,7 @@
 
         }
 
+/*
         jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
@@ -172,9 +173,10 @@
             b = parseInt($(b).text());
             return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
         };
-
+*/
         $(document).ready(function() {
             $('#myscans-table').DataTable( {
+                "aaSorting": [[0, "desc"]],
                 "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
@@ -242,7 +244,7 @@
                         .html(label.text)))
             );
         }
-
+/*
         jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
@@ -254,9 +256,10 @@
             b = parseInt($(b).text());
             return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
         };
-
+*/
         $(document).ready(function() {
             $('#starredscans-table').DataTable( {
+                "aaSorting": [[0,"desc"]],
                 "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
