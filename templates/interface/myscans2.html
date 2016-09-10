@@ -8,6 +8,11 @@
 {% endblock %}
 {% block content %}
     <div class="container">
+        <style scoped>
+            .urlwrap{
+                    word-break:break-all;
+            } 
+        </style>
         <div class="row">
             <div class="col-md-6" style="height:175px;margin-bootom:10px;">
                 <div class="panel panel-default" style="height:177px;">
@@ -147,7 +152,7 @@
                         .attr("href", '/report/'+id+'/')
                         .html(id)))
                 .append(
-                    $("<td>")
+                    $("<td class='urlwrap'>")
                     .html(
                         $("<p>")
                         .html(url)))
@@ -160,7 +165,6 @@
             );
 
         }
-
         jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
@@ -175,12 +179,12 @@
 
         $(document).ready(function() {
             $('#myscans-table').DataTable( {
-                "aoColumns" : [
+                "aaSorting": [[0, "desc"]],
+                 "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
                     null
                 ]
-
             });
         });
 
@@ -242,7 +246,7 @@
                         .html(label.text)))
             );
         }
-
+        
         jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
@@ -257,12 +261,12 @@
 
         $(document).ready(function() {
             $('#starredscans-table').DataTable( {
+                "aaSorting": [[0,"desc"]],
                 "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
                     null
                 ]
-
             });
         });
 
