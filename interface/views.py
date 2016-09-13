@@ -162,11 +162,8 @@ def my_profile(request):
     :param request: User
     :return: All groups user is in
     """
-    context = {
-        'groups': json_util.dumps(request.user.groups.all().values())
-    }
 
-    return render(request, 'interface/myprofile.html', context)
+    return render(request, 'interface/myprofile.html')
 
 @login_required
 def new_group(request):

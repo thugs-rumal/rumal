@@ -43,13 +43,36 @@ Resources for SQLite models
 
 class GroupResource(ModelResource):
     class Meta:
-        queryset        = Group.objects.all()
-        resource_name   = 'group'
-        authentication  = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
-        authorization   = DjangoAuthorization()
+        queryset = Group.objects.all()
+        resource_name = 'group'
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        always_return_data = True
+        filtering = {
+            'id': ALL,
+            'name': ALL,
+        }
+
+class CurrentUserResource(ModelResource):
+
+    groups = fields.ToManyField(GroupResource, 'groups',
+                                blank=True)
+
+    class Meta:
+        queryset        = User.objects.all()
+        resource_name   = 'current-user'
+
         allowed_methods = ['get']
-        fields          = ['id', 'name']
-        ordering        = ['id', 'name']
+        fields          = ['id', 'username']
+        ordering        = ['id', 'username']
+        filtering = {
+          'username': ALL_WITH_RELATIONS,
+          'groups': ALL_WITH_RELATIONS
+        }
+
+    def get_object_list(self, request):
+        users = super(CurrentUserResource, self).get_object_list(request)
+        return users.filter(id=request.user.id)
 
 class UserResource(ModelResource):
     class Meta:

@@ -28,6 +28,7 @@ from interface.api import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
+v1_api.register(CurrentUserResource())
 v1_api.register(GroupResource())
 v1_api.register(ProxyResource())
 v1_api.register(TaskResource())
