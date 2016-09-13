@@ -80,97 +80,8 @@
     </div>
 {% endblock %}
 {% block bottomscripts %}
-    var tasks = {{ tasks|safe }}
 
-    for (var i in tasks) {
-            var id = tasks[i].pk;
-            var url = tasks[i].fields.url;
-            var status = tasks[i].fields.status;
-            submitted_on = tasks[i].fields.submitted_on.replace("T", " ").replace("Z", "");
-            var label = {};
-
-            switch (status) {
-
-                case "0":
-
-                case "1":
-                    label.class = 'info';
-                    label.text = 'Pending';
-                    break;
-                case "2":
-                    label.class = 'danger';
-                    label.text = 'Failed';
-                    break;
-
-                case "3":
-                    label.class = 'success';
-                    label.text = 'Finished';
-                    break;
-
-                case "4":
-                    label.class = 'danger';
-                    label.text = 'Timeout';
-                    break;
-
-            }
-
-
-            $("#table_tasks tbody ").append(
-                $("<tr>")
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<a>")
-                        .attr("href", '/report/'+id+'/')
-                        .html(id)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(submitted_on)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(url)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(tasks[i].fields.referer)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(tasks[i].fields.useragent)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(tasks[i].fields.proxy)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(tasks[i].fields.user)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(tasks[i].fields.sharing_model)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<span></span>")
-                        .attr("class", "label label-" + label.class)
-                        .html(label.text)))
-
-
-            );
-
-        }
-
-        jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
+    jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
             return ((a < b) ? -1 : ((a > b) ?  1 : 0));
@@ -182,53 +93,89 @@
             return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
         };
 
+    var table = $('#table_tasks').DataTable({
+        "columns": [
+            { "data": "id" },
+            { "data": "submitted_on" },
+            { "data": "url" },
+            { "data": "referer" },
+            { "data": "useragent" },
+            { "data": "proxy" },
+            { "data": "user.username" },
+            { "data": "shared_with" },
+            { "data": "status" },
+        ],
+        "aoColumns" : [
+            { "sType" : "numeric-html" },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+        ],
+        "columnDefs": [ {
+                    "targets": 0,
+                    "render": function ( data, type, full, meta ) {
+                        return '<a href="/report/'+data+'">'+data+'</a>';
+                    }
+                    }, {
+                    "targets": 8,
+                    "render": function ( data, type, full, meta ) {
+                        return '<span class="label label-'+data[1]+'">'+data[0]+'</span>';
+                    }
+        } ]
+    });
 
+    search_query = '{{search | safe}}';
 
-var table = $('#table_tasks').DataTable({
-    "processing": true,
-    "serverSide": true,
-    "stateSave": true,
-    "jQueryUI": true,
-    "autoWidth": false,
-    "ordering": true,
-    "order": [[0, 'desc']],
-    "searching": false,
-    "pagingType": "full_numbers",
-    "pageLength": 25,
-    "lengthMenu": [ [25, 50, 100, 200, -1], [25, 50, 100, 200, "All"] ],
-    "language":{
-        "zeroRecords": "No records found.",
-        "lengthMenu": "Display: _MENU_",
-        "infoFiltered": "",
-        "emptyTable": "Still no tasks here"
-    },
-    "columns": [
-        { "data": "id" },
-        { "data": "submitted_on" },
-        { "data": "url" },
-        { "data": "referer" },
-        { "data": "useragent" },
-        { "data": "proxy" },
-        { "data": "user.username" },
-        { "data": "shared_with" },
-        { "data": "status" },
-    ],
-            "aoColumns" : [
-                    { "sType" : "numeric-html" },
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                ]
-});
+    $.getJSON("/api/v1/advancedsearch/?format=json&" + "search=" + search_query,
+        function(data) {
+            for (var i in data['advancedsearch']) {
 
-// Reload table every 10 seconds
-// setInterval( function () {
-//     table.ajax.reload( null, false ); // user paging is not reset on reload
-// }, 10000 );
+                var owner = data['advancedsearch'][i].owner;
+                var id = data['advancedsearch'][i].id;
+                var url = data['advancedsearch'][i].url;
+                var status = data['advancedsearch'][i].status;
+                submitted_on = data['advancedsearch'][i].submitted_on.replace("T", " ").replace("Z", "");
+                var referer = data['advancedsearch'][i].referer;
+                var useragent = data['advancedsearch'][i].useragent;
+                var proxy = data['advancedsearch'][i].proxy;
+                var shared_with = data['advancedsearch'][i].shared_with;
+
+                var label = {};
+
+                switch (status) {
+
+                    case 0:
+
+                    case 1:
+                        label.class = 'info';
+                        label.text = 'Pending';
+                        break;
+                    case 2:
+                        label.class = 'danger';
+                        label.text = 'Failed';
+                        break;
+
+                    case 3:
+                        label.class = 'success';
+                        label.text = 'Finished';
+                        break;
+
+                    case 4:
+                        label.class = 'danger';
+                        label.text = 'Timeout';
+                        break;
+
+                }
+
+                table.row.add([id, submitted_on, url, referer, useragent, proxy, owner, shared_with, [label.text, label.class]]).draw();
+            }
+        }
+    );
+
 
 {% endblock %}

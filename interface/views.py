@@ -40,7 +40,6 @@ from interface.models import *
 import requests
 
 from django.core import serializers
-import advanced_search
 from django.core.exceptions import FieldError, ObjectDoesNotExist
 import pymongo
 
@@ -83,57 +82,17 @@ def new_task(request):
 @login_required
 def reports(request):
     """
-    Advanced search feature, parses string into a mongodb query, displays relevant results to user in table.
-    Search help display guide on what operators and fileds can be used
+    Advanced search feature moved to Restful API
+    Search help display guide on what operators and fields can be used
     :param request: contains string to parse
     :return: table with scans matching query
     """
-    # makes sure text indexes are set
-    db.analysiscombo.create_index([("$**", pymongo.TEXT)],
-                                  default_language="en",
-                                  language_override="en")
 
-    tasks = Task.objects
     context = {
-        'active_tab': 'reports',
-        'status': None,  # Error messages for advanced search
-        'help': False  # Display help setting to user
+        'search': None
     }
 
-    if 'help' in request.get_full_path().split('/'):  # Display help aid
-        context['help'] = True
-        return render(request, 'interface/results.html', context)
-
-    search_query = request.GET.get('search', '')
-
-    if search_query:
-
-        tree = advanced_search.search(search_query)  # Make Abstract syntax tree
-        if tree:
-            query = advanced_search.get_query(tree)  # Create Q query from AST
-            mongo_result = [str(x['_id']) for x in list(db.analysiscombo.find(query))]  # get object IDs of valid scans
-
-        else:  # problem with parser (string can be in wrong format )
-            context['status'] = 'Could not make AST'
-            return render(request, 'interface/results.html', context)
-    else:  # no string detected for search
-        context['status'] = 'Empty search'
-        return render(request, 'interface/results.html', context)
-
-    #  Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
-    tasks = tasks.filter(
-        Q(user__exact=request.user) |
-        Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
-        (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
-    )
-
-    # Now apply the filter of valid mongo Objects IDs Advanced search
-    tasks = [task for task in tasks if task.object_id in mongo_result]
-
-    tasks = set(tasks)  # Make the task list unique for scans within Multiple groups
-
-    context['tasks'] = serializers.serialize('json', tasks)
-    context['total'] = len(tasks)
+    context['search'] = request.GET.get('search', '')
 
     return render(request, 'interface/results.html', context)
 

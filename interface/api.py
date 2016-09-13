@@ -22,7 +22,7 @@
 
 from json import dumps, loads
 from tastypie import fields
-from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL, Resource
 from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
 from tastypie.authorization import DjangoAuthorization, ReadOnlyAuthorization
 from django.contrib.auth.models import User, Group
@@ -34,6 +34,8 @@ from interface.models import *
 from interface.resources import MongoDBResource
 from interface.highlights import generate_warnings, generate_threats
 from interface.utils import make_nested_tree
+import advanced_search
+import pymongo
 
 from django.http import HttpRequest
 
@@ -195,6 +197,110 @@ class CommentResource(ModelResource):
         }
 
 
+"""Non ORM Model for advanced search"""
+
+class Object(object):
+    """
+    Container to keep data that doesn't conform to any orm model, but has to be returned
+    by some resources.
+    """
+
+    def __init__(self, initial=None):
+        self.__dict__['_data'] = {}
+
+        if hasattr(initial, 'items'):
+            self.__dict__['_data'] = initial
+
+    def __getattr__(self, name):
+        return self._data.get(name, None)
+
+    def __setattr__(self, name, value):
+        self.__dict__['_data'][name] = value
+
+    def to_dict(self):
+        return self._data
+
+
+
+class AdvancedSearchResource(Resource):
+    id = fields.CharField(attribute='id')
+    submitted_on = fields.CharField(attribute='submitted_on')
+    url = fields.CharField(attribute='url')
+    referer = fields.CharField(attribute='referer')
+    useragent = fields.CharField(attribute='user_agent', null=True, blank=True)
+    proxy = fields.CharField(attribute='proxy', null=True, blank=True)
+    owner = fields.CharField(attribute='owner')
+    shared_with = fields.ListField('shared_with')
+    status = fields.IntegerField(attribute='status')
+
+
+    def obj_get_list(self, request=None, **kwargs):
+        # you have to do this if you want to use request in get_object_list
+        if not request:
+            request = kwargs['bundle'].request
+        return self.get_object_list(request)
+
+    def get_object_list(self, request):
+
+        # makes sure text indexes are set
+        db.analysiscombo.create_index([("$**", pymongo.TEXT)],
+                                      default_language="en",
+                                      language_override="en")
+
+        search_query = request.GET.get('search')
+        results = []
+
+        if search_query:
+
+            tree = advanced_search.search(search_query)  # Make Abstract syntax tree
+            if tree:
+                query = advanced_search.get_query(tree)  # Create Q query from AST
+                mongo_result = [str(x['_id']) for x in
+                                list(db.analysiscombo.find(query))]  # get object IDs of valid scans
+
+            else:  # problem with parser (string can be in wrong format )
+                return results
+        else:  # no string detected for search
+            return results
+
+        # Only show tasks that belong to the current user, or are public, or are shared with a group this user belongs to.
+        tasks = Task.objects.filter(
+            Q(user__exact=request.user) |
+            Q(sharing_model__exact=SHARING_MODEL_PUBLIC) |
+            (Q(sharing_model__exact=SHARING_MODEL_GROUPS) & Q(sharing_groups__in=request.user.groups.all()))
+        )
+
+        # Now apply the filter of valid mongo Objects IDs Advanced search
+        tasks = [task for task in tasks if task.object_id in mongo_result]
+
+        tasks = set(tasks)  # Make the task list unique for scans within Multiple groups
+
+        for p in tasks:
+            new_obj = Object()
+            new_obj.id = p.id
+            new_obj.submitted_on = p.submitted_on
+            new_obj.url = p.url
+            new_obj.referer = p.referer
+            new_obj.useragent = p.useragent
+            new_obj.proxy = p.proxy
+            new_obj.owner = p.user.username
+            groups = []
+            for group in p.sharing_groups.all():
+                groups.append(group.name)
+            new_obj.shared_with = groups
+            new_obj.status = p.status
+            results.append(new_obj)
+
+        return results
+
+    class Meta:
+        resource_name = 'advancedsearch'
+        collection_name = 'advancedsearch'
+        allowed_methods = ['get']
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        include_resource_uri = False
+        object_class = Object
 
 """
 Resources for MongoDB models
@@ -433,3 +539,4 @@ class ComboResource(MongoDBResource):
         detail_uri_name = "_id"
         excludes = ["id",]
         include_resource_uri = False
+
