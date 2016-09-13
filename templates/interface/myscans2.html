@@ -8,11 +8,6 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <style scoped>
-            .urlwrap{
-                    word-break:break-all;
-            } 
-        </style>
         <div class="row">
             <div class="col-md-6" style="height:175px;margin-bootom:10px;">
                 <div class="panel panel-default" style="height:177px;">
@@ -108,63 +103,17 @@
         </div>
     </div>
 {% endblock %}
+
+{% block customcss %}
+    td {
+        word-break: break-word;
+    }
+
+{% endblock %}
+
+
 {% block bottomscripts %}
-    $.getJSON('/api/v1/task/?format=json&myscans=true', function(response) {
-        var objects = response.objects;
-        for (var i in objects) {
-            var id = objects[i].id;
-            var url = objects[i].url;
-            var status = objects[i].status;
-            var label = {};
 
-            switch (status) {
-
-                case 0:
-
-                case 1:
-                    label.class = 'info';
-                    label.text = 'Pending';
-
-                    break;
-                case 2:
-                    label.class = 'danger';
-                    label.text = 'Failed';
-                    break;
-
-                case 3:
-                    label.class = 'success';
-                    label.text = 'Finished';
-                    break;
-
-                case 4:
-                    label.class = 'danger';
-                    label.text = 'Timeout';
-                    break;
-
-            }
-
-            $("#myscans tbody ").append(
-                $("<tr>")
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<a>")
-                        .attr("href", '/report/'+id+'/')
-                        .html(id)))
-                .append(
-                    $("<td class='urlwrap'>")
-                    .html(
-                        $("<p>")
-                        .html(url)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<span>")
-                        .attr("class", "label label-" + label.class)
-                        .html(label.text)))
-            );
-
-        }
         jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
             a = parseInt($(a).text());
             b = parseInt($(b).text());
@@ -178,99 +127,138 @@
         };
 
         $(document).ready(function() {
-            $('#myscans-table').DataTable( {
+
+            var my_scans = $('#myscans-table').DataTable( {
                 "aaSorting": [[0, "desc"]],
                  "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
                     null
-                ]
+                ],
+
+                "columnDefs": [ {
+                    "targets": 0,
+                    "render": function ( data, type, full, meta ) {
+                        return '<a href="/report/'+data+'">'+data+'</a>';
+                    }
+                }, {
+                    "targets": 1,
+                    "render": function ( data, type, full, meta ) {
+                        return '<p>'+data+'</p>';
+                    }
+                }, {
+                    "targets": 2,
+                    "render": function ( data, type, full, meta ) {
+                        return '<span class="label label-'+data[1]+'">'+data[0]+'</span>';
+                }
+              } ]
             });
-        });
 
-    });
+            $.getJSON('/api/v1/task/?format=json&myscans=true', function(response) {
+                var objects = response.objects;
+                for (var i in objects) {
+                    var id = objects[i].id;
+                    var url = objects[i].url;
+                    var status = objects[i].status;
+                    var label = {};
 
+                    switch (status) {
 
+                        case 0:
 
-    $.getJSON('/api/v1/task/?format=json&starred=true', function(response) {
-        var objects = response.objects;
-        for (var i in objects) {
-            var id = objects[i].id;
-            var url = objects[i].url;
-            var status = objects[i].status;
-            var label = {};
+                        case 1:
+                            label.class = 'info';
+                            label.text = 'Pending';
 
-            switch (status) {
+                            break;
+                        case 2:
+                            label.class = 'danger';
+                            label.text = 'Failed';
+                            break;
 
-                case 0:
+                        case 3:
+                            label.class = 'success';
+                            label.text = 'Finished';
+                            break;
 
-                case 1:
-                    label.class = 'info';
-                    label.text = 'Pending';
-                    break;
+                        case 4:
+                            label.class = 'danger';
+                            label.text = 'Timeout';
+                            break;
 
-                case 2:
-                    label.class = 'danger';
-                    label.text = 'Failed';
-                    break;
+                    }
 
-                case 3:
-                    label.class = 'success';
-                    label.text = 'Finished';
-                    break;
+                    my_scans.row.add([id, url, [label.text, label.class]]).draw();
+                }
 
-                case 4:
-                    label.class = 'danger';
-                    label.text = 'Timeout';
-                    break;
+            });
 
-            }
-            $("#starredscans-table tbody").append(
-                $("<tr>")
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<a>")
-                        .attr("href", '/report/'+id+'/')
-                        .html(id)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(url)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<span></span>")
-                        .attr("class", "label label-" + label.class)
-                        .html(label.text)))
-            );
-        }
-        
-        jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
-            a = parseInt($(a).text());
-            b = parseInt($(b).text());
-            return ((a < b) ? -1 : ((a > b) ?  1 : 0));
-        };
-
-        jQuery.fn.dataTableExt.oSort['numeric-html-desc']  = function(a, b) {
-            a = parseInt($(a).text());
-            b = parseInt($(b).text());
-            return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
-        };
-
-        $(document).ready(function() {
-            $('#starredscans-table').DataTable( {
+             var starred_scans = $('#starredscans-table').DataTable( {
                 "aaSorting": [[0,"desc"]],
                 "aoColumns" : [
                     { "sType" : "numeric-html" },
                     null,
                     null
-                ]
+                ],
+                "columnDefs": [ {
+                    "targets": 0,
+                    "render": function ( data, type, full, meta ) {
+                        return '<a href="/report/'+data+'">'+data+'</a>';
+                    }
+                }, {
+                    "targets": 1,
+                    "render": function ( data, type, full, meta ) {
+                        return '<p>'+data+'</p>';
+                    }
+                }, {
+                    "targets": 2,
+                    "render": function ( data, type, full, meta ) {
+                        return '<span class="label label-'+data[1]+'">'+data[0]+'</span>';
+                }
+            } ]
             });
+
+            $.getJSON('/api/v1/task/?format=json&starred=true', function(response) {
+                var objects = response.objects;
+                for (var i in objects) {
+                    var id = objects[i].id;
+                    var url = objects[i].url;
+                    var status = objects[i].status;
+                    var label = {};
+
+                    switch (status) {
+
+                        case 0:
+
+                        case 1:
+                            label.class = 'info';
+                            label.text = 'Pending';
+                            break;
+
+                        case 2:
+                            label.class = 'danger';
+                            label.text = 'Failed';
+                            break;
+
+                        case 3:
+                            label.class = 'success';
+                            label.text = 'Finished';
+                            break;
+
+                        case 4:
+                            label.class = 'danger';
+                            label.text = 'Timeout';
+                            break;
+
+                    }
+
+                    starred_scans.row.add([id, url, [label.text, label.class]]).draw();
+                }
+            });
+
+
         });
 
-    });
 
     $("#scan_title_toggle").click(function(){
         if($("#scan_title").html()=='Starred Scans'){
