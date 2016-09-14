@@ -36,7 +36,7 @@
                                 </tr>
                                 <tr>
                                     <td>Members</td>
-                                    <td>{{ members }}</td>
+                                    <td id="members">{{ members }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -100,105 +100,105 @@
 {% endblock %}
 
 {% block bottomscripts %}
-    var scans = {{ scans | safe }};
-    var members = {{ members | safe }};
+    var group_id = '{{ group_id| safe }}';
     var admin = '{{ admin | safe }}';
     var creator = {{ creator | safe }};
     var user_typeahead = {{ user_typeahead | safe }};
 
-    if (admin == 'True'){
-        if (members != 'None'){
-                    $('#user-input').attr('value', members.join());
-                }
-
-        var elt = $('#user-input')
-        elt.typeahead();
-
-        $('#user-input').tagsinput({
-            typeahead:{
-                 source: user_typeahead
-            }
-        });
-
-    }
-
-    for (var i in scans) {
-            var id = scans[i].id;
-            var url = scans[i].url;
-            var status = scans[i].status;
-            var label = {};
-
-            switch (status) {
-
-                case "0":
-
-                case "1":
-                    label.class = 'info';
-                    label.text = 'Pending';
-
-                    break;
-                case "2":
-                    label.class = 'danger';
-                    label.text = 'Failed';
-                    break;
-
-                case "3":
-                    label.class = 'success';
-                    label.text = 'Finished';
-                    break;
-
-                case "4":
-                    label.class = 'danger';
-                    label.text = 'Timeout';
-                    break;
-
-            }
-
-            $("#groupscans tbody ").append(
-                $("<tr>")
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<a>")
-                        .attr("href", '/report/'+id+'/')
-                        .html(id)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<p>")
-                        .html(url)))
-                .append(
-                    $("<td>")
-                    .html(
-                        $("<span>")
-                        .attr("class", "label label-" + label.class)
-                        .html(label.text)))
-            );
-
+     $('#user-input').tagsinput({
+        typeahead:{
+             source: user_typeahead
         }
+     });
 
-        jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
-            a = parseInt($(a).text());
-            b = parseInt($(b).text());
-            return ((a < b) ? -1 : ((a > b) ?  1 : 0));
-        };
 
-        jQuery.fn.dataTableExt.oSort['numeric-html-desc']  = function(a, b) {
-            a = parseInt($(a).text());
-            b = parseInt($(b).text());
-            return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
-        };
-
-        $(document).ready(function() {
-            $('#groupscans-table').DataTable( {
-                "aoColumns" : [
-                    { "sType" : "numeric-html" },
-                    null,
-                    null
-                ]
-
+    $.getJSON("/api/v1/members" + "/?format=json&"+"group="+group_id,
+            function(data) {
+                for (var i in data.objects){
+                    if (admin == 'True'){
+                        $('#user-input').tagsinput('add', data.objects[i].username)
+                    }
+                    $('#members').append(data.objects[i].username + ", ")
+                }
             });
+
+    jQuery.fn.dataTableExt.oSort['numeric-html-asc']  = function(a, b) {
+        a = parseInt($(a).text());
+        b = parseInt($(b).text());
+        return ((a < b) ? -1 : ((a > b) ?  1 : 0));
+    };
+
+    jQuery.fn.dataTableExt.oSort['numeric-html-desc']  = function(a, b) {
+        a = parseInt($(a).text());
+        b = parseInt($(b).text());
+        return ((a < b) ? 1 : ((a > b) ?  -1 : 0));
+    };
+
+    $(document).ready(function() {
+        var group_scans_table = $('#groupscans-table').DataTable( {
+            "aoColumns" : [
+                { "sType" : "numeric-html" },
+                null,
+                null
+            ],
+            "columnDefs": [ {
+                    "targets": 0,
+                    "render": function ( data, type, full, meta ) {
+                        return '<a href="/report/'+data+'">'+data+'</a>';
+                    }
+                }, {
+                    "targets": 1,
+                    "render": function ( data, type, full, meta ) {
+                        return '<p>'+data+'</p>';
+                    }
+                }, {
+                    "targets": 2,
+                    "render": function ( data, type, full, meta ) {
+                        return '<span class="label label-'+data[1]+'">'+data[0]+'</span>';
+                }
+            } ]
+
         });
+
+        $.getJSON("/api/v1/groupscans" + "/?format=json&"+"group="+group_id,
+            function(data) {
+                for (var i in data.objects) {
+                    var id = data.objects[i].id
+                    var url = data.objects[i].url
+                    var status = data.objects[i].status
+                    var label = {};
+
+                    switch (status) {
+
+                        case 0:
+
+                        case 1:
+                            label.class = 'info';
+                            label.text = 'Pending';
+                            break;
+
+                        case 2:
+                            label.class = 'danger';
+                            label.text = 'Failed';
+                            break;
+
+                        case 3:
+                            label.class = 'success';
+                            label.text = 'Finished';
+                            break;
+
+                        case 4:
+                            label.class = 'danger';
+                            label.text = 'Timeout';
+                            break;
+
+                    }
+
+                    group_scans_table.row.add([id, url, [label.text, label.class]]).draw();
+                }
+        });
+
+    });
 
 
 {% endblock %}

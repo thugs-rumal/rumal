@@ -28,6 +28,7 @@ from interface.api import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
+v1_api.register(CurrentUserResource())
 v1_api.register(GroupResource())
 v1_api.register(ProxyResource())
 v1_api.register(TaskResource())
@@ -43,6 +44,9 @@ v1_api.register(ExploitResource())
 v1_api.register(GraphResource())
 v1_api.register(ComboResource())
 v1_api.register(CommentResource())
+v1_api.register(AdvancedSearchResource())
+v1_api.register(GroupScansResource())
+v1_api.register(GroupMembersResource())
 
 urlpatterns = (
     # Admin views

@@ -58,39 +58,33 @@
 {% endblock %}
 
 {% block bottomscripts %}
-    var groups = {{ groups | safe }};
-
-    for (var i in groups) {
-        $("#mygroups-body ").append(
-        $("<tr>")
-            .append(
-                $("<td>")
-                .html(
-                    $("<a>")
-                    .attr("href", '/group/'+groups[i].id+'/')
-                    .html(groups[i].id)))
-            .append(
-                $("<td>")
-                .html(
-                    $("<a>")
-                    .attr("href", '/group/'+groups[i].id+'/')
-                    .html(groups[i].name)))
-            );
-    }
 
     $(document).ready(function() {
-            var my_groups_table = $('#mygroups-table').DataTable( {
-                "aoColumns" : [
-                    null,
-                    null
-                ]
-            });
-     });
 
+        var my_groups_table = $('#mygroups-table').DataTable({
+            "columnDefs": [ {
+                "targets": 0,
+                "render": function ( data, type, full, meta ) {
+                    console.log(data);
+                    return '<a href="/group/'+data+'">'+data+'</a>';
+                }
+              } ]
+        });
 
+        $.getJSON("/api/v1/current-user" + "/?format=json",
+            function(data) {
+                groups_url = data.objects[0].groups;
+                for (var i in groups_url){
 
+                    $.getJSON(groups_url[i] + "?format=json",
+                        function(data) {
+                                console.log(data);
+                                my_groups_table.row.add([data.id, data.name]).draw();
+                    });
 
+                };
+        });
 
-
+    });
 
 {% endblock %}
