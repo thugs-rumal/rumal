@@ -45,6 +45,8 @@ v1_api.register(GraphResource())
 v1_api.register(ComboResource())
 v1_api.register(CommentResource())
 v1_api.register(AdvancedSearchResource())
+v1_api.register(GroupScansResource())
+v1_api.register(GroupMembersResource())
 
 urlpatterns = (
     # Admin views

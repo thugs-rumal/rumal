@@ -70,6 +70,7 @@
                 }
               } ]
         });
+
         $.getJSON("/api/v1/current-user" + "/?format=json",
             function(data) {
                 groups_url = data.objects[0].groups;
@@ -82,25 +83,8 @@
                     });
 
                 };
-
-
-
-                    });
-
+        });
 
     });
-
-
-
-
-{#    var groups = {{ groups | safe }};#}
-
-
-
-
-
-
-
-
 
 {% endblock %}

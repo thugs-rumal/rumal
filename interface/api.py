@@ -136,7 +136,6 @@ class TaskResource(ModelResource):
         else:
             return semi_filtered.distinct()
 
-
     class Meta:
         queryset        = Task.objects.all()
         resource_name   = 'task'
@@ -164,6 +163,7 @@ class TaskResource(ModelResource):
           'star': ALL_WITH_RELATIONS,
           'id': ALL_WITH_RELATIONS
         }
+
 
 class CommentResource(ModelResource):
     task = fields.ForeignKey(TaskResource, 'task', full=True)
@@ -195,6 +195,45 @@ class CommentResource(ModelResource):
             'node': ALL_WITH_RELATIONS
 
         }
+
+
+class GroupScansResource(ModelResource):
+
+    def apply_filters(self, request, applicable_filters):
+        group_id = request.GET.get('group', None)
+        if group_id:
+            return Task.objects.filter(sharing_groups=group_id)
+        return Task.objects.none()
+
+    class Meta:
+        queryset = Task.objects.all()
+        resource_name = 'groupscans'
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        limit = 0
+        excludes = ["adobepdf", "ast_debug", "broken_url", "debug", "delay", "events", "extensive", "http_debug",
+                    "javaplugin", "no_adobepdf", "no_cache","no_honeyagent", "no_javaplugin", "no_shockwave", "quiet",
+                    "resource_uri", "shockwave", "threshold", "timeout", "useragent", "verbose", "vtquery", "vtsubmit"]
+
+
+class GroupMembersResource(ModelResource):
+
+    def apply_filters(self, request, applicable_filters):
+        group_id = request.GET.get('group', None)
+        if group_id:
+            group = get_object_or_404(Group, pk=group_id)
+            return group.user_set.all()
+        return Group.objects.none()
+
+    class Meta:
+        queryset = User.objects.all()
+        resource_name = 'members'
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        limit = 0
+
 
 
 """Non ORM Model for advanced search"""

@@ -162,9 +162,9 @@ def new_group(request):
 @login_required
 def group(request, group_id):
     """
-    Group page that contains group name, List of Users, creator, and scans for the current  logged in User.
-    User has to be a valid group member to be able to view this page
-    Group creator can add/remove users in this group
+    Loads group page with members, typeahead data for adding members, admin, name, number of scans.
+    Retrieving scans and members has been moved to use RESTful API in JS
+    Handles modification of group users (only admin can)
     :param request: Current logged in user, Group Info
     :param group_id: unique Id for group
     :return: Group Info, scans and group settings
@@ -173,10 +173,9 @@ def group(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
     group_creator = GroupCreator.objects.get(group=group).group_creator
     context = {
-        'scans': None,
+        'group_id': None,
         'number_of_scans': None,
         'name': None,
-        'members': None,
         'admin': False,
         'creator': None,
         'user_typeahead': None
@@ -184,10 +183,9 @@ def group(request, group_id):
 
     # check for valid group user
     if request.user in group.user_set.all():
-        context['scans'] = json_util.dumps(Task.objects.filter(sharing_groups=group).values())
+        context['group_id'] = group_id
         context['number_of_scans'] = len(Task.objects.filter(sharing_groups=group).values())
         context['name'] = group.name
-        context['members'] = json_util.dumps([g.username for g in group.user_set.all()])
         context['creator'] = json_util.dumps(group_creator.username)
         context['user_typeahead'] = json_util.dumps([user.username for user in User.objects.all()])
 
