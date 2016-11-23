@@ -63,10 +63,12 @@ function setMap(tooltip) {
 function loadMapPoints() {
     var points = [];
     for (var i in full_analysis["flat_tree"]) {
-        if ("City" in full_analysis["flat_tree"][i]["GeoPlugin"]["city"]) {
-            var city = full_analysis["flat_tree"][i]["GeoPlugin"]["city"];
+        var iflat_tree = full_analysis['flat_tree'][i];
+        if ('GeoPlugin' in iflat_tree && 'city' in iflat_tree['GeoPlugin'] && "City" in iflat_tree["GeoPlugin"]["city"]) {
+            var city = iflat_tree["GeoPlugin"]["city"];
             points.push(city);
         }
     }
     return points;
 }
+
