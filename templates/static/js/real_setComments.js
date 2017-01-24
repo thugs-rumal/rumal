@@ -20,15 +20,19 @@ function setComments(d) {
         $('.comments-list').empty();
 
         for (var key in objects) {
+
+            //encode message text and username against xss
+            var username = encodeURI(objects[key]['user']['username']);
+            var comment_message = encodeURI(objects[key]['text']);
             
             $('#comments-list').append("" +
                 "<li>" +
                     "<div class='comment-box'>" +
                         "<div class='comment-head'>" +
-                            "<h6 class='comment-name by-author'>" + objects[key]['user']['username'] + "</h6>" +
+                            "<h6 class='comment-name by-author'>" + username + "</h6>" +
                             "<span><h6>" + new Date(objects[key]['created_on']).toLocaleString() + "</h6></span>" +
                         "</div>" +
-                        "<div class='comment-content'  style='word-wrap: break-word'>" + objects[key]['text'] +
+                        "<div class='comment-content'  style='word-wrap: break-word'>" + comment_message +
                         "</div>" +
                     "</div>" +
                 "</li>");
